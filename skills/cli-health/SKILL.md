@@ -11,8 +11,8 @@ Check server health, component status, and live metrics from the CLI. Run `healt
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g szroute   # or: npx szroute
+szroute --version
 ```
 
 ## Subcommands
@@ -28,7 +28,7 @@ omniroute --version
 **Example:**
 
 ```bash
-omniroute doctor
+szroute doctor
 ```
 
 ### `health`
@@ -42,7 +42,7 @@ omniroute doctor
 **Example:**
 
 ```bash
-omniroute health
+szroute health
 ```
 
 ### `health components`
@@ -56,7 +56,7 @@ List health components and their status
 **Example:**
 
 ```bash
-omniroute health components
+szroute health components
 ```
 
 ### `health watch`
@@ -70,12 +70,12 @@ Live dashboard — refresh every N seconds
 **Example:**
 
 ```bash
-omniroute health watch
+szroute health watch
 ```
 
 ### `status`
 
-Show OmniRoute status dashboard
+Show SZRoute status dashboard
 
 **Flags:**
 
@@ -84,5 +84,5 @@ Show OmniRoute status dashboard
 **Example:**
 
 ```bash
-omniroute status
+szroute status
 ```

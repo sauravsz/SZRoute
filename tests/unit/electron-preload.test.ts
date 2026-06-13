@@ -187,7 +187,7 @@ describe("Preload Listener Disposer Pattern", () => {
 
 describe("macOS Drag Region", () => {
   it("should make the real header draggable when available", () => {
-    assert.match(preloadSource, /header,\s*\.omniroute-electron-drag-region/);
+    assert.match(preloadSource, /header,\s*\.szroute-electron-drag-region/);
     assert.match(preloadSource, /document\.querySelector\("header"\)/);
   });
 
@@ -282,8 +282,8 @@ describe("Preload openExternal Security", () => {
 
   const SAFE_URLS = [
     "https://github.com",
-    "http://localhost:20128",
-    "https://omniroute.dev/docs",
+    "http://localhost:21128",
+    "https://szroute.dev/docs",
     "https://example.com/path?q=1&p=2#section",
   ];
 

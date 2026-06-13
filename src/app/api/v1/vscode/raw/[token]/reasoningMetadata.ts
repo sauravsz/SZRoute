@@ -1,5 +1,5 @@
-import { parseModel } from "@omniroute/open-sse/services/model";
-import { supportsXHighEffort } from "@omniroute/open-sse/config/providerModels";
+import { parseModel } from "@szroute/open-sse/services/model";
+import { supportsXHighEffort } from "@szroute/open-sse/config/providerModels";
 import { stripVscodeServiceTierVariantModelId } from "@/app/api/v1/vscode/raw/[token]/serviceTierVariants";
 
 export type VscodeCatalogModel = {

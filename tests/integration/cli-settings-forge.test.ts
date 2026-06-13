@@ -9,7 +9,7 @@ import os from "node:os";
 import path from "node:path";
 import { makeManagementSessionRequest } from "../helpers/managementSession.ts";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-forge-settings-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-forge-settings-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret-forge";
 process.env.JWT_SECRET = "test-jwt-secret-forge";
@@ -80,7 +80,7 @@ test("forge-settings POST: 400 when model is missing", async () => {
     new Request("http://localhost/api/cli-tools/forge-settings", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ baseUrl: "http://localhost:20128", apiKey: "sk-test" }),
+      body: JSON.stringify({ baseUrl: "http://localhost:21128", apiKey: "sk-test" }),
     })
   );
   assert.equal(res.status, 400, `Expected 400 for missing model, got ${res.status}`);
@@ -99,7 +99,7 @@ test("forge-settings POST: writes config.toml with valid body", async () => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test-forge-key",
           model: "gpt-5.4-mini",
         }),
@@ -119,8 +119,8 @@ test("forge-settings POST: writes config.toml with valid body", async () => {
       const configPath = path.join(tmpHome, ".forge", "config.toml");
       if (fs.existsSync(configPath)) {
         const content = fs.readFileSync(configPath, "utf-8");
-        assert.ok(content.includes("managed by OmniRoute"), "Config should have OmniRoute marker");
-        assert.ok(content.includes("http://localhost:20128"), "Config should contain base URL");
+        assert.ok(content.includes("managed by SZRoute"), "Config should have SZRoute marker");
+        assert.ok(content.includes("http://localhost:21128"), "Config should contain base URL");
         assert.ok(content.includes("[openai]"), "Config should have [openai] section");
       }
     }
@@ -143,7 +143,7 @@ test("forge-settings DELETE: removes config file when it exists", async () => {
     fs.mkdirSync(forgeDir, { recursive: true });
     fs.writeFileSync(
       path.join(forgeDir, "config.toml"),
-      "# managed by OmniRoute (plan 14)\n[openai]\nbase_url = \"http://localhost:20128\"\n"
+      "# managed by SZRoute (plan 14)\n[openai]\nbase_url = \"http://localhost:21128\"\n"
     );
 
     const res = await DELETE(

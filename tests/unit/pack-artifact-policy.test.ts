@@ -64,7 +64,7 @@ test("webdav-handler.mjs is allowed in staging dist/ (server-ws.mjs dependency, 
   assert.deepEqual(unexpectedPaths, []);
 });
 
-test("setupPolyfill.ts is allowed in the tarball (bin/omniroute.mjs imports it at startup)", () => {
+test("setupPolyfill.ts is allowed in the tarball (bin/szroute.mjs imports it at startup)", () => {
   const unexpectedPaths = findUnexpectedArtifactPaths(["open-sse/utils/setupPolyfill.ts"], {
     exactPaths: PACK_ARTIFACT_ALLOWED_EXACT_PATHS,
     prefixPaths: PACK_ARTIFACT_ALLOWED_PATH_PREFIXES,
@@ -77,7 +77,7 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
   const missingPaths = findMissingArtifactPaths(
     [
       "dist/server.js",
-      "bin/omniroute.mjs",
+      "bin/szroute.mjs",
       "package.json",
       "scripts/build/postinstall.mjs",
       "scripts/build/postinstallSupport.mjs",
@@ -87,7 +87,7 @@ test("findMissingArtifactPaths flags missing root runtime files in the tarball",
 
   // findMissingArtifactPaths returns the missing required paths sorted
   // alphabetically (bin/ < dist/ < scripts/ < src/), minus the paths present
-  // above (dist/server.js, bin/omniroute.mjs, package.json, the postinstall scripts).
+  // above (dist/server.js, bin/szroute.mjs, package.json, the postinstall scripts).
   assert.deepEqual(missingPaths, [
     "bin/cli/program.mjs",
     "bin/mcp-server.mjs",

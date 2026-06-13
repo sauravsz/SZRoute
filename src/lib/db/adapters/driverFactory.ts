@@ -7,14 +7,14 @@ import type { SqliteAdapter, PreparedStatement, RunResult } from "./types";
 const _require = createRequire(import.meta.url);
 
 declare global {
-  var __omnirouteSqlJsAdapters: Map<string, SqliteAdapter> | undefined;
+  var __szrouteSqlJsAdapters: Map<string, SqliteAdapter> | undefined;
 }
 
 function getSqlJsCache(): Map<string, SqliteAdapter> {
-  if (!globalThis.__omnirouteSqlJsAdapters) {
-    globalThis.__omnirouteSqlJsAdapters = new Map();
+  if (!globalThis.__szrouteSqlJsAdapters) {
+    globalThis.__szrouteSqlJsAdapters = new Map();
   }
-  return globalThis.__omnirouteSqlJsAdapters;
+  return globalThis.__szrouteSqlJsAdapters;
 }
 
 function buildNodeAdapterSync(

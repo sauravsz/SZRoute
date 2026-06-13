@@ -1,6 +1,6 @@
 # Zed IDE Integration in Docker Environments
 
-When OmniRoute runs inside Docker, the standard "Import from Zed Keychain" flow fails
+When SZRoute runs inside Docker, the standard "Import from Zed Keychain" flow fails
 because the container cannot reach the host OS keychain daemon (libsecret on Linux,
 Keychain on macOS, Credential Manager on Windows) and the Zed config directories on the
 host filesystem are not visible inside the container by default.
@@ -16,7 +16,7 @@ Two blocking issues occur inside a container:
    module communicates with the OS keychain service over a Unix socket or D-Bus session.
    Neither is bridged into the container by default, so credential reads always fail.
 
-OmniRoute detects the Docker environment via two heuristics:
+SZRoute detects the Docker environment via two heuristics:
 
 - Presence of `/.dockerenv` (written by the Docker daemon at container start).
 - The string `docker` appearing in `/proc/1/cgroup` (Linux cgroup v1).
@@ -28,7 +28,7 @@ When either heuristic triggers, the import route returns HTTP 422 with
 
 1. Open **Dashboard → Providers → Zed**.
 2. The **Manual Token Import** panel appears below the keychain import card. When
-   OmniRoute detects Docker, this panel expands automatically after the first failed
+   SZRoute detects Docker, this panel expands automatically after the first failed
    keychain import attempt.
 3. Select the provider from the dropdown (OpenAI, Anthropic, Google, Mistral, xAI,
    OpenRouter, or DeepSeek).
@@ -75,8 +75,8 @@ non-secret Zed config values (e.g., model preferences).
 ```yaml
 # docker-compose.yml snippet
 services:
-  omniroute:
-    image: omniroute:latest
+  szroute:
+    image: szroute:latest
     volumes:
       # Linux host
       - "${HOME}/.config/zed:/host-zed-config:ro"
@@ -84,7 +84,7 @@ services:
       # - "${HOME}/Library/Application Support/Zed:/host-zed-config:ro"
     environment:
       # Future: ZED_CONFIG_PATH=/host-zed-config
-      PORT: "20128"
+      PORT: "21128"
 ```
 
 Note: a `ZED_CONFIG_PATH` environment variable override is not yet implemented. This

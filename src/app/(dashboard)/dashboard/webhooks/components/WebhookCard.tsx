@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ContextMenu, { type ContextMenuEntry } from "@/shared/components/ContextMenu";
 import { WebhookDeliveriesPanel } from "./WebhookDeliveriesPanel";
 
 export type WebhookKind = "slack" | "telegram" | "discord" | "custom";
@@ -63,8 +64,16 @@ export function WebhookCard({
   const status = getStatus(webhook);
   const isTesting = testingId === webhook.id;
 
+  const contextMenuItems: ContextMenuEntry[] = [
+    { label: t("testWebhook"), icon: "send", onClick: () => onTest(webhook), disabled: isTesting },
+    { label: webhook.enabled ? t("disable") : t("enable"), icon: webhook.enabled ? "toggle_off" : "toggle_on", onClick: () => onToggleEnabled(webhook) },
+    { type: "separator" },
+    { label: t("edit"), icon: "edit", onClick: () => onEdit(webhook) },
+    { label: t("delete"), icon: "delete", destructive: true, onClick: () => onDelete(webhook) },
+  ];
+
   return (
-    <div className="rounded-xl border border-border bg-surface transition-shadow hover:shadow-sm">
+    <ContextMenu items={contextMenuItems} className="rounded-xl border border-border bg-surface transition-shadow hover:shadow-sm">
       <div className="flex items-center gap-3 p-4">
         <span
           className={`material-symbols-outlined shrink-0 text-[22px] ${KIND_COLORS[webhook.kind]}`}
@@ -159,6 +168,6 @@ export function WebhookCard({
           <WebhookDeliveriesPanel webhookId={webhook.id} t={t} />
         </div>
       )}
-    </div>
+    </ContextMenu>
   );
 }

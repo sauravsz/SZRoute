@@ -25,7 +25,7 @@ const { default: ExportCodeModal } = await import(
 
 const BASE_STATE = {
   endpoint: "chat.completions" as const,
-  baseUrl: "http://localhost:20128",
+  baseUrl: "http://localhost:21128",
   model: "openai/gpt-4o",
   systemPrompt: "You are helpful.",
   messages: [{ role: "user" as const, content: "Hello" }],
@@ -70,11 +70,11 @@ describe("ExportCodeModal", () => {
     expect(el.textContent).toContain("exportCodeTitle");
   });
 
-  it("shows curl code with $OMNIROUTE_API_KEY placeholder", () => {
+  it("shows curl code with $SZROUTE_API_KEY placeholder", () => {
     const el = renderModal();
     const pre = el.querySelector("pre");
     expect(pre?.textContent).toContain(API_KEY_PLACEHOLDER);
-    expect(pre?.textContent).toContain("$OMNIROUTE_API_KEY");
+    expect(pre?.textContent).toContain("$SZROUTE_API_KEY");
   });
 
   it("never contains a real API key pattern (sk-...) in any tab", async () => {
@@ -143,7 +143,7 @@ describe("ExportCodeModal", () => {
 
     const pre = el.querySelector("pre");
     const code = pre?.textContent ?? "";
-    // TypeScript code should contain OMNIROUTE_API_KEY
+    // TypeScript code should contain SZROUTE_API_KEY
     expect(code).toContain(API_KEY_PLACEHOLDER);
     expect(code).not.toMatch(/sk-[A-Za-z0-9_-]{16,}/);
   });

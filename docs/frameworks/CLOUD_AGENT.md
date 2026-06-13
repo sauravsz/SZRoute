@@ -9,7 +9,7 @@ lastUpdated: 2026-05-13
 > **Source of truth:** `src/lib/cloudAgent/` and `src/app/api/v1/agents/tasks/`
 > **Last updated:** 2026-05-13 — v3.8.0
 
-OmniRoute orchestrates third-party cloud-hosted coding agents (Codex Cloud, Devin,
+SZRoute orchestrates third-party cloud-hosted coding agents (Codex Cloud, Devin,
 Jules) as long-running tasks. Each agent is wrapped behind a uniform interface so
 clients can submit a prompt + repo URL and receive results without dealing with
 provider-specific APIs.
@@ -234,7 +234,7 @@ CREATE INDEX IF NOT EXISTS idx_cloud_agent_tasks_created  ON cloud_agent_tasks(c
 ### Create task
 
 ```bash
-curl -X POST http://localhost:20128/api/v1/agents/tasks \
+curl -X POST http://localhost:21128/api/v1/agents/tasks \
   -H "Cookie: auth_token=..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -272,7 +272,7 @@ Response `201`:
 ### Approve a plan
 
 ```bash
-curl -X POST http://localhost:20128/api/v1/agents/tasks/<id> \
+curl -X POST http://localhost:21128/api/v1/agents/tasks/<id> \
   -H "Cookie: auth_token=..." \
   -H "Content-Type: application/json" \
   -d '{"action":"approve"}'
@@ -281,14 +281,14 @@ curl -X POST http://localhost:20128/api/v1/agents/tasks/<id> \
 ### Send a follow-up message
 
 ```bash
-curl -X POST http://localhost:20128/api/v1/agents/tasks/<id> \
+curl -X POST http://localhost:21128/api/v1/agents/tasks/<id> \
   -d '{"action":"message","message":"Also add a unit test for the parser"}'
 ```
 
 ### Cancel (local status only)
 
 ```bash
-curl -X POST http://localhost:20128/api/v1/agents/tasks/<id> \
+curl -X POST http://localhost:21128/api/v1/agents/tasks/<id> \
   -d '{"action":"cancel"}'
 ```
 

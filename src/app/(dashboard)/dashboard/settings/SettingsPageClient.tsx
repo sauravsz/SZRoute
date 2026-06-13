@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { SegmentedControl } from "@/shared/components";
-import AppearanceTab from "./components/AppearanceTab";
-import ResilienceTab from "./components/ResilienceTab";
 import SystemStorageTab from "./components/SystemStorageTab";
 
-export type SettingsTab = "general" | "appearance" | "resilience";
+export type SettingsTab = "general";
 
 const SETTINGS_TABS: Array<{ value: SettingsTab; label: string; icon: string }> = [
   { value: "general", label: "General", icon: "settings" },
-  { value: "appearance", label: "Appearance", icon: "palette" },
-  { value: "resilience", label: "Resilience", icon: "health_and_safety" },
 ];
 
 type SettingsPageClientProps = {
@@ -39,8 +35,6 @@ export default function SettingsPageClient({ initialTab }: SettingsPageClientPro
 
       <div role="tabpanel" aria-label={activeLabel} className="min-w-0">
         {activeTab === "general" ? <SystemStorageTab /> : null}
-        {activeTab === "appearance" ? <AppearanceTab /> : null}
-        {activeTab === "resilience" ? <ResilienceTab /> : null}
       </div>
     </div>
   );

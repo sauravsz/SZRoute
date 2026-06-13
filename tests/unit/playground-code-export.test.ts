@@ -9,7 +9,7 @@ const { exportCode, exportAllLanguages, endpointToPath, API_KEY_PLACEHOLDER } = 
 
 /** Assert security invariants on every generated snippet. */
 function assertSecurityInvariants(generated: string, label: string) {
-  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $OMNIROUTE_API_KEY`);
+  assert.ok(generated.includes(API_KEY_PLACEHOLDER), `${label}: must include $SZROUTE_API_KEY`);
   assert.ok(generated.length > 0, `${label}: must not be empty`);
   assert.doesNotMatch(
     generated,
@@ -43,15 +43,15 @@ test("endpointToPath: maps all 13 endpoints correctly (D4-rev2)", () => {
 
 // ── API_KEY_PLACEHOLDER ───────────────────────────────────────────────────────
 
-test("API_KEY_PLACEHOLDER is $OMNIROUTE_API_KEY", () => {
-  assert.equal(API_KEY_PLACEHOLDER, "$OMNIROUTE_API_KEY");
+test("API_KEY_PLACEHOLDER is $SZROUTE_API_KEY", () => {
+  assert.equal(API_KEY_PLACEHOLDER, "$SZROUTE_API_KEY");
 });
 
 // ── Table-driven tests for chat.completions ────────────────────────────────────
 
 const baseState = {
   endpoint: "chat.completions" as const,
-  baseUrl: "http://localhost:20128",
+  baseUrl: "http://localhost:21128",
   model: "gpt-4o-mini",
   stream: false,
 };
@@ -68,7 +68,7 @@ test("chat.completions × python: contains required elements", () => {
   const generated = exportCode(baseState, "python");
   assertSecurityInvariants(generated, "chat.completions/python");
   assert.ok(generated.includes("import requests"), "imports requests");
-  assert.ok(generated.includes('os.environ["OMNIROUTE_API_KEY"]'), "uses os.environ");
+  assert.ok(generated.includes('os.environ["SZROUTE_API_KEY"]'), "uses os.environ");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 
@@ -76,7 +76,7 @@ test("chat.completions × typescript: contains required elements", () => {
   const generated = exportCode(baseState, "typescript");
   assertSecurityInvariants(generated, "chat.completions/typescript");
   assert.ok(generated.includes("await fetch("), "uses fetch");
-  assert.ok(generated.includes("process.env.OMNIROUTE_API_KEY"), "uses process.env");
+  assert.ok(generated.includes("process.env.SZROUTE_API_KEY"), "uses process.env");
   assert.ok(generated.includes("gpt-4o-mini"), "model present");
 });
 
@@ -108,7 +108,7 @@ test("chat.completions: uses messages when provided", () => {
 test("completions × all languages: security + path", () => {
   const state = {
     endpoint: "completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-3.5-turbo-instruct",
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -123,7 +123,7 @@ test("completions × all languages: security + path", () => {
 test("embeddings × all languages: security + path", () => {
   const state = {
     endpoint: "embeddings" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "text-embedding-3-small",
     prompt: "Hello world",
   };
@@ -139,7 +139,7 @@ test("embeddings × all languages: security + path", () => {
 test("images × all languages: security + path", () => {
   const state = {
     endpoint: "images" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "dall-e-3",
     prompt: "A beautiful sunset",
   };
@@ -155,7 +155,7 @@ test("images × all languages: security + path", () => {
 test("search × all languages: security + path + query", () => {
   const state = {
     endpoint: "search" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     query: "AI news today",
     searchProvider: "tavily",
     searchType: "web" as const,
@@ -174,7 +174,7 @@ test("search × all languages: security + path + query", () => {
 test("web.fetch × all languages: security + path + url", () => {
   const state = {
     endpoint: "web.fetch" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     url: "https://example.com",
     fetchProvider: "firecrawl" as const,
     fetchFormat: "markdown" as const,
@@ -192,7 +192,7 @@ test("web.fetch × all languages: security + path + url", () => {
 test("rerank × all languages: security + path + query", () => {
   const state = {
     endpoint: "rerank" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     query: "find relevant docs",
     rerankModel: "rerank-english-v3.0",
     documents: ["Doc 1", "Doc 2"],
@@ -209,7 +209,7 @@ test("rerank × all languages: security + path + query", () => {
 test("audio.transcriptions × all languages: security + path", () => {
   const state = {
     endpoint: "audio.transcriptions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "whisper-1",
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -224,7 +224,7 @@ test("audio.transcriptions × all languages: security + path", () => {
 test("audio.speech × all languages: security + path", () => {
   const state = {
     endpoint: "audio.speech" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "tts-1",
     prompt: "Hello world",
   };
@@ -240,7 +240,7 @@ test("audio.speech × all languages: security + path", () => {
 test("moderations × all languages: security + path", () => {
   const state = {
     endpoint: "moderations" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "text-moderation-latest",
     prompt: "Hello world",
   };
@@ -274,7 +274,7 @@ test("exportAllLanguages returns all 3 snippets with valid content", () => {
 test("curl: body is present (JSON.stringify used)", () => {
   const state = {
     endpoint: "embeddings" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "text-embedding-3-small",
     prompt: "Test input",
   };
@@ -286,7 +286,7 @@ test("curl: body is present (JSON.stringify used)", () => {
 test("python: body uses json.loads for JSON parsing", () => {
   const state = {
     endpoint: "embeddings" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "text-embedding-3-small",
     prompt: "Test input",
   };
@@ -297,7 +297,7 @@ test("python: body uses json.loads for JSON parsing", () => {
 test("typescript: body uses JSON object literal", () => {
   const state = {
     endpoint: "embeddings" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "text-embedding-3-small",
     prompt: "Test input",
   };
@@ -311,7 +311,7 @@ test("typescript: body uses JSON object literal", () => {
 test("chat.completions: defaults model when not provided", () => {
   const state = {
     endpoint: "chat.completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -328,7 +328,7 @@ test("chat.completions: defaults model when not provided", () => {
 test("chat.completions: no messages, no systemPrompt — builds default user message", () => {
   const state = {
     endpoint: "chat.completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-4o",
     // no messages, no systemPrompt, no prompt
   };
@@ -341,7 +341,7 @@ test("chat.completions: no messages, no systemPrompt — builds default user mes
 test("completions: defaults model when not provided", () => {
   const state = {
     endpoint: "completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no prompt, no stream
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -355,7 +355,7 @@ test("completions: defaults model when not provided", () => {
 test("embeddings: defaults model and prompt when not provided", () => {
   const state = {
     endpoint: "embeddings" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no prompt
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -369,7 +369,7 @@ test("embeddings: defaults model and prompt when not provided", () => {
 test("images: defaults model and prompt when not provided", () => {
   const state = {
     endpoint: "images" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no prompt
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -382,7 +382,7 @@ test("images: defaults model and prompt when not provided", () => {
 test("audio.transcriptions: defaults model when not provided", () => {
   const state = {
     endpoint: "audio.transcriptions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -395,7 +395,7 @@ test("audio.transcriptions: defaults model when not provided", () => {
 test("audio.speech: defaults model and prompt when not provided", () => {
   const state = {
     endpoint: "audio.speech" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no prompt
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -411,7 +411,7 @@ test("audio.speech: defaults model and prompt when not provided", () => {
 test("responses × all languages: security + path", () => {
   const state = {
     endpoint: "responses" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-4o",
     prompt: "Summarize the news",
     systemPrompt: "Be concise.",
@@ -428,7 +428,7 @@ test("responses × all languages: security + path", () => {
 test("responses: defaults model and input when not provided", () => {
   const state = {
     endpoint: "responses" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
@@ -443,7 +443,7 @@ test("responses: defaults model and input when not provided", () => {
 test("video × all languages: security + path", () => {
   const state = {
     endpoint: "video" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "sora-1.0",
     prompt: "A cat playing piano",
   };
@@ -458,7 +458,7 @@ test("video × all languages: security + path", () => {
 test("video: defaults when no model/prompt provided", () => {
   const state = {
     endpoint: "video" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
@@ -472,7 +472,7 @@ test("video: defaults when no model/prompt provided", () => {
 test("music × all languages: security + path", () => {
   const state = {
     endpoint: "music" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "music-1",
     prompt: "An ambient piano piece",
   };
@@ -487,7 +487,7 @@ test("music × all languages: security + path", () => {
 test("music: defaults when no model/prompt provided", () => {
   const state = {
     endpoint: "music" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
     const generated = exportCode(state, lang);
@@ -499,7 +499,7 @@ test("music: defaults when no model/prompt provided", () => {
 test("moderations: defaults model and prompt when not provided", () => {
   const state = {
     endpoint: "moderations" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no prompt
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -512,7 +512,7 @@ test("moderations: defaults model and prompt when not provided", () => {
 test("rerank: defaults query and documents when not provided", () => {
   const state = {
     endpoint: "rerank" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no model, no query, no documents
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -526,7 +526,7 @@ test("rerank: defaults query and documents when not provided", () => {
 test("search: omits optional fields when not provided", () => {
   const state = {
     endpoint: "search" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     query: "test query",
     // no model, no provider, no type, no maxResults
   };
@@ -540,7 +540,7 @@ test("search: omits optional fields when not provided", () => {
 test("web.fetch: minimal state (only url)", () => {
   const state = {
     endpoint: "web.fetch" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     url: "https://my-site.com",
     // no provider, no format, no depth
   };
@@ -554,7 +554,7 @@ test("web.fetch: minimal state (only url)", () => {
 test("chat.completions: with tools in state", () => {
   const state = {
     endpoint: "chat.completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-4o",
     tools: [
       {
@@ -576,7 +576,7 @@ test("chat.completions: with tools in state", () => {
 test("chat.completions: with params in state", () => {
   const state = {
     endpoint: "chat.completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-4o",
     params: { temperature: 0.7, max_tokens: 500 },
   };
@@ -589,7 +589,7 @@ test("chat.completions: with params in state", () => {
 test("completions: with params in state", () => {
   const state = {
     endpoint: "completions" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     model: "gpt-3.5-turbo-instruct",
     prompt: "Say hello",
     params: { temperature: 0.5, max_tokens: 100 },
@@ -604,7 +604,7 @@ test("completions: with params in state", () => {
 test("search: with model in state (covers model branch)", () => {
   const state = {
     endpoint: "search" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     query: "test",
     model: "some-search-model",
   };
@@ -618,7 +618,7 @@ test("search: with model in state (covers model branch)", () => {
 test("search: default url used when url not provided", () => {
   const state = {
     endpoint: "search" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no query — will use default
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -631,7 +631,7 @@ test("search: default url used when url not provided", () => {
 test("web.fetch: with all optional fields set (depth, format, provider)", () => {
   const state = {
     endpoint: "web.fetch" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     url: "https://example.com",
     fetchProvider: "firecrawl" as const,
     fetchFormat: "html" as const,
@@ -649,7 +649,7 @@ test("web.fetch: with all optional fields set (depth, format, provider)", () => 
 test("web.fetch: default url when url not provided", () => {
   const state = {
     endpoint: "web.fetch" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     // no url
   };
   for (const lang of ["curl", "python", "typescript"] as const) {
@@ -662,7 +662,7 @@ test("web.fetch: default url when url not provided", () => {
 test("web.fetch: fetchDepth 0 is included (not null)", () => {
   const state = {
     endpoint: "web.fetch" as const,
-    baseUrl: "http://localhost:20128",
+    baseUrl: "http://localhost:21128",
     url: "https://example.com",
     fetchDepth: 0 as const,
   };

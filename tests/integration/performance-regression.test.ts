@@ -1,5 +1,5 @@
 /**
- * Performance regression tests for OmniRoute
+ * Performance regression tests for SZRoute
  *
  * Tests bulk data operations against acceptable time thresholds.
  * Thresholds are 2x the expected target to account for slow CI machines.
@@ -14,7 +14,7 @@ import os from "node:os";
 import path from "node:path";
 
 // --- Environment setup (must come before dynamic imports) ---
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-perf-regression-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-perf-regression-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
 if (!process.env.API_KEY_SECRET) {
@@ -232,7 +232,7 @@ describe("Performance: memory API route handler (1000 records)", () => {
   it(`should handle GET /api/memory?limit=50 in <${THRESHOLD_API_ROUTE_MS}ms`, async () => {
     // Create a mock Request object for the route handler
     const request = new Request(
-      `http://localhost:20128/api/memory?limit=50&apiKeyId=${TEST_API_KEY_ID}`,
+      `http://localhost:21128/api/memory?limit=50&apiKeyId=${TEST_API_KEY_ID}`,
       {
         method: "GET",
         headers: { authorization: `Bearer ${managementApiKey}` },

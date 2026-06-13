@@ -2,7 +2,7 @@
  * Unit tests for MCP Essential Tools (Phase 1)
  *
  * Tests all 9 essential tool handlers via the tool handler functions.
- * The omniroute_web_search tests use InMemoryTransport + Client to exercise
+ * The szroute_web_search tests use InMemoryTransport + Client to exercise
  * the actual registered handler (not mockFetch directly).
  */
 
@@ -27,10 +27,10 @@ describe("MCP Essential Tools", () => {
       expect(schemas).toHaveLength(9);
     });
 
-    it("all tools should have omniroute_ prefix", () => {
+    it("all tools should have szroute_ prefix", () => {
       const schemas = MCP_ESSENTIAL_TOOLS;
       for (const schema of schemas) {
-        expect(schema.name).toMatch(/^omniroute_/);
+        expect(schema.name).toMatch(/^szroute_/);
       }
     });
   });
@@ -42,7 +42,7 @@ describe("MCP Essential Tools", () => {
         json: async () => ({ status: "healthy", uptime: 1000, circuitBreakers: [] }),
       });
 
-      const response = await mockFetch("http://localhost:20128/api/monitoring/health");
+      const response = await mockFetch("http://localhost:21128/api/monitoring/health");
       const data = await response.json();
       expect(data.status).toBe("healthy");
       expect(data).toHaveProperty("uptime");
@@ -50,7 +50,7 @@ describe("MCP Essential Tools", () => {
 
     it("should handle API failure gracefully", async () => {
       mockFetch.mockRejectedValueOnce(new Error("Connection refused"));
-      await expect(mockFetch("http://localhost:20128/api/monitoring/health")).rejects.toThrow();
+      await expect(mockFetch("http://localhost:21128/api/monitoring/health")).rejects.toThrow();
     });
   });
 
@@ -66,7 +66,7 @@ describe("MCP Essential Tools", () => {
         }),
       });
 
-      const response = await mockFetch("http://localhost:20128/api/usage/quota");
+      const response = await mockFetch("http://localhost:21128/api/usage/quota");
       const data = await response.json();
       expect(data.providers).toHaveLength(2);
       expect(data.providers[0].provider).toBe("anthropic");
@@ -80,7 +80,7 @@ describe("MCP Essential Tools", () => {
         }),
       });
 
-      const response = await mockFetch("http://localhost:20128/api/usage/quota?provider=anthropic");
+      const response = await mockFetch("http://localhost:21128/api/usage/quota?provider=anthropic");
       const data = await response.json();
       expect(data.providers).toHaveLength(1);
     });
@@ -96,7 +96,7 @@ describe("MCP Essential Tools", () => {
         ],
       });
 
-      const response = await mockFetch("http://localhost:20128/api/combos");
+      const response = await mockFetch("http://localhost:21128/api/combos");
       const data = await response.json();
       expect(Array.isArray(data)).toBe(true);
       expect(data[0]).toHaveProperty("id");
@@ -115,7 +115,7 @@ describe("MCP Essential Tools", () => {
         }),
       });
 
-      const response = await mockFetch("http://localhost:20128/v1/chat/completions", {
+      const response = await mockFetch("http://localhost:21128/v1/chat/completions", {
         method: "POST",
         body: JSON.stringify({ model: "auto", messages: [{ role: "user", content: "hi" }] }),
       });
@@ -135,7 +135,7 @@ describe("MCP Essential Tools", () => {
         }),
       });
 
-      const response = await mockFetch("http://localhost:20128/api/usage/analytics?period=session");
+      const response = await mockFetch("http://localhost:21128/api/usage/analytics?period=session");
       const data = await response.json();
       expect(data).toHaveProperty("totalCost");
       expect(data).toHaveProperty("requestCount");
@@ -143,7 +143,7 @@ describe("MCP Essential Tools", () => {
   });
 });
 
-// ── omniroute_web_search: handler dispatch tests ──────────────────────────────
+// ── szroute_web_search: handler dispatch tests ──────────────────────────────
 // These tests use InMemoryTransport + Client to exercise the actual registered
 // handler (not mockFetch directly), ensuring real handler coverage.
 
@@ -151,7 +151,7 @@ vi.mock("../audit.ts", () => ({
   logToolCall: vi.fn().mockResolvedValue(undefined),
 }));
 
-describe("omniroute_web_search handler (via MCP dispatch)", () => {
+describe("szroute_web_search handler (via MCP dispatch)", () => {
   let client: Client;
 
   beforeEach(async () => {
@@ -170,7 +170,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
 
   it("should appear in tools/list after registration", async () => {
     const { tools } = await client.listTools();
-    const webSearch = tools.find((t) => t.name === "omniroute_web_search");
+    const webSearch = tools.find((t) => t.name === "szroute_web_search");
     expect(webSearch).toBeDefined();
     expect(webSearch?.description).toContain("web search");
   });
@@ -197,7 +197,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
     });
 
     const result = await client.callTool({
-      name: "omniroute_web_search",
+      name: "szroute_web_search",
       arguments: { query: "typescript best practices" },
     });
 
@@ -223,7 +223,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
     });
 
     await client.callTool({
-      name: "omniroute_web_search",
+      name: "szroute_web_search",
       arguments: {
         query: "react hooks tutorial",
         max_results: 10,
@@ -258,7 +258,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
     });
 
     await client.callTool({
-      name: "omniroute_web_search",
+      name: "szroute_web_search",
       arguments: { query: "test query" },
     });
 
@@ -275,7 +275,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
     });
 
     const result = await client.callTool({
-      name: "omniroute_web_search",
+      name: "szroute_web_search",
       arguments: { query: "test" },
     });
 
@@ -288,7 +288,7 @@ describe("omniroute_web_search handler (via MCP dispatch)", () => {
     mockFetch.mockRejectedValueOnce(new DOMException("signal timed out", "TimeoutError"));
 
     const result = await client.callTool({
-      name: "omniroute_web_search",
+      name: "szroute_web_search",
       arguments: { query: "test" },
     });
 

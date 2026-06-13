@@ -101,7 +101,7 @@ export default function RelayProxyClient() {
         <div>
           <h1 className="text-xl font-bold">Serverless Relay Proxies</h1>
           <p className="text-sm text-text-muted mt-1">
-            Create public API endpoints that proxy to OmniRoute with rate limiting and access control
+            Create public API endpoints that proxy to SZRoute with rate limiting and access control
           </p>
         </div>
         <Button onClick={() => setShowCreate(!showCreate)}>
@@ -186,7 +186,7 @@ export default function RelayProxyClient() {
             Send requests to your relay endpoint:
           </p>
           <pre className="text-xs bg-surface/50 border border-border rounded-lg p-3 overflow-x-auto">
-{`curl http://localhost:20128/v1/relay/chat/completions \\
+{`curl http://localhost:21128/v1/relay/chat/completions \\
   -H "Authorization: Bearer relay_..." \\
   -H "Content-Type: application/json" \\
   -d '{"model":"claude-sonnet-4","messages":[{"role":"user","content":"Hello"}]}'`}

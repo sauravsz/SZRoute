@@ -7,7 +7,7 @@ import path from "path";
 import os from "os";
 import { cloudSyncActionSchema } from "@/shared/validation/schemas";
 import { isValidationFailure, validateBody } from "@/shared/validation/helpers";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+import { sanitizeErrorMessage } from "@szroute/open-sse/utils/error";
 
 /**
  * GET /api/sync/cloud
@@ -220,7 +220,7 @@ async function handleDisable(machineId: string, request: any) {
   }
 
   // Update Claude CLI settings to use local endpoint
-  const host = request.headers.get("host") || "localhost:20128";
+  const host = request.headers.get("host") || "localhost:21128";
   await updateClaudeSettingsToLocal(machineId, host);
 
   return NextResponse.json({

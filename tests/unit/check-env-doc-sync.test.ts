@@ -36,7 +36,7 @@ test("parseEnvExampleVars: ignores prose", () => {
   const text = `
 # This file documents env vars. Don't put values here.
 Some narrative paragraph mentions PORT and DATA_DIR in passing.
-PORT=20128
+PORT=21128
 `;
   const vars = parseEnvExampleVars(text);
   assert.deepEqual([...vars].sort(), ["PORT"]);
@@ -49,9 +49,9 @@ test("parseEnvDocVars: extracts SHOUTY_NAMES from inline backticks", () => {
 });
 
 test("parseEnvDocVars: ignores values like `7s` or two-letter codes", () => {
-  const md = "TTL is `60s` and the type is `JSON`. Real var: `OMNIROUTE_TTL_MS`.";
+  const md = "TTL is `60s` and the type is `JSON`. Real var: `SZROUTE_TTL_MS`.";
   const vars = parseEnvDocVars(md);
-  assert.deepEqual([...vars].sort(), ["JSON", "OMNIROUTE_TTL_MS"]);
+  assert.deepEqual([...vars].sort(), ["JSON", "SZROUTE_TTL_MS"]);
 });
 
 test("runEnvDocSync: matched fixture passes", () => {

@@ -11,7 +11,7 @@ function parsePort(value: string | undefined, fallback: number): number {
 }
 
 function resolvePort(optsPort: string | undefined, envPort: string | undefined): number {
-  return parsePort(optsPort ?? envPort ?? "20128", 20128);
+  return parsePort(optsPort ?? envPort ?? "21128", 21128);
 }
 
 test("serve port: uses --port flag when explicitly provided", () => {
@@ -24,24 +24,24 @@ test("serve port: falls back to PORT env var when --port is not provided", () =>
   assert.equal(port, 20129);
 });
 
-test("serve port: falls back to 20128 when neither --port nor PORT env var is set", () => {
+test("serve port: falls back to 21128 when neither --port nor PORT env var is set", () => {
   const port = resolvePort(undefined, undefined);
-  assert.equal(port, 20128);
+  assert.equal(port, 21128);
 });
 
-test("serve port: invalid --port falls back to 20128", () => {
+test("serve port: invalid --port falls back to 21128", () => {
   const port = resolvePort("abc", undefined);
-  assert.equal(port, 20128);
+  assert.equal(port, 21128);
 });
 
-test("serve port: port 0 is invalid, falls back to 20128", () => {
+test("serve port: port 0 is invalid, falls back to 21128", () => {
   const port = resolvePort("0", undefined);
-  assert.equal(port, 20128);
+  assert.equal(port, 21128);
 });
 
-test("serve port: port > 65535 is invalid, falls back to 20128", () => {
+test("serve port: port > 65535 is invalid, falls back to 21128", () => {
   const port = resolvePort("70000", undefined);
-  assert.equal(port, 20128);
+  assert.equal(port, 21128);
 });
 
 test("serve command: --port option has no Commander default", async () => {
@@ -66,11 +66,11 @@ function resolveAppDir(root: string, distServerExists: boolean): string {
 }
 
 test("serve app dir: resolves to dist/ when dist/server.js exists (current layout)", () => {
-  assert.equal(resolveAppDir("/opt/omniroute", true), "/opt/omniroute/dist");
+  assert.equal(resolveAppDir("/opt/szroute", true), "/opt/szroute/dist");
 });
 
 test("serve app dir: falls back to legacy app/ when dist/server.js is absent (upgrade safety)", () => {
-  assert.equal(resolveAppDir("/opt/omniroute", false), "/opt/omniroute/app");
+  assert.equal(resolveAppDir("/opt/szroute", false), "/opt/szroute/app");
 });
 
 test("serve command: APP_DIR keeps the dist/ -> app/ backward-compat fallback", async () => {

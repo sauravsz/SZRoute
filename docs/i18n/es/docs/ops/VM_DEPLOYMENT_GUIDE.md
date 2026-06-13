@@ -1,10 +1,10 @@
-# OmniRoute — Deployment Guide on VM with Cloudflare (Español)
+# SZRoute — Deployment Guide on VM with Cloudflare (Español)
 
 🌐 **Languages:** 🇺🇸 [English](../../../../docs/VM_DEPLOYMENT_GUIDE.md) · 🇸🇦 [ar](../../ar/docs/VM_DEPLOYMENT_GUIDE.md) · 🇧🇬 [bg](../../bg/docs/VM_DEPLOYMENT_GUIDE.md) · 🇧🇩 [bn](../../bn/docs/VM_DEPLOYMENT_GUIDE.md) · 🇨🇿 [cs](../../cs/docs/VM_DEPLOYMENT_GUIDE.md) · 🇩🇰 [da](../../da/docs/VM_DEPLOYMENT_GUIDE.md) · 🇩🇪 [de](../../de/docs/VM_DEPLOYMENT_GUIDE.md) · 🇪🇸 [es](../../es/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇷 [fa](../../fa/docs/VM_DEPLOYMENT_GUIDE.md) · 🇫🇮 [fi](../../fi/docs/VM_DEPLOYMENT_GUIDE.md) · 🇫🇷 [fr](../../fr/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [gu](../../gu/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇱 [he](../../he/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [hi](../../hi/docs/VM_DEPLOYMENT_GUIDE.md) · 🇭🇺 [hu](../../hu/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇩 [id](../../id/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇹 [it](../../it/docs/VM_DEPLOYMENT_GUIDE.md) · 🇯🇵 [ja](../../ja/docs/VM_DEPLOYMENT_GUIDE.md) · 🇰🇷 [ko](../../ko/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [mr](../../mr/docs/VM_DEPLOYMENT_GUIDE.md) · 🇲🇾 [ms](../../ms/docs/VM_DEPLOYMENT_GUIDE.md) · 🇳🇱 [nl](../../nl/docs/VM_DEPLOYMENT_GUIDE.md) · 🇳🇴 [no](../../no/docs/VM_DEPLOYMENT_GUIDE.md) · 🇵🇭 [phi](../../phi/docs/VM_DEPLOYMENT_GUIDE.md) · 🇵🇱 [pl](../../pl/docs/VM_DEPLOYMENT_GUIDE.md) · 🇵🇹 [pt](../../pt/docs/VM_DEPLOYMENT_GUIDE.md) · 🇧🇷 [pt-BR](../../pt-BR/docs/VM_DEPLOYMENT_GUIDE.md) · 🇷🇴 [ro](../../ro/docs/VM_DEPLOYMENT_GUIDE.md) · 🇷🇺 [ru](../../ru/docs/VM_DEPLOYMENT_GUIDE.md) · 🇸🇰 [sk](../../sk/docs/VM_DEPLOYMENT_GUIDE.md) · 🇸🇪 [sv](../../sv/docs/VM_DEPLOYMENT_GUIDE.md) · 🇰🇪 [sw](../../sw/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [ta](../../ta/docs/VM_DEPLOYMENT_GUIDE.md) · 🇮🇳 [te](../../te/docs/VM_DEPLOYMENT_GUIDE.md) · 🇹🇭 [th](../../th/docs/VM_DEPLOYMENT_GUIDE.md) · 🇹🇷 [tr](../../tr/docs/VM_DEPLOYMENT_GUIDE.md) · 🇺🇦 [uk-UA](../../uk-UA/docs/VM_DEPLOYMENT_GUIDE.md) · 🇵🇰 [ur](../../ur/docs/VM_DEPLOYMENT_GUIDE.md) · 🇻🇳 [vi](../../vi/docs/VM_DEPLOYMENT_GUIDE.md) · 🇨🇳 [zh-CN](../../zh-CN/docs/VM_DEPLOYMENT_GUIDE.md)
 
 ---
 
-Complete guide to install and configure OmniRoute on a VM (VPS) with domain managed via Cloudflare.
+Complete guide to install and configure SZRoute on a VM (VPS) with domain managed via Cloudflare.
 
 ---
 
@@ -82,18 +82,18 @@ ufw enable
 
 ---
 
-## 2. Install OmniRoute
+## 2. Install SZRoute
 
 ### 2.1 Create configuration directory
 
 ```bash
-mkdir -p /opt/omniroute
+mkdir -p /opt/szroute
 ```
 
 ### 2.2 Create environment variables file
 
 ```bash
-cat > /opt/omniroute/.env << ‘EOF’
+cat > /opt/szroute/.env << ‘EOF’
 # === Security ===
 JWT_SECRET=CHANGE-TO-A-UNIQUE-64-CHAR-SECRET-KEY
 INITIAL_PASSWORD=YourSecurePassword123!
@@ -103,7 +103,7 @@ STORAGE_ENCRYPTION_KEY_VERSION=v1
 MACHINE_ID_SALT=CHANGE-TO-A-UNIQUE-SALT
 
 # === App ===
-PORT=20128
+PORT=21128
 NODE_ENV=production
 HOSTNAME=0.0.0.0
 DATA_DIR=/app/data
@@ -117,8 +117,8 @@ BASE_URL=https://llms.seudominio.com
 NEXT_PUBLIC_BASE_URL=https://llms.seudominio.com
 
 # === Cloud Sync (optional) ===
-# CLOUD_URL=https://cloud.omniroute.online
-# NEXT_PUBLIC_CLOUD_URL=https://cloud.omniroute.online
+# CLOUD_URL=https://cloud.szroute.online
+# NEXT_PUBLIC_CLOUD_URL=https://cloud.szroute.online
 EOF
 ```
 
@@ -127,25 +127,25 @@ EOF
 ### 2.3 Start the container
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
+docker pull diegosouzapw/szroute:latest
 
 docker run -d \
-  --name omniroute \
+  --name szroute \
   --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
-  -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  --env-file /opt/szroute/.env \
+  -p 21128:21128 \
+  -v szroute-data:/app/data \
+  diegosouzapw/szroute:latest
 ```
 
 ### 2.4 Verify that it is running
 
 ```bash
-docker ps | grep omniroute
-docker logs omniroute --tail 20
+docker ps | grep szroute
+docker logs szroute --tail 20
 ```
 
-It should display: `[DB] SQLite database ready` and `listening on port 20128`.
+It should display: `[DB] SQLite database ready` and `listening on port 21128`.
 
 ---
 
@@ -175,7 +175,7 @@ chmod 600 /etc/nginx/ssl/origin.key
 ### 3.2 Nginx Configuration
 
 ```bash
-cat > /etc/nginx/sites-available/omniroute << ‘NGINX’
+cat > /etc/nginx/sites-available/szroute << ‘NGINX’
 # Default server — blocks direct access via IP
 server {
     listen 80 default_server;
@@ -188,7 +188,7 @@ server {
     return 444;
 }
 
-# OmniRoute — HTTPS
+# SZRoute — HTTPS
 server {
     listen 443 ssl;
     listen [::]:443 ssl;
@@ -201,7 +201,7 @@ server {
     client_max_body_size 100M;
 
     location / {
-        proxy_pass http://127.0.0.1:20128;
+        proxy_pass http://127.0.0.1:21128;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -230,7 +230,7 @@ server {
 NGINX
 ```
 
-Keep reverse-proxy stream timeouts aligned with your OmniRoute timeout env vars. If you raise
+Keep reverse-proxy stream timeouts aligned with your SZRoute timeout env vars. If you raise
 `FETCH_TIMEOUT_MS` / `STREAM_IDLE_TIMEOUT_MS`, raise `proxy_read_timeout` / `proxy_send_timeout`
 above the same threshold.
 
@@ -240,8 +240,8 @@ above the same threshold.
 # Remove default configuration
 rm -f /etc/nginx/sites-enabled/default
 
-# Enable OmniRoute
-ln -sf /etc/nginx/sites-available/omniroute /etc/nginx/sites-enabled/omniroute
+# Enable SZRoute
+ln -sf /etc/nginx/sites-available/szroute /etc/nginx/sites-enabled/szroute
 
 # Test and reload
 nginx -t && systemctl reload nginx
@@ -285,40 +285,40 @@ curl -sI https://llms.seudominio.com/health
 ### Upgrade to a new version
 
 ```bash
-docker pull diegosouzapw/omniroute:latest
-docker stop omniroute && docker rm omniroute
-docker run -d --name omniroute --restart unless-stopped \
-  --env-file /opt/omniroute/.env \
-  -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+docker pull diegosouzapw/szroute:latest
+docker stop szroute && docker rm szroute
+docker run -d --name szroute --restart unless-stopped \
+  --env-file /opt/szroute/.env \
+  -p 21128:21128 \
+  -v szroute-data:/app/data \
+  diegosouzapw/szroute:latest
 ```
 
 ### View logs
 
 ```bash
-docker logs -f omniroute          # Real-time stream
-docker logs omniroute --tail 50   # Last 50 lines
+docker logs -f szroute          # Real-time stream
+docker logs szroute --tail 50   # Last 50 lines
 ```
 
 ### Manual database backup
 
 ```bash
 # Copy data from the volume to the host
-docker cp omniroute:/app/data ./backup-$(date +%F)
+docker cp szroute:/app/data ./backup-$(date +%F)
 
 # Or compress the entire volume
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/omniroute-data-$(date +%F).tar.gz /data
+docker run --rm -v szroute-data:/data -v $(pwd):/backup \
+  alpine tar czf /backup/szroute-data-$(date +%F).tar.gz /data
 ```
 
 ### Restore from backup
 
 ```bash
-docker stop omniroute
-docker run --rm -v omniroute-data:/data -v $(pwd):/backup \
-  alpine sh -c “rm -rf /data/* && tar xzf /backup/omniroute-data-YYYY-MM-DD.tar.gz -C /”
-docker start omniroute
+docker stop szroute
+docker run --rm -v szroute-data:/data -v $(pwd):/backup \
+  alpine sh -c “rm -rf /data/* && tar xzf /backup/szroute-data-YYYY-MM-DD.tar.gz -C /”
+docker start szroute
 ```
 
 ---
@@ -370,9 +370,9 @@ fail2ban-client status sshd
 ### Block direct access to the Docker port
 
 ```bash
-# Prevent direct external access to port 20128
-iptables -I DOCKER-USER -p tcp --dport 20128 -j DROP
-iptables -I DOCKER-USER -i lo -p tcp --dport 20128 -j ACCEPT
+# Prevent direct external access to port 21128
+iptables -I DOCKER-USER -p tcp --dport 21128 -j DROP
+iptables -I DOCKER-USER -i lo -p tcp --dport 21128 -j ACCEPT
 
 # Persist the rules
 apt install -y iptables-persistent
@@ -387,13 +387,13 @@ For remote access via Cloudflare Workers (without exposing the VM directly):
 
 ```bash
 # In the local repository
-cd omnirouteCloud
+cd szrouteCloud
 npm install
 npx wrangler login
 npx wrangler deploy
 ```
 
-See the full documentation at [omnirouteCloud/README.md](../omnirouteCloud/README.md).
+See the full documentation at [szrouteCloud/README.md](../szrouteCloud/README.md).
 
 ---
 
@@ -404,4 +404,4 @@ See the full documentation at [omnirouteCloud/README.md](../omnirouteCloud/READM
 | 22    | SSH         | Public (with fail2ban)     |
 | 80    | nginx HTTP  | Redirect → HTTPS           |
 | 443   | nginx HTTPS | Via Cloudflare Proxy       |
-| 20128 | OmniRoute   | Localhost only (via nginx) |
+| 21128 | SZRoute   | Localhost only (via nginx) |

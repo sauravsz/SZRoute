@@ -8,7 +8,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-smelt-settings-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-smelt-settings-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret-smelt";
 process.env.JWT_SECRET = "test-jwt-secret-smelt";
@@ -76,7 +76,7 @@ test("smelt-settings POST: 400 when model is missing", async () => {
     new Request("http://localhost/api/cli-tools/smelt-settings", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ baseUrl: "http://localhost:20128", apiKey: "sk-test" }),
+      body: JSON.stringify({ baseUrl: "http://localhost:21128", apiKey: "sk-test" }),
     })
   );
   assert.equal(res.status, 400, `Expected 400, got ${res.status}`);
@@ -95,7 +95,7 @@ test("smelt-settings POST: writes config.json with valid body", async () => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test-smelt-key",
           model: "gpt-5.4-mini",
         }),
@@ -111,8 +111,8 @@ test("smelt-settings POST: writes config.json with valid body", async () => {
       const configPath = path.join(tmpHome, ".smelt", "config.json");
       if (fs.existsSync(configPath)) {
         const written = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-        assert.equal(written._managedBy, "omniroute");
-        assert.ok(written.baseUrl.includes("localhost:20128"));
+        assert.equal(written._managedBy, "szroute");
+        assert.ok(written.baseUrl.includes("localhost:21128"));
         assert.equal(written.model, "gpt-5.4-mini");
       }
     }
@@ -122,9 +122,9 @@ test("smelt-settings POST: writes config.json with valid body", async () => {
   }
 });
 
-// ── Test 5: DELETE → removes OmniRoute fields ────────────────────────────────
+// ── Test 5: DELETE → removes SZRoute fields ────────────────────────────────
 
-test("smelt-settings DELETE: removes OmniRoute fields from existing config", async () => {
+test("smelt-settings DELETE: removes SZRoute fields from existing config", async () => {
   const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "smelt-home-del-"));
   const origHome = process.env.HOME;
   process.env.HOME = tmpHome;
@@ -135,8 +135,8 @@ test("smelt-settings DELETE: removes OmniRoute fields from existing config", asy
     fs.writeFileSync(
       path.join(smeltDir, "config.json"),
       JSON.stringify({
-        _managedBy: "omniroute",
-        baseUrl: "http://localhost:20128",
+        _managedBy: "szroute",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
         model: "gpt-5",
       })

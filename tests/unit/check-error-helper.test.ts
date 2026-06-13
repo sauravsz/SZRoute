@@ -92,7 +92,7 @@ test("does NOT flag a file that imports utils/error (relative)", () => {
 });
 
 test("does NOT flag a file that imports utils/error (workspace alias)", () => {
-  const src = `import { buildErrorBody } from "@omniroute/open-sse/utils/error";
+  const src = `import { buildErrorBody } from "@szroute/open-sse/utils/error";
   function build(err: Error) { return new Response(JSON.stringify({ error: { message: \`x \${err.message}\` } })); }`;
   assert.deepEqual(run(src), []);
 });

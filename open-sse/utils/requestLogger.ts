@@ -131,7 +131,7 @@ export function cloneBoundedForLog(value: unknown, depth = 0, key: string | null
     if (shouldTruncate) {
       return [
         {
-          _omniroute_truncated_array: true,
+          _szroute_truncated_array: true,
           originalLength: value.length,
           retainedTailItems: MAX_LOG_ARRAY_ITEMS,
         },
@@ -147,7 +147,7 @@ export function cloneBoundedForLog(value: unknown, depth = 0, key: string | null
     result[k] = cloneBoundedForLog(item, depth + 1, k);
   }
   if (entries.length > MAX_LOG_OBJECT_KEYS) {
-    result._omniroute_truncated_keys = entries.length - MAX_LOG_OBJECT_KEYS;
+    result._szroute_truncated_keys = entries.length - MAX_LOG_OBJECT_KEYS;
   }
   return result;
 }

@@ -1,12 +1,12 @@
 ---
-title: "📖 Setup Guide — OmniRoute"
+title: "📖 Setup Guide — SZRoute"
 version: 3.8.2
 lastUpdated: 2026-05-13
 ---
 
-# 📖 Setup Guide — OmniRoute
+# 📖 Setup Guide — SZRoute
 
-> Complete setup reference for OmniRoute. For the quick version, see the [Quick Start in README](../README.md#-quick-start).
+> Complete setup reference for SZRoute. For the quick version, see the [Quick Start in README](../README.md#-quick-start).
 
 ## Table of Contents
 
@@ -25,18 +25,18 @@ lastUpdated: 2026-05-13
 ### npm (recommended)
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g szroute
+szroute
 ```
 
-Dashboard opens at `http://localhost:20128` and API base URL is `http://localhost:20128/v1`.
+Dashboard opens at `http://localhost:21128` and API base URL is `http://localhost:21128/v1`.
 
 ### pnpm
 
 ```bash
-pnpm install -g omniroute
+pnpm install -g szroute
 pnpm approve-builds -g   # Select all packages → approve
-omniroute
+szroute
 ```
 
 > **pnpm users:** `pnpm approve-builds -g` is required to enable native build scripts for `better-sqlite3` and `@swc/core`.
@@ -44,17 +44,17 @@ omniroute
 ### Arch Linux (AUR)
 
 ```bash
-yay -S omniroute-bin
-systemctl --user enable --now omniroute.service
+yay -S szroute-bin
+systemctl --user enable --now szroute.service
 ```
 
-The [AUR package](https://aur.archlinux.org/packages/omniroute-bin) installs OmniRoute and provides a systemd user service.
+The [AUR package](https://aur.archlinux.org/packages/szroute-bin) installs SZRoute and provides a systemd user service.
 
 ### From Source
 
 ```bash
 npm install
-PORT=20128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
+PORT=21128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
 ```
 
 > **Note:** `npm install` auto-generates `.env` from `.env.example` on first run. Subsequent installs will not overwrite an existing `.env`, so customizations are preserved. To re-seed, delete `.env` before re-running.
@@ -65,7 +65,7 @@ See the [Docker Guide](./DOCKER_GUIDE.md) for complete Docker setup including Co
 
 ### Desktop App (Electron)
 
-OmniRoute ships a desktop wrapper built on Electron 41 + electron-builder 26.10. Available scripts (workspace root):
+SZRoute ships a desktop wrapper built on Electron 41 + electron-builder 26.10. Available scripts (workspace root):
 
 ```bash
 npm run electron:dev          # Run desktop with hot-reload
@@ -83,56 +83,56 @@ Releases of the desktop installers are attached to GitHub Releases. For the full
 For unattended setups (Docker, Kubernetes, CI), use:
 
 ```bash
-omniroute setup --non-interactive
-omniroute providers test-batch
+szroute setup --non-interactive
+szroute providers test-batch
 ```
 
-Combined with env vars (`INITIAL_PASSWORD`, `OMNIROUTE_WS_BRIDGE_SECRET`, etc.), this lets you spin up an OmniRoute instance fully scriptable.
+Combined with env vars (`INITIAL_PASSWORD`, `SZROUTE_WS_BRIDGE_SECRET`, etc.), this lets you spin up an SZRoute instance fully scriptable.
 
 ### CLI Options
 
 | Command                 | Description                                                    |
 | ----------------------- | -------------------------------------------------------------- |
-| `omniroute`             | Start server (`PORT=20128`, API and dashboard on same port)    |
-| `omniroute setup`       | Guided CLI onboarding for password and first provider          |
-| `omniroute doctor`      | Run local health checks without starting the server            |
-| `omniroute providers`   | Discover, list, validate, and test providers from CLI          |
-| `omniroute config`      | CLI tool configuration — list, get, set, validate configs      |
-| `omniroute status`      | Offline status dashboard — version, DB, tools, config          |
-| `omniroute logs`        | Stream usage logs from the API (supports `--follow`)           |
-| `omniroute update`      | Check for or apply OmniRoute updates                           |
-| `omniroute provider`    | Manage provider connections — add, list, remove, test, default |
-| `omniroute --port 3000` | Set canonical/API port to 3000                                 |
-| `omniroute --mcp`       | Start MCP server (stdio transport)                             |
-| `omniroute --no-open`   | Don't auto-open browser                                        |
-| `omniroute --help`      | Show help                                                      |
+| `szroute`             | Start server (`PORT=21128`, API and dashboard on same port)    |
+| `szroute setup`       | Guided CLI onboarding for password and first provider          |
+| `szroute doctor`      | Run local health checks without starting the server            |
+| `szroute providers`   | Discover, list, validate, and test providers from CLI          |
+| `szroute config`      | CLI tool configuration — list, get, set, validate configs      |
+| `szroute status`      | Offline status dashboard — version, DB, tools, config          |
+| `szroute logs`        | Stream usage logs from the API (supports `--follow`)           |
+| `szroute update`      | Check for or apply SZRoute updates                           |
+| `szroute provider`    | Manage provider connections — add, list, remove, test, default |
+| `szroute --port 3000` | Set canonical/API port to 3000                                 |
+| `szroute --mcp`       | Start MCP server (stdio transport)                             |
+| `szroute --no-open`   | Don't auto-open browser                                        |
+| `szroute --help`      | Show help                                                      |
 
 Headless setup can be scripted with flags or environment variables:
 
 ```bash
-omniroute setup --non-interactive --password "$OMNIROUTE_PASSWORD"
-omniroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY"
-omniroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY" --test-provider
+szroute setup --non-interactive --password "$SZROUTE_PASSWORD"
+szroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY"
+szroute setup --non-interactive --add-provider --provider openai --api-key "$OPENAI_API_KEY" --test-provider
 ```
 
 Run local diagnostics without opening the dashboard:
 
 ```bash
-omniroute doctor
-omniroute doctor --json
-omniroute doctor --no-liveness
+szroute doctor
+szroute doctor --json
+szroute doctor --no-liveness
 ```
 
 Manage providers from SSH or scripts without opening the dashboard:
 
 ```bash
-omniroute providers available
-omniroute providers available --search openai
-omniroute providers available --category api-key
-omniroute providers list
-omniroute providers test <id-or-name>
-omniroute providers test-all
-omniroute providers validate
+szroute providers available
+szroute providers available --search openai
+szroute providers available --category api-key
+szroute providers list
+szroute providers test <id-or-name>
+szroute providers test-all
+szroute providers validate
 ```
 
 ---
@@ -148,7 +148,7 @@ omniroute providers validate
 ### 2) Point Your Coding Tool
 
 ```txt
-Base URL: http://localhost:20128/v1
+Base URL: http://localhost:21128/v1
 API Key:  [copy from Endpoint page]
 Model:    if/kimi-k2-thinking (or any provider/model prefix)
 ```
@@ -156,10 +156,10 @@ Model:    if/kimi-k2-thinking (or any provider/model prefix)
 If your editor cannot send `Authorization: Bearer ...`, use the tokenized compatibility base instead:
 
 ```txt
-Base URL: http://localhost:20128/api/v1/vscode/YOUR_KEY/
-Models URL: http://localhost:20128/api/v1/vscode/YOUR_KEY/models
-Chat URL: http://localhost:20128/api/v1/vscode/YOUR_KEY/chat/completions
-Ollama Tags URL: http://localhost:20128/api/v1/vscode/YOUR_KEY/api/tags
+Base URL: http://localhost:21128/api/v1/vscode/YOUR_KEY/
+Models URL: http://localhost:21128/api/v1/vscode/YOUR_KEY/models
+Chat URL: http://localhost:21128/api/v1/vscode/YOUR_KEY/chat/completions
+Ollama Tags URL: http://localhost:21128/api/v1/vscode/YOUR_KEY/api/tags
 ```
 
 Works with Claude Code, Codex CLI, Gemini CLI, Cursor, Cline, OpenClaw, OpenCode, and OpenAI-compatible SDKs.
@@ -175,18 +175,18 @@ For detailed per-tool configuration (Claude Code, Codex CLI, Cursor, Cline, Open
 Start MCP transport in stdio mode:
 
 ```bash
-omniroute --mcp
+szroute --mcp
 ```
 
 Recommended validation flow:
 
 ```bash
 # 1. Start MCP server
-omniroute --mcp
+szroute --mcp
 
 # 2. From your MCP client, call:
-omniroute_get_health        # Should return system health
-omniroute_list_combos       # Should return active combos
+szroute_get_health        # Should return system health
+szroute_list_combos       # Should return active combos
 
 # 3. Or run the full E2E suite:
 npm run test:protocols:e2e
@@ -197,7 +197,7 @@ npm run test:protocols:e2e
 **Claude Code:**
 
 ```bash
-claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp/stream
+claude mcp add-server szroute --type http --url http://localhost:21128/api/mcp/stream
 ```
 
 **Cursor / Cline:**
@@ -207,8 +207,8 @@ Add to your MCP settings:
 ```json
 {
   "mcpServers": {
-    "omniroute": {
-      "command": "omniroute",
+    "szroute": {
+      "command": "szroute",
       "args": ["--mcp"],
       "env": {}
     }
@@ -223,13 +223,13 @@ Add to your MCP settings:
 Verify the Agent Card:
 
 ```bash
-curl http://localhost:20128/.well-known/agent.json
+curl http://localhost:21128/.well-known/agent.json
 ```
 
 Send a task:
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":"quickstart","method":"message/send","params":{"skill":"quota-management","messages":[{"role":"user","content":"Give me a short quota summary."}]}}'
 ```
@@ -247,15 +247,15 @@ For most deployments, you only need these two variables:
 | Variable                 | Default                       | Purpose                                                                                                                                      |
 | ------------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `REQUEST_TIMEOUT_MS`     | `600000`                      | Shared baseline for upstream response-start timeout, hidden Undici timeouts, TLS fingerprint requests, and API bridge request/proxy timeouts |
-| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before OmniRoute aborts the SSE stream                                                                  |
+| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before SZRoute aborts the SSE stream                                                                  |
 
 Backward compatibility is preserved: existing `FETCH_TIMEOUT_MS`, `API_BRIDGE_PROXY_TIMEOUT_MS`, and other per-layer timeout vars still work and override the shared baseline.
 
 ### Provider-Specific Notes
 
-For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), OmniRoute derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
+For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), SZRoute derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
 
-For third-party Claude Code-compatible reverse proxies, OmniRoute keeps the default `anthropic-beta` set conservative and, when `Client Cache Control` is left on `Auto`, only forwards client-provided `cache_control` markers.
+For third-party Claude Code-compatible reverse proxies, SZRoute keeps the default `anthropic-beta` set conservative and, when `Client Cache Control` is left on `Auto`, only forwards client-provided `cache_control` markers.
 
 ### Advanced Timeout Overrides
 
@@ -273,11 +273,11 @@ For third-party Claude Code-compatible reverse proxies, OmniRoute keeps the defa
 | `API_BRIDGE_SERVER_KEEPALIVE_TIMEOUT_MS` | `5000`                                     | Keep-alive timeout on the API bridge server                          |
 | `API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS`    | `0`                                        | Socket inactivity timeout on the API bridge server (`0` disables it) |
 
-> **Note:** For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, OmniRoute will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
+> **Note:** For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, SZRoute will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
 
 ### Reverse Proxy Compatibility
 
-If you run OmniRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy timeouts are also higher than your OmniRoute stream/fetch timeouts.
+If you run SZRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy timeouts are also higher than your SZRoute stream/fetch timeouts.
 
 ---
 
@@ -286,8 +286,8 @@ If you run OmniRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, 
 Run API and Dashboard on separate ports for advanced scenarios (reverse proxy, container networking):
 
 ```bash
-PORT=20128 DASHBOARD_PORT=20129 omniroute
-# API:       http://localhost:20128/v1
+PORT=21128 DASHBOARD_PORT=20129 szroute
+# API:       http://localhost:21128/v1
 # Dashboard: http://localhost:20129
 ```
 
@@ -295,11 +295,11 @@ PORT=20128 DASHBOARD_PORT=20129 omniroute
 
 ## Void Linux (xbps-src) Template
 
-For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/omniroute/template`:
+For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/szroute/template`:
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'szroute'
+pkgname=szroute
 version=3.8.0
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -307,13 +307,13 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/sauravsz/SZRoute"
+distfiles="https://github.com/sauravsz/SZRoute/archive/refs/tags/v${version}.tar.gz"
 # Regenerate the checksum for each release with:
-#   curl -L -o /tmp/omniroute.tar.gz "https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz" && sha256sum /tmp/omniroute.tar.gz
+#   curl -L -o /tmp/szroute.tar.gz "https://github.com/sauravsz/SZRoute/archive/refs/tags/v${version}.tar.gz" && sha256sum /tmp/szroute.tar.gz
 checksum=PLACEHOLDER_REGENERATE_PER_RELEASE
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_szroute"
+szroute_homedir="/var/lib/szroute"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -353,25 +353,25 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/szroute/.next
+	vcopy .next/standalone/. usr/lib/szroute/.next/standalone
 
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/szroute/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/szroute" <<'EOF'
 #!/bin/sh
-export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export PORT="${PORT:-21128}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/szroute}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/szroute/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/szroute"
 }
 
 post_install() {
@@ -385,7 +385,7 @@ post_install() {
 
 | Command                  | Action                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.omniroute`.  |
+| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.szroute`.  |
 | `npm run uninstall:full` | Removes the app AND permanently **erases all configurations, keys, and databases**. |
 
 > For detailed uninstall instructions across all methods, see [UNINSTALL.md](./UNINSTALL.md).

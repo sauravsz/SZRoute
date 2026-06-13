@@ -3,8 +3,8 @@ import {
   getActiveSessions,
   getActiveSessionCount,
   getAllActiveSessionCountsByKey,
-} from "@omniroute/open-sse/services/sessionManager.ts";
-import { sanitizeErrorMessage } from "@omniroute/open-sse/utils/error";
+} from "@szroute/open-sse/services/sessionManager.ts";
+import { sanitizeErrorMessage } from "@szroute/open-sse/utils/error";
 
 export async function GET() {
   try {

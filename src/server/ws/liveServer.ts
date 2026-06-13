@@ -50,7 +50,7 @@ const MAX_EVENTS_PER_SECOND = 100;
  * mitigation. Non-browser clients (CLI, MCP) omit Origin, which we accept.
  */
 function buildAllowedOrigins(): Set<string> {
-  const base = [`http://127.0.0.1:20128`, `http://localhost:20128`, `http://[::1]:20128`];
+  const base = [`http://127.0.0.1:21128`, `http://localhost:21128`, `http://[::1]:21128`];
   const extra = (process.env.LIVE_WS_ALLOWED_ORIGINS || "")
     .split(",")
     .map((s) => s.trim())
@@ -365,7 +365,7 @@ export async function startLiveDashboardServer(
 // ── Auto-start on import (opt-in) ────────────────────────────────────────
 //
 // Default: OFF. The live dashboard WebSocket is an opt-in feature — operators
-// who want it must set OMNIROUTE_ENABLE_LIVE_WS=1 (or "true"). This avoids
+// who want it must set SZROUTE_ENABLE_LIVE_WS=1 (or "true"). This avoids
 // silently opening a network listener on every Next.js boot.
 //
 // Build/test environments never auto-start regardless of the flag.
@@ -380,7 +380,7 @@ function isBuildOrTest(): boolean {
 }
 
 function isLiveWsEnabled(): boolean {
-  const v = process.env.OMNIROUTE_ENABLE_LIVE_WS;
+  const v = process.env.SZROUTE_ENABLE_LIVE_WS;
   return v === "1" || v === "true";
 }
 

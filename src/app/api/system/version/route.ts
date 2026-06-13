@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic";
 
 async function getLatestNpmVersion(): Promise<string | null> {
   try {
-    const { stdout } = await execFileAsync("npm", ["info", "omniroute", "version", "--json"], {
+    const { stdout } = await execFileAsync("npm", ["info", "szroute", "version", "--json"], {
       timeout: 10000,
     });
     const parsed = JSON.parse(stdout.trim());
@@ -256,7 +256,7 @@ export async function POST(req: NextRequest) {
 
           send({ step: "restart", status: "running", message: "Restarting service..." });
           try {
-            await execFileAsync("pm2", ["restart", "omniroute", "--update-env"], {
+            await execFileAsync("pm2", ["restart", "szroute", "--update-env"], {
               timeout: 30_000,
               cwd: PROJECT_ROOT,
             });
@@ -306,16 +306,16 @@ export async function POST(req: NextRequest) {
 
       try {
         // Step 1: Install
-        send({ step: "install", status: "running", message: `Installing omniroute@${latest}...` });
+        send({ step: "install", status: "running", message: `Installing szroute@${latest}...` });
           await execFileAsync(
             "npm",
-            ["install", "-g", `omniroute@${latest}`, "--ignore-scripts", "--legacy-peer-deps"],
+            ["install", "-g", `szroute@${latest}`, "--ignore-scripts", "--legacy-peer-deps"],
             {
               timeout: 300000,
               cwd: PROJECT_ROOT,
             }
           );
-        send({ step: "install", status: "done", message: `Installed omniroute@${latest}` });
+        send({ step: "install", status: "done", message: `Installed szroute@${latest}` });
 
         // Step 2: Rebuild native modules (critical for better-sqlite3)
         send({
@@ -326,7 +326,7 @@ export async function POST(req: NextRequest) {
           const globalRoot = (
             await execFileAsync("npm", ["root", "-g"], { timeout: 10000, cwd: PROJECT_ROOT })
           ).stdout.trim();
-        const omniPath = `${globalRoot}/omniroute/app`;
+        const omniPath = `${globalRoot}/szroute/app`;
         await execFileAsync(
           "npm",
           ["rebuild", "better-sqlite3"],
@@ -340,7 +340,7 @@ export async function POST(req: NextRequest) {
         // Step 3: Restart PM2
         send({ step: "restart", status: "running", message: "Restarting service via PM2..." });
           try {
-            await execFileAsync("pm2", ["restart", "omniroute", "--update-env"], {
+            await execFileAsync("pm2", ["restart", "szroute", "--update-env"], {
               timeout: 30000,
               cwd: PROJECT_ROOT,
             });

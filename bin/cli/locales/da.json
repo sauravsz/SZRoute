@@ -1,8 +1,8 @@
 {
   "common": {
     "error": "Fejl: {message}",
-    "serverOffline": "OmniRoute-serveren er offline. Start med: omniroute serve",
-    "authRequired": "Godkendelse kræves. Sæt OMNIROUTE_API_KEY eller kør: omniroute setup",
+    "serverOffline": "SZRoute-serveren er offline. Start med: szroute serve",
+    "authRequired": "Godkendelse kræves. Sæt SZROUTE_API_KEY eller kør: szroute setup",
     "rateLimited": "Anmodningsgrænse overskredet. Prøv igen om {seconds}s.",
     "timeout": "Anmodningen timed ud efter {ms}ms.",
     "success": "Færdig.",
@@ -15,15 +15,15 @@
     "yesOpt": "Spring bekræftelse over"
   },
   "program": {
-    "description": "OmniRoute — Smart AI-router med automatisk fallback",
+    "description": "SZRoute — Smart AI-router med automatisk fallback",
     "version": "Vis version og afslut",
     "output": "Outputformat (table, json, jsonl, csv)",
     "quiet": "Undertryk ikke-essentielt output",
     "no_color": "Deaktiver farvet output",
     "timeout": "HTTP-anmodnings timeout i millisekunder",
-    "api_key": "API-nøgle til OmniRoute-serveren",
-    "base_url": "OmniRoute-serverens basis-URL",
+    "api_key": "API-nøgle til SZRoute-serveren",
+    "base_url": "SZRoute-serverens basis-URL",
     "context": "Server-kontekst/profil til denne kommando",
-    "lang": "Angiv CLI-visningssprog (tilsidesætter OMNIROUTE_LANG)"
+    "lang": "Angiv CLI-visningssprog (tilsidesætter SZROUTE_LANG)"
   }
 }

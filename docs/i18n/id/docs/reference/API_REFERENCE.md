@@ -4,7 +4,7 @@
 
 ---
 
-Referensi lengkap untuk semua titik akhir API OmniRoute.
+Referensi lengkap untuk semua titik akhir API SZRoute.
 
 ---
 
@@ -42,16 +42,16 @@ Content-Type: application/json
 
 | Header                   | Arah      | Deskripsi                                                    |
 | ------------------------ | --------- | ------------------------------------------------------------ |
-| `X-OmniRoute-No-Cache`   | Permintaan | Atur ke `true` untuk melewati cache                          |
-| `X-OmniRoute-Progress`   | Permintaan | Atur ke `true` untuk event progres                           |
+| `X-SZRoute-No-Cache`   | Permintaan | Atur ke `true` untuk melewati cache                          |
+| `X-SZRoute-Progress`   | Permintaan | Atur ke `true` untuk event progres                           |
 | `X-Session-Id`           | Permintaan | Kunci sesi tetap untuk afinitas sesi eksternal               |
 | `x_session_id`           | Permintaan | Varian garis bawah juga diterima (HTTP langsung)             |
 | `Idempotency-Key`        | Permintaan | Kunci deduplikasi (jendela 5 detik)                          |
 | `X-Request-Id`           | Permintaan | Kunci deduplikasi alternatif                                 |
-| `X-OmniRoute-Cache`      | Respons   | `HIT` atau `MISS` (non-streaming)                            |
-| `X-OmniRoute-Idempotent` | Respons   | `true` jika dideduplikasi                                    |
-| `X-OmniRoute-Progress`   | Respons   | `enabled` jika pelacakan progres aktif                       |
-| `X-OmniRoute-Session-Id` | Respons   | ID sesi efektif yang digunakan OmniRoute                     |
+| `X-SZRoute-Cache`      | Respons   | `HIT` atau `MISS` (non-streaming)                            |
+| `X-SZRoute-Idempotent` | Respons   | `true` jika dideduplikasi                                    |
+| `X-SZRoute-Progress`   | Respons   | `enabled` jika pelacakan progres aktif                       |
+| `X-SZRoute-Session-Id` | Respons   | ID sesi efektif yang digunakan SZRoute                     |
 
 > Catatan Nginx: jika Anda mengandalkan header bergaris bawah (misalnya `x_session_id`), aktifkan `underscores_in_headers on;`.
 
@@ -350,7 +350,7 @@ Memperbaiki variabel lingkungan OAuth yang hilang atau rusak untuk penyedia tert
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.szroute/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -369,7 +369,7 @@ Transkripsi file audio menggunakan Deepgram atau AssemblyAI.
 **Permintaan:**
 
 ```bash
-curl -X POST http://localhost:20128/v1/audio/transcriptions \
+curl -X POST http://localhost:21128/v1/audio/transcriptions \
   -H "Authorization: Bearer your-api-key" \
   -F "file=@recording.mp3" \
   -F "model=deepgram/nova-3"

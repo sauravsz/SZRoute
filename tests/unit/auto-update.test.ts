@@ -8,25 +8,25 @@ const autoUpdate = await import("../../src/lib/system/autoUpdate.ts");
 
 test("auto update config normalizes env values and local source installs to source mode", () => {
   const config = autoUpdate.getAutoUpdateConfig({
-    DATA_DIR: "/tmp/omniroute-data",
+    DATA_DIR: "/tmp/szroute-data",
     AUTO_UPDATE_MODE: "npm",
-    AUTO_UPDATE_REPO_DIR: "/workspace/custom-omniroute",
-    AUTO_UPDATE_COMPOSE_FILE: "/workspace/custom-omniroute/compose.yml",
+    AUTO_UPDATE_REPO_DIR: "/workspace/custom-szroute",
+    AUTO_UPDATE_COMPOSE_FILE: "/workspace/custom-szroute/compose.yml",
     AUTO_UPDATE_COMPOSE_PROFILE: "desktop",
-    AUTO_UPDATE_SERVICE: "omniroute-desktop",
+    AUTO_UPDATE_SERVICE: "szroute-desktop",
     AUTO_UPDATE_GIT_REMOTE: "upstream",
     AUTO_UPDATE_PATCH_COMMITS: "abc123, def456 ghi789",
-    AUTO_UPDATE_LOG_PATH: "/tmp/omniroute-data/auto-update.log",
+    AUTO_UPDATE_LOG_PATH: "/tmp/szroute-data/auto-update.log",
   });
 
   assert.equal(config.mode, "source");
-  assert.equal(config.repoDir, "/workspace/custom-omniroute");
-  assert.equal(config.composeFile, "/workspace/custom-omniroute/compose.yml");
+  assert.equal(config.repoDir, "/workspace/custom-szroute");
+  assert.equal(config.composeFile, "/workspace/custom-szroute/compose.yml");
   assert.equal(config.composeProfile, "desktop");
-  assert.equal(config.composeService, "omniroute-desktop");
+  assert.equal(config.composeService, "szroute-desktop");
   assert.equal(config.gitRemote, "upstream");
   assert.deepEqual(config.patchCommits, ["abc123", "def456", "ghi789"]);
-  assert.equal(config.logPath, "/tmp/omniroute-data/auto-update.log");
+  assert.equal(config.logPath, "/tmp/szroute-data/auto-update.log");
 });
 
 test("detectComposeCommand prefers docker compose and falls back to docker-compose", async () => {
@@ -60,7 +60,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -86,7 +86,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -103,7 +103,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -122,7 +122,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -139,7 +139,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -156,7 +156,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -176,7 +176,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -196,7 +196,7 @@ test("validateAutoUpdateRuntime covers source, docker preconditions and successf
       repoDir: "/repo",
       composeFile: "/repo/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: [],
       logPath: "/tmp/log",
@@ -247,8 +247,8 @@ test("ensureGitTagExists verifies refs/tags paths and throws a clear error when 
 
 test("auto update script builders generate npm, source, and docker-compose scripts with quoting and patch commits", () => {
   const npmScript = autoUpdate.buildNpmUpdateScript("3.6.0");
-  assert.match(npmScript, /npm install -g omniroute@3.6.0/);
-  assert.match(npmScript, /pm2 restart omniroute \|\| true/);
+  assert.match(npmScript, /npm install -g szroute@3.6.0/);
+  assert.match(npmScript, /pm2 restart szroute \|\| true/);
   assert.match(npmScript, /Successfully updated to v3.6.0/);
 
   const sourceScript = autoUpdate.buildSourceUpdateScript("3.6.0", "upstream");
@@ -265,7 +265,7 @@ test("auto update script builders generate npm, source, and docker-compose scrip
       repoDir: "/workspace/with spaces",
       composeFile: "/workspace/with spaces/docker-compose.yml",
       composeProfile: "cli",
-      composeService: "omniroute-cli",
+      composeService: "szroute-cli",
       gitRemote: "origin",
       patchCommits: ["abc123", "feature'fix"],
       logPath: "/tmp/logs/auto-update.log",
@@ -325,7 +325,7 @@ test("launchAutoUpdate returns validation failures and starts detached update sc
   assert.match(sourceSpawnCalls[0].args[1], /npm run build/);
   assert.equal(sourceSpawnCalls[0].unrefCalled, true);
 
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-autoupdate-"));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-autoupdate-"));
   const repoDir = path.join(tempRoot, "repo");
   const composeFile = path.join(repoDir, "docker-compose.yml");
   const logPath = path.join(tempRoot, "logs", "auto-update.log");
@@ -341,7 +341,7 @@ test("launchAutoUpdate returns validation failures and starts detached update sc
       AUTO_UPDATE_REPO_DIR: repoDir,
       AUTO_UPDATE_COMPOSE_FILE: composeFile,
       AUTO_UPDATE_COMPOSE_PROFILE: "cli",
-      AUTO_UPDATE_SERVICE: "omniroute-cli",
+      AUTO_UPDATE_SERVICE: "szroute-cli",
       AUTO_UPDATE_GIT_REMOTE: "origin",
       AUTO_UPDATE_PATCH_COMMITS: "abc123",
       AUTO_UPDATE_LOG_PATH: logPath,
@@ -396,7 +396,7 @@ test("launchAutoUpdate returns validation failures and starts detached update sc
 });
 
 test("resolveProjectRoot walks up from start dir to nearest package.json or .git", () => {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-root-"));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-root-"));
   const subDir = path.join(tempRoot, "sub", "deep");
   fs.mkdirSync(subDir, { recursive: true });
   fs.writeFileSync(path.join(tempRoot, "package.json"), "{}");

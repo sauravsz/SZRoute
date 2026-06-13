@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Docker healthcheck script for OmniRoute.
+ * Docker healthcheck script for SZRoute.
  * Probes the /api/monitoring/health endpoint on the dashboard port.
  * Used by Dockerfile and docker-compose files.
  *
@@ -86,7 +86,7 @@ export async function probeHealth({
 }
 
 async function main() {
-  const port = process.env.DASHBOARD_PORT || process.env.PORT || "20128";
+  const port = process.env.DASHBOARD_PORT || process.env.PORT || "21128";
 
   // Build host list: defaults + detected container bridge IP
   const hosts = [...DEFAULT_HOSTS];

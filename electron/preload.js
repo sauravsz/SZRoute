@@ -1,5 +1,5 @@
 /**
- * OmniRoute Electron Desktop App - Preload Script
+ * SZRoute Electron Desktop App - Preload Script
  *
  * Secure bridge between renderer (Next.js) and main process (Electron).
  * Uses contextIsolation: true for maximum security.
@@ -11,9 +11,9 @@
 
 const { contextBridge, ipcRenderer } = require("electron");
 
-const MAC_DRAG_STYLE_ID = "omniroute-electron-drag-region-style";
-const MAC_DRAG_FALLBACK_ID = "omniroute-electron-drag-region";
-const MAC_DRAG_OBSERVER_KEY = "__omnirouteMacDragRegionObserver";
+const MAC_DRAG_STYLE_ID = "szroute-electron-drag-region-style";
+const MAC_DRAG_FALLBACK_ID = "szroute-electron-drag-region";
+const MAC_DRAG_OBSERVER_KEY = "__szrouteMacDragRegionObserver";
 
 function installMacDragRegion() {
   if (process.platform !== "darwin") return;
@@ -28,7 +28,7 @@ function installMacDragRegion() {
     style.id = MAC_DRAG_STYLE_ID;
     style.textContent = `
       header,
-      .omniroute-electron-drag-region {
+      .szroute-electron-drag-region {
         app-region: drag;
         -webkit-app-region: drag;
         user-select: none;
@@ -46,7 +46,7 @@ function installMacDragRegion() {
         -webkit-app-region: no-drag;
       }
 
-      .omniroute-electron-drag-region {
+      .szroute-electron-drag-region {
         position: fixed;
         top: 0;
         left: 96px;
@@ -58,7 +58,7 @@ function installMacDragRegion() {
 
     const dragRegion = document.createElement("div");
     dragRegion.id = MAC_DRAG_FALLBACK_ID;
-    dragRegion.className = "omniroute-electron-drag-region";
+    dragRegion.className = "szroute-electron-drag-region";
     dragRegion.setAttribute("aria-hidden", "true");
 
     document.head.appendChild(style);
@@ -106,9 +106,12 @@ const VALID_CHANNELS = {
     "login:start",
     "login:cancel",
     "login:status",
+    "dialog:show-message-box",
+    "window:open",
+    "system:prompt-touch-id",
   ],
   send: ["window-minimize", "window-maximize", "window-close"],
-  receive: ["server-status", "port-changed", "update-status", "login:status"],
+  receive: ["server-status", "port-changed", "update-status", "login:status", "open-command-palette"],
 };
 
 // ── Fix #16: Generic IPC wrappers ──────────────────────────
@@ -142,6 +145,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getDataDir: () => safeInvoke("get-data-dir"),
   restartServer: () => safeInvoke("restart-server"),
   getAppVersion: () => safeInvoke("get-app-version"),
+  showMessageBox: (options) => safeInvoke("dialog:show-message-box", options),
+  openWindow: (route, options) => safeInvoke("window:open", route, options),
+  promptTouchId: (reason) => safeInvoke("system:prompt-touch-id", reason),
 
   // ── Auto-Update ──────────────────────────────────────────
   checkForUpdates: () => safeInvoke("check-for-updates"),

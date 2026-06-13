@@ -1,7 +1,7 @@
 {
-  "name": "@omniroute/opencode-provider",
+  "name": "@szroute/opencode-provider",
   "version": "0.1.0",
-  "description": "DEPRECATED — use @omniroute/opencode-plugin instead (it fetches the live OmniRoute /v1/models catalog at startup, so models never drift). This static-config generator still works but is no longer the recommended path. OpenCode provider helper for the OmniRoute AI Gateway.",
+  "description": "DEPRECATED — use @szroute/opencode-plugin instead (it fetches the live SZRoute /v1/models catalog at startup, so models never drift). This static-config generator still works but is no longer the recommended path. OpenCode provider helper for the SZRoute AI Gateway.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -25,7 +25,7 @@
     "prepublishOnly": "npm run clean && npm run build && npm test"
   },
   "keywords": [
-    "omniroute",
+    "szroute",
     "opencode",
     "opencode-ai",
     "ai-sdk",
@@ -34,17 +34,17 @@
     "ai-gateway",
     "llm-router"
   ],
-  "author": "OmniRoute contributors",
+  "author": "SZRoute contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/diegosouzapw/OmniRoute.git",
-    "directory": "@omniroute/opencode-provider"
+    "url": "git+https://github.com/sauravsz/SZRoute.git",
+    "directory": "@szroute/opencode-provider"
   },
   "bugs": {
-    "url": "https://github.com/diegosouzapw/OmniRoute/issues"
+    "url": "https://github.com/sauravsz/SZRoute/issues"
   },
-  "homepage": "https://github.com/diegosouzapw/OmniRoute/tree/main/%40omniroute/opencode-provider#readme",
+  "homepage": "https://github.com/sauravsz/SZRoute/tree/main/%40szroute/opencode-provider#readme",
   "engines": {
     "node": ">=22.22.3"
   },

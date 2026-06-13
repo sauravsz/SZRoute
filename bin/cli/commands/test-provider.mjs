@@ -95,8 +95,8 @@ async function _runAllProviders(opts) {
 
   if (process.stdout.isTTY && !opts.json && opts.output !== "json") {
     const { startProvidersTestTui } = await import("../tui/ProvidersTestAll.jsx");
-    const baseUrl = opts.baseUrl ?? "http://localhost:20128";
-    const apiKey = opts.apiKey ?? process.env.OMNIROUTE_API_KEY;
+    const baseUrl = opts.baseUrl ?? "http://localhost:21128";
+    const apiKey = opts.apiKey ?? process.env.SZROUTE_API_KEY;
     await startProvidersTestTui({ providers, baseUrl, apiKey });
     return 0;
   }

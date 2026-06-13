@@ -1,4 +1,4 @@
-# 🚀 OmniRoute — The Free AI Gateway (中文 (简体))
+# 🚀 SZRoute — The Free AI Gateway (中文 (简体))
 
 🌐 **Languages:** 🇺🇸 [English](../../../README.md) · 🇸🇦 [ar](../ar/README.md) · 🇧🇬 [bg](../bg/README.md) · 🇧🇩 [bn](../bn/README.md) · 🇨🇿 [cs](../cs/README.md) · 🇩🇰 [da](../da/README.md) · 🇩🇪 [de](../de/README.md) · 🇪🇸 [es](../es/README.md) · 🇮🇷 [fa](../fa/README.md) · 🇫🇮 [fi](../fi/README.md) · 🇫🇷 [fr](../fr/README.md) · 🇮🇳 [gu](../gu/README.md) · 🇮🇱 [he](../he/README.md) · 🇮🇳 [hi](../hi/README.md) · 🇭🇺 [hu](../hu/README.md) · 🇮🇩 [id](../id/README.md) · 🇮🇹 [it](../it/README.md) · 🇯🇵 [ja](../ja/README.md) · 🇰🇷 [ko](../ko/README.md) · 🇮🇳 [mr](../mr/README.md) · 🇲🇾 [ms](../ms/README.md) · 🇳🇱 [nl](../nl/README.md) · 🇳🇴 [no](../no/README.md) · 🇵🇭 [phi](../phi/README.md) · 🇵🇱 [pl](../pl/README.md) · 🇵🇹 [pt](../pt/README.md) · 🇧🇷 [pt-BR](../pt-BR/README.md) · 🇷🇴 [ro](../ro/README.md) · 🇷🇺 [ru](../ru/README.md) · 🇸🇰 [sk](../sk/README.md) · 🇸🇪 [sv](../sv/README.md) · 🇰🇪 [sw](../sw/README.md) · 🇮🇳 [ta](../ta/README.md) · 🇮🇳 [te](../te/README.md) · 🇹🇭 [th](../th/README.md) · 🇹🇷 [tr](../tr/README.md) · 🇺🇦 [uk-UA](../uk-UA/README.md) · 🇵🇰 [ur](../ur/README.md) · 🇻🇳 [vi](../vi/README.md) · 🇨🇳 [zh-CN](../zh-CN/README.md)
 
@@ -14,34 +14,34 @@ _Your universal API proxy — one endpoint, 100+ providers, zero downtime. Now w
 
 <div align="center">
 
-[![npm version](https://img.shields.io/npm/v/omniroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/omniroute)
-[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/omniroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/omniroute)
+[![npm version](https://img.shields.io/npm/v/szroute?color=cb3837&logo=npm)](https://www.npmjs.com/package/szroute)
+[![Docker Hub](https://img.shields.io/docker/v/diegosouzapw/szroute?label=Docker%20Hub&logo=docker&color=2496ED)](https://hub.docker.com/r/diegosouzapw/szroute)
 
-![NPM Downloads](https://img.shields.io/npm/dw/omniroute?label=npm%20down%20week&color=red)
-![NPM Downloads](https://img.shields.io/npm/dm/omniroute?label=npm%20down%20month&color=red)
+![NPM Downloads](https://img.shields.io/npm/dw/szroute?label=npm%20down%20week&color=red)
+![NPM Downloads](https://img.shields.io/npm/dm/szroute?label=npm%20down%20month&color=red)
 
-![NPM Downloads](https://img.shields.io/npm/d18m/omniroute?label=npm%20down%20year&color=red)
-![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/omniroute)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/diegosouzapw/omniroute/total?style=flat&label=eletron%20donwloads&color=blue)
+![NPM Downloads](https://img.shields.io/npm/d18m/szroute?label=npm%20down%20year&color=red)
+![Docker Pulls](https://img.shields.io/docker/pulls/diegosouzapw/szroute)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/diegosouzapw/szroute/total?style=flat&label=eletron%20donwloads&color=blue)
 
-[![stars](https://custom-icon-badges.demolab.com/github/stars/diegosouzapw/OmniRoute?logo=star&style=flat)](https://github.com/diegosouzapw/OmniRoute/stargazers)
-[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/diegosouzapw/OmniRoute?logo=issue)](https://github.com/diegosouzapw/OmniRoute/issues)
-[![license](https://custom-icon-badges.demolab.com/github/license/diegosouzapw/OmniRoute?logo=law)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/diegosouzapw/OmniRoute?logo=history&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/commits/main)
+[![stars](https://custom-icon-badges.demolab.com/github/stars/sauravsz/SZRoute?logo=star&style=flat)](https://github.com/sauravsz/SZRoute/stargazers)
+[![open issues](https://custom-icon-badges.demolab.com/github/issues-raw/sauravsz/SZRoute?logo=issue)](https://github.com/sauravsz/SZRoute/issues)
+[![license](https://custom-icon-badges.demolab.com/github/license/sauravsz/SZRoute?logo=law)](https://github.com/sauravsz/SZRoute/blob/main/LICENSE)
+[![last commit](https://custom-icon-badges.demolab.com/github/last-commit/sauravsz/SZRoute?logo=history&logoColor=white)](https://github.com/sauravsz/SZRoute/commits/main)
 [![total contributions](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=graph&logoColor=fff&color=blue&label=total%20contributions&query=%24.totalContributions&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
-[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/diegosouzapw/OmniRoute?logo=file-code&logoColor=white)](https://github.com/diegosouzapw/OmniRoute)
-[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/diegosouzapw/OmniRoute?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/pulls?q=is%3Apr+is%3Aclosed)
-[![tag](https://custom-icon-badges.demolab.com/github/v/tag/diegosouzapw/OmniRoute?logo=tag&logoColor=white)](https://github.com/diegosouzapw/OmniRoute/tags)
+[![code size](https://custom-icon-badges.demolab.com/github/languages/code-size/sauravsz/SZRoute?logo=file-code&logoColor=white)](https://github.com/sauravsz/SZRoute)
+[![pr closed](https://custom-icon-badges.demolab.com/github/issues-pr-closed/sauravsz/SZRoute?color=purple&logo=git-pull-request&logoColor=white)](https://github.com/sauravsz/SZRoute/pulls?q=is%3Apr+is%3Aclosed)
+[![tag](https://custom-icon-badges.demolab.com/github/v/tag/sauravsz/SZRoute?logo=tag&logoColor=white)](https://github.com/sauravsz/SZRoute/tags)
 [![github streak](https://custom-icon-badges.demolab.com/badge/dynamic/json?logo=fire&logoColor=fff&color=orange&label=github%20streak&query=%24.currentStreak.length&suffix=%20days&url=https%3A%2F%2Fstreak-stats.demolab.com%2F%3Fuser%3Ddiegosouzapw%26type%3Djson)](https://github.com/diegosouzapw)
 [![followers](https://custom-icon-badges.demolab.com/github/followers/diegosouzapw?logo=person-add)](https://github.com/diegosouzapw?tab=followers)
-[![fork](https://custom-icon-badges.demolab.com/github/forks/diegosouzapw/OmniRoute?logo=fork)](https://github.com/diegosouzapw/OmniRoute/network/members)
-[![watch](https://custom-icon-badges.demolab.com/github/watchers/diegosouzapw/OmniRoute?logo=eye)](https://github.com/diegosouzapw/OmniRoute/watchers)
+[![fork](https://custom-icon-badges.demolab.com/github/forks/sauravsz/SZRoute?logo=fork)](https://github.com/sauravsz/SZRoute/network/members)
+[![watch](https://custom-icon-badges.demolab.com/github/watchers/sauravsz/SZRoute?logo=eye)](https://github.com/sauravsz/SZRoute/watchers)
 
-[![License](https://img.shields.io/github/license/diegosouzapw/OmniRoute)](https://github.com/diegosouzapw/OmniRoute/blob/main/LICENSE)
-[![Website](https://img.shields.io/badge/Website-omniroute.online-blue?logo=google-chrome&logoColor=white)](https://omniroute.online)
+[![License](https://img.shields.io/github/license/sauravsz/SZRoute)](https://github.com/sauravsz/SZRoute/blob/main/LICENSE)
+[![Website](https://img.shields.io/badge/Website-szroute.online-blue?logo=google-chrome&logoColor=white)](https://szroute.online)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Community-25D366?logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
-[🌐 Website](https://omniroute.online) • [🚀 Quick Start](#-quick-start) • [💡 Features](#-key-features) • [📖 Docs](#-documentation) • [💰 Pricing](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
+[🌐 Website](https://szroute.online) • [🚀 Quick Start](#-quick-start) • [💡 Features](#-key-features) • [📖 Docs](#-documentation) • [💰 Pricing](#-pricing-at-a-glance) • [💬 WhatsApp](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 
 </div>
 
@@ -52,7 +52,7 @@ _Your universal API proxy — one endpoint, 100+ providers, zero downtime. Now w
 ## 🖼️ Main Dashboard
 
 <div align="center">
-  <img src="./docs/screenshots/MainOmniRoute.png" alt="OmniRoute Dashboard" width="800"/>
+  <img src="./docs/screenshots/MainSZRoute.png" alt="SZRoute Dashboard" width="800"/>
 </div>
 
 ---
@@ -80,7 +80,7 @@ _Your universal API proxy — one endpoint, 100+ providers, zero downtime. Now w
 
 ### 🤖 Free AI Provider for your favorite coding agents
 
-_Connect any AI-powered IDE or CLI tool through OmniRoute — free API gateway for unlimited coding._
+_Connect any AI-powered IDE or CLI tool through SZRoute — free API gateway for unlimited coding._
 
   <table>
     <tr>
@@ -159,11 +159,11 @@ _Connect any AI-powered IDE or CLI tool through OmniRoute — free API gateway f
     </tr>
   </table>
 
-<sub>📡 All agents connect via <code>http://localhost:20128/v1</code> or <code>http://cloud.omniroute.online/v1</code> — one config, unlimited models and quota</sub>
+<sub>📡 All agents connect via <code>http://localhost:21128/v1</code> or <code>http://cloud.szroute.online/v1</code> — one config, unlimited models and quota</sub>
 
 ---
 
-## 🤔 Why OmniRoute?
+## 🤔 Why SZRoute?
 
 **Stop wasting money and hitting limits:**
 
@@ -172,7 +172,7 @@ _Connect any AI-powered IDE or CLI tool through OmniRoute — free API gateway f
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> Expensive APIs ($20-50/month per provider)
 - <img src="https://img.shields.io/badge/✗-e74c3c?style=flat-square" height="16"/> Manual switching between providers
 
-**OmniRoute solves this:**
+**SZRoute solves this:**
 
 - ✅ **Maximize subscriptions** - Track quota, use every bit before reset
 - ✅ **Auto fallback** - Subscription → API Key → Cheap → Free, zero downtime
@@ -185,9 +185,9 @@ _Connect any AI-powered IDE or CLI tool through OmniRoute — free API gateway f
 
 > 💬 **Join our community!** [WhatsApp Group](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t) — Get help, share tips, and stay updated.
 
-- **Website**: [omniroute.online](https://omniroute.online)
-- **GitHub**: [github.com/diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute)
-- **Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Website**: [szroute.online](https://szroute.online)
+- **GitHub**: [github.com/sauravsz/SZRoute](https://github.com/sauravsz/SZRoute)
+- **Issues**: [github.com/sauravsz/SZRoute/issues](https://github.com/sauravsz/SZRoute/issues)
 - **WhatsApp**: [Community Group](https://chat.whatsapp.com/JI7cDQ1GyaiDHhVBpLxf8b?mode=gi_t)
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md), open a PR, or pick a `good first issue`
 
@@ -199,7 +199,7 @@ When opening an issue, please run the system-info command and attach the generat
 npm run system-info
 ```
 
-This generates a `system-info.txt` with your Node.js version, OmniRoute version, OS details, installed CLI tools (qoder, gemini, claude, codex, antigravity, droid, etc.), Docker/PM2 status, and system packages — everything we need to reproduce your issue quickly. Attach the file directly to your GitHub issue.
+This generates a `system-info.txt` with your Node.js version, SZRoute version, OS details, installed CLI tools (qoder, gemini, claude, codex, antigravity, droid, etc.), Docker/PM2 status, and system packages — everything we need to reproduce your issue quickly. Attach the file directly to your GitHub issue.
 
 ---
 
@@ -210,10 +210,10 @@ This generates a `system-info.txt` with your Node.js version, OmniRoute version,
 │  Your CLI   │  (Claude Code, Codex, Gemini CLI, OpenClaw, Cursor, Cline...)
 │   Tool      │
 └──────┬──────┘
-       │ http://localhost:20128/v1
+       │ http://localhost:21128/v1
        ↓
 ┌─────────────────────────────────────────┐
-│           OmniRoute (Smart Router)        │
+│           SZRoute (Smart Router)        │
 │  • Format translation (OpenAI ↔ Claude) │
 │  • Quota tracking + Embeddings + Images │
 │  • Auto token refresh                   │
@@ -232,16 +232,16 @@ Result: Never stop coding, minimal cost
 
 ---
 
-## 🎯 What OmniRoute Solves — 30 Real Pain Points & Use Cases
+## 🎯 What SZRoute Solves — 30 Real Pain Points & Use Cases
 
-> **Every developer using AI tools faces these problems daily.** OmniRoute was built to solve them all — from cost overruns to regional blocks, from broken OAuth flows to protocol operations and enterprise observability.
+> **Every developer using AI tools faces these problems daily.** SZRoute was built to solve them all — from cost overruns to regional blocks, from broken OAuth flows to protocol operations and enterprise observability.
 
 <details>
 <summary><b>💸 1. "I pay for an expensive subscription but still get interrupted by limits"</b></summary>
 
 Developers pay $20–200/month for Claude Pro, Codex Pro, or GitHub Copilot. Even paying, quota has a ceiling — 5h of usage, weekly limits, or per-minute rate limits. Mid-coding session, the provider stops responding and the developer loses flow and productivity.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Smart 4-Tier Fallback** — If subscription quota runs out, automatically redirects to API Key → Cheap → Free with zero manual intervention
 - **Provider Limits Tracking** — Cached quota snapshots refresh on a server-side schedule (default `PROVIDER_LIMITS_SYNC_INTERVAL_MINUTES=70`) with manual refresh available in the UI
@@ -258,9 +258,9 @@ Developers pay $20–200/month for Claude Pro, Codex Pro, or GitHub Copilot. Eve
 
 OpenAI uses one format, Claude (Anthropic) uses another, Gemini yet another. If a dev wants to test models from different providers or fallback between them, they need to reconfigure SDKs, change endpoints, deal with incompatible formats. Custom providers (FriendLI, NIM) have non-standard model endpoints.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
-- **Unified Endpoint** — A single `http://localhost:20128/v1` serves as proxy for all 100+ providers
+- **Unified Endpoint** — A single `http://localhost:21128/v1` serves as proxy for all 100+ providers
 - **Format Translation** — Automatic and transparent: OpenAI ↔ Claude ↔ Gemini ↔ Responses API
 - **Response Sanitization** — Strips non-standard fields (`x_groq`, `usage_breakdown`, `service_tier`) that break OpenAI SDK v1.83+
 - **Role Normalization** — Converts `developer` → `system` for non-OpenAI providers; `system` → `user` for GLM/ERNIE
@@ -275,7 +275,7 @@ OpenAI uses one format, Claude (Anthropic) uses another, Gemini yet another. If 
 
 Providers like OpenAI/Codex block access from certain geographic regions. Users get errors like `unsupported_country_region_territory` during OAuth and API connections. This is especially frustrating for developers from developing countries.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **3-Level Proxy Config** — Configurable proxy at 3 levels: global (all traffic), per-provider (one provider only), and per-connection/key
 - **Color-Coded Proxy Badges** — Visual indicators: 🟢 global proxy, 🟡 provider proxy, 🔵 connection proxy, always showing the IP
@@ -292,7 +292,7 @@ Providers like OpenAI/Codex block access from certain geographic regions. Users 
 
 Not everyone can pay $20–200/month for AI subscriptions. Students, devs from emerging countries, hobbyists, and freelancers need access to quality models at zero cost.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Free Tier Providers Built-in** — Native support for 100% free providers: Qoder (5 unlimited models via OAuth: kimi-k2-thinking, qwen3-coder-plus, deepseek-r1, minimax-m2, kimi-k2), Qwen (4 unlimited models: qwen3-coder-plus, qwen3-coder-flash, qwen3-coder-next, vision-model), Kiro (Claude + AWS Builder ID for free), Gemini CLI (180K tokens/month free)
 - **Ollama Cloud** — Cloud-hosted Ollama models at `api.ollama.com` with free "Light usage" tier; use `ollamacloud/<model>` prefix
@@ -307,7 +307,7 @@ Not everyone can pay $20–200/month for AI subscriptions. Students, devs from e
 
 When exposing an AI gateway to the network (LAN, VPS, Docker), anyone with the address can consume the developer's tokens/quota. Without protection, APIs are vulnerable to misuse, prompt injection, and abuse.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **API Key Management** — Generation, rotation, and scoping per provider with a dedicated `/dashboard/api-manager` page
 - **Model-Level Permissions** — Restrict API keys to specific models (`openai/*`, wildcard patterns), with Allow All/Restrict toggle
@@ -325,7 +325,7 @@ When exposing an AI gateway to the network (LAN, VPS, Docker), anyone with the a
 
 AI providers can become unstable, return 5xx errors, or hit temporary rate limits. If a dev depends on a single provider, they're interrupted. Without circuit breakers, repeated retries can crash the application.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Request Queue & Pacing** — Per-connection request buckets smooth bursts before they hit upstream rate caps
 - **Connection Cooldown** — A single connection cools down after retryable failures with optional upstream `Retry-After` hints and exponential backoff
@@ -342,12 +342,12 @@ AI providers can become unstable, return 5xx errors, or hit temporary rate limit
 
 Developers use Cursor, Claude Code, Codex CLI, OpenClaw, Gemini CLI, Kilo Code... Each tool needs a different config (API endpoint, key, model). Reconfiguring when switching providers or models is a waste of time.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **CLI Tools Dashboard** — Dedicated page with one-click setup for Claude Code, Codex CLI, OpenClaw, Kilo Code, Antigravity, Cline
 - **GitHub Copilot Config Generator** — Generates `chatLanguageModels.json` for VS Code with bulk model selection
 - **Onboarding Wizard** — Guided 4-step setup for first-time users
-- **One endpoint, all models** — Configure `http://localhost:20128/v1` once, access 100+ providers
+- **One endpoint, all models** — Configure `http://localhost:21128/v1` once, access 100+ providers
 
 </details>
 
@@ -356,7 +356,7 @@ Developers use Cursor, Claude Code, Codex CLI, OpenClaw, Gemini CLI, Kilo Code..
 
 Claude Code, Codex, Gemini CLI, Copilot — all use OAuth 2.0 with expiring tokens. Developers need to re-authenticate constantly, deal with `client_secret is missing`, `redirect_uri_mismatch`, and failures on remote servers. OAuth on LAN/VPS is particularly problematic.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Auto Token Refresh** — OAuth tokens refresh in background before expiration
 - **OAuth 2.0 (PKCE) Built-in** — Automatic flow for Claude Code, Codex, Gemini CLI, Copilot, Kiro, Qwen, Qoder
@@ -372,7 +372,7 @@ Claude Code, Codex, Gemini CLI, Copilot — all use OAuth 2.0 with expiring toke
 
 Developers use multiple paid providers but have no unified view of spending. Each provider has its own billing dashboard, but there's no consolidated view. Unexpected costs can pile up.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Cost Analytics Dashboard** — Per-token cost tracking and budget management per provider
 - **Budget Limits per Tier** — Spending ceiling per tier that triggers automatic fallback
@@ -387,7 +387,7 @@ Developers use multiple paid providers but have no unified view of spending. Eac
 
 When a call fails, the dev doesn't know if it was a rate limit, expired token, wrong format, or provider error. Fragmented logs across different terminals. Without observability, debugging is trial-and-error.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Unified Logs Dashboard** — 4 tabs: Request Logs, Proxy Logs, Audit Logs, Console
 - **Console Log Viewer** — Real-time terminal-style viewer with color-coded levels, auto-scroll, search, filter
@@ -395,7 +395,7 @@ When a call fails, the dev doesn't know if it was a rate limit, expired token, w
 - **Translator Playground** — 4 debugging modes: Playground (format translation), Chat Tester (round-trip), Test Bench (batch), Live Monitor (real-time)
 - **Request Telemetry** — p50/p95/p99 latency + X-Request-Id tracing
 - **File-Based Detail Artifacts** — App logs rotate by size, retention days, and archive count; detailed request/response payloads live in `DATA_DIR/call_logs/` and rotate independently of SQLite summaries
-- **System Info Report** — `npm run system-info` generates `system-info.txt` with your full environment (Node version, OmniRoute version, OS, CLI tools, Docker/PM2 status). Attach it when reporting issues for instant triage.
+- **System Info Report** — `npm run system-info` generates `system-info.txt` with your full environment (Node version, SZRoute version, OS, CLI tools, Docker/PM2 status). Attach it when reporting issues for instant triage.
 
 </details>
 
@@ -404,9 +404,9 @@ When a call fails, the dev doesn't know if it was a rate limit, expired token, w
 
 Installing, configuring, and maintaining an AI proxy across different environments (local, VPS, Docker, cloud) is labor-intensive. Problems like hardcoded paths, `EACCES` on directories, port conflicts, and cross-platform builds add friction.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
-- **npm global install** — `npm install -g omniroute && omniroute` — done
+- **npm global install** — `npm install -g szroute && szroute` — done
 - **Docker Multi-Platform** — AMD64 + ARM64 native (Apple Silicon, AWS Graviton, Raspberry Pi)
 - **Docker Compose Profiles** — `base` (no CLI tools) and `cli` (with Claude Code, Codex, OpenClaw)
 - **Electron Desktop App** — Native app for Windows/macOS/Linux with system tray, auto-start, offline mode
@@ -421,7 +421,7 @@ Installing, configuring, and maintaining an AI proxy across different environmen
 
 Teams in non-English-speaking countries, especially in Latin America, Asia, and Europe, struggle with English-only interfaces. Language barriers reduce adoption and increase configuration errors.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Dashboard i18n — 30 Languages** — All 500+ keys translated including Arabic, Bulgarian, Danish, German, Spanish, Finnish, French, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Malay, Dutch, Norwegian, Polish, Portuguese (PT/BR), Romanian, Russian, Slovak, Swedish, Thai, Ukrainian, Vietnamese, Chinese, Filipino, English
 - **RTL Support** — Right-to-left support for Arabic and Hebrew
@@ -435,7 +435,7 @@ Teams in non-English-speaking countries, especially in Latin America, Asia, and 
 
 AI isn't just chat completion. Devs need to generate images, transcribe audio, create embeddings for RAG, rerank documents, and moderate content. Each API has a different endpoint and format.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Embeddings** — `/v1/embeddings` with 6 providers and 9+ models
 - **Image Generation** — `/v1/images/generations` with 10 providers and 20+ models (OpenAI, xAI, Together, Fireworks, Nebius, Hyperbolic, NanoBanana, Antigravity, SD WebUI, ComfyUI)
@@ -454,7 +454,7 @@ AI isn't just chat completion. Devs need to generate images, transcribe audio, c
 
 Developers want to know which model is best for their use case — code, translation, reasoning — but comparing manually is slow. No integrated eval tools exist.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **LLM Evaluations** — Golden set testing with 10 pre-loaded cases covering greetings, math, geography, code generation, JSON compliance, translation, markdown, safety refusal
 - **4 Match Strategies** — `exact`, `contains`, `regex`, `custom` (JS function)
@@ -469,7 +469,7 @@ Developers want to know which model is best for their use case — code, transla
 
 As request volume grows, without caching the same questions generate duplicate costs. Without idempotency, duplicate requests waste processing. Per-provider rate limits must be respected.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Semantic Cache** — Two-tier cache (signature + semantic) reduces cost and latency
 - **Request Idempotency** — 5s deduplication window for identical requests
@@ -485,7 +485,7 @@ As request volume grows, without caching the same questions generate duplicate c
 
 Developers who want all responses in a specific language, with a specific tone, or want to limit reasoning tokens. Configuring this in every tool/request is impractical.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **System Prompt Injection** — Global prompt applied to all requests
 - **Thinking Budget Validation** — Reasoning token allocation control per request (passthrough, auto, custom, adaptive)
@@ -503,11 +503,11 @@ Developers who want all responses in a specific language, with a specific tone, 
 
 Many AI gateways expose MCP only as a hidden implementation detail. Teams need a visible, manageable operation layer.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - MCP appears in the dashboard navigation and endpoint protocol tab
 - Dedicated MCP management page with process, tools, scopes, and audit
-- Built-in quick-start for `omniroute --mcp` and client onboarding
+- Built-in quick-start for `szroute --mcp` and client onboarding
 
 </details>
 
@@ -516,7 +516,7 @@ Many AI gateways expose MCP only as a hidden implementation detail. Teams need a
 
 Agent workflows need both direct replies and long-running streamed execution with lifecycle control.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - A2A JSON-RPC endpoint (`POST /a2a`) with `message/send` and `message/stream`
 - SSE streaming with terminal state propagation
@@ -529,7 +529,7 @@ Agent workflows need both direct replies and long-running streamed execution wit
 
 Operational teams need to know if MCP is actually alive, not just whether an API is reachable.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Runtime heartbeat file with PID, timestamps, transport, tool count, and scope mode
 - MCP status API combining heartbeat + recent activity
@@ -542,7 +542,7 @@ Operational teams need to know if MCP is actually alive, not just whether an API
 
 When tools mutate config or trigger ops actions, teams need forensic traceability.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - SQLite-backed audit logging for MCP tool calls
 - Filters by tool, success/failure, API key, and pagination
@@ -555,7 +555,7 @@ When tools mutate config or trigger ops actions, teams need forensic traceabilit
 
 Different clients should have least-privilege access to tool categories.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - 10 granular MCP scopes for controlled tool access
 - Scope enforcement and visibility in MCP management UI
@@ -568,7 +568,7 @@ Different clients should have least-privilege access to tool categories.
 
 Teams need quick runtime changes during incidents or cost events.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Switch combo activation directly from MCP dashboard
 - Tune queue, cooldown, breaker, and wait settings from the dedicated Resilience page
@@ -581,7 +581,7 @@ Teams need quick runtime changes during incidents or cost events.
 
 Without lifecycle visibility, task incidents become hard to triage.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Task listing/filtering by state/skill with pagination
 - Drill-down on task metadata, events, and artifacts
@@ -594,7 +594,7 @@ Without lifecycle visibility, task incidents become hard to triage.
 
 Streaming workflows require operational insight into concurrency and live connections.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Active stream counters integrated into A2A status
 - Last task timestamp and per-state counts
@@ -607,7 +607,7 @@ Streaming workflows require operational insight into concurrency and live connec
 
 External clients and orchestrators need machine-readable metadata for onboarding.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Agent Card exposed at `/.well-known/agent.json`
 - Capabilities and skills shown in management UI
@@ -620,7 +620,7 @@ External clients and orchestrators need machine-readable metadata for onboarding
 
 If users cannot discover protocol surfaces, adoption and support quality drop.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Consolidated **Endpoints** page with tabs for Proxy, MCP, A2A, and API Endpoints
 - Inline service status toggles (Online/Offline) for MCP and A2A
@@ -633,7 +633,7 @@ If users cannot discover protocol surfaces, adoption and support quality drop.
 
 Mock tests are not enough to validate protocol compatibility before release.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - E2E suite that boots app and uses real MCP SDK client transport
 - A2A client tests for discovery, send, stream, get, and cancel flows
@@ -646,7 +646,7 @@ Mock tests are not enough to validate protocol compatibility before release.
 
 Splitting observability by protocol creates blind spots and longer MTTR.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Unified dashboards/logs/analytics in one product
 - Health + audit + request telemetry across OpenAI, MCP, and A2A layers
@@ -659,7 +659,7 @@ Splitting observability by protocol creates blind spots and longer MTTR.
 
 Running many separate services increases operational cost and failure modes.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - OpenAI-compatible proxy, MCP server, and A2A server in one stack
 - Shared auth, resilience, data store, and observability
@@ -672,7 +672,7 @@ Running many separate services increases operational cost and failure modes.
 
 Teams lose velocity when stitching multiple ad-hoc services and scripts.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - Unified endpoint strategy for clients and agents
 - Built-in protocol management UIs and smoke validation paths
@@ -685,7 +685,7 @@ Teams lose velocity when stitching multiple ad-hoc services and scripts.
 
 During deep debugging, long histories with tool results quickly exceed provider token windows, causing failed requests and orphaned context.
 
-**How OmniRoute solves it:**
+**How SZRoute solves it:**
 
 - **Proactive Context Compression** — Evaluates token budgets before the request hits upstream and proactively prunes old conversation history with a smart binary-search mechanism.
 - **Structural Integrity Guards** — Automatically tracks explicit `tool_use` definitions and ensures that if a tool input is truncated, its corresponding `tool_result` is also safely removed, preventing API validation errors.
@@ -735,7 +735,7 @@ Outcome: deep fallback depth for deadline-critical workloads
 **Playbook D: Agent ops with MCP + A2A**
 
 ```txt
-1) Start MCP transport (`omniroute --mcp`) for tool-driven operations
+1) Start MCP transport (`szroute --mcp`) for tool-driven operations
 2) Run A2A tasks via `message/send` and `message/stream`
 3) Observe via /dashboard/endpoint (MCP and A2A tabs)
 4) Toggle services via inline status controls
@@ -755,7 +755,7 @@ Outcome: deep fallback depth for deadline-critical workloads
 | 4    | Connect **Gemini CLI** (Google OAuth)              | gemini-3-flash, gemini-2.5-pro — **180K/mo free**                  |
 | 5    | `/dashboard/combos` → **Free Stack ($0)** template | Round-robin all free providers automatically                       |
 
-**Point any IDE/CLI to:** `http://localhost:20128/v1` · API Key: `any-string` · Done.
+**Point any IDE/CLI to:** `http://localhost:21128/v1` · API Key: `any-string` · Done.
 
 > **Optional extra coverage (also free):** Groq API key (30 RPM free), NVIDIA NIM (40 RPM free, 70+ models), Cerebras (1M tok/day), LongCat API key (50M tokens/day!), Cloudflare Workers AI (10K Neurons/day, 50+ models).
 
@@ -764,55 +764,55 @@ Outcome: deep fallback depth for deadline-critical workloads
 ### 1) Install and run
 
 ```bash
-npm install -g omniroute
-omniroute
+npm install -g szroute
+szroute
 ```
 
 > **pnpm users:** Run `pnpm approve-builds -g` after install to enable native build scripts required by `better-sqlite3` and `@swc/core`:
 >
 > ```bash
-> pnpm install -g omniroute
+> pnpm install -g szroute
 > pnpm approve-builds -g   # Select all packages → approve
-> omniroute
+> szroute
 > ```
 
-Dashboard opens at `http://localhost:20128` and API base URL is `http://localhost:20128/v1`.
+Dashboard opens at `http://localhost:21128` and API base URL is `http://localhost:21128/v1`.
 
 #### Arch Linux (AUR)
 
-Arch Linux users can install the [AUR package](https://aur.archlinux.org/packages/omniroute-bin), which installs OmniRoute and provides a systemd user service:
+Arch Linux users can install the [AUR package](https://aur.archlinux.org/packages/szroute-bin), which installs SZRoute and provides a systemd user service:
 
 ```bash
-yay -S omniroute-bin
-systemctl --user enable --now omniroute.service
+yay -S szroute-bin
+systemctl --user enable --now szroute.service
 ```
 
 | Command                 | Description                                                 |
 | ----------------------- | ----------------------------------------------------------- |
-| `omniroute`             | Start server (`PORT=20128`, API and dashboard on same port) |
-| `omniroute --port 3000` | Set canonical/API port to 3000                              |
-| `omniroute --mcp`       | Start MCP server (stdio transport)                          |
-| `omniroute --no-open`   | Don't auto-open browser                                     |
-| `omniroute --help`      | Show help                                                   |
+| `szroute`             | Start server (`PORT=21128`, API and dashboard on same port) |
+| `szroute --port 3000` | Set canonical/API port to 3000                              |
+| `szroute --mcp`       | Start MCP server (stdio transport)                          |
+| `szroute --no-open`   | Don't auto-open browser                                     |
+| `szroute --help`      | Show help                                                   |
 
 Optional split-port mode:
 
 ```bash
-PORT=20128 DASHBOARD_PORT=20129 omniroute
-# API:       http://localhost:20128/v1
+PORT=21128 DASHBOARD_PORT=20129 szroute
+# API:       http://localhost:21128/v1
 # Dashboard: http://localhost:20129
 ```
 
 ### 2) Uninstalling
 
-When you no longer need OmniRoute, we provide two quick scripts for a clean removal:
+When you no longer need SZRoute, we provide two quick scripts for a clean removal:
 
 | Command                  | Action                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.omniroute`.  |
+| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.szroute`.  |
 | `npm run uninstall:full` | Removes the app AND permanently **erases all configurations, keys, and databases**. |
 
-> Note: To run these commands, navigate to the OmniRoute project folder (if you cloned it) and run them. Alternatively, if globally installed, you can simply run `npm uninstall -g omniroute`.
+> Note: To run these commands, navigate to the SZRoute project folder (if you cloned it) and run them. Alternatively, if globally installed, you can simply run `npm uninstall -g szroute`.
 
 ### Long-Running Streaming Timeouts
 
@@ -821,16 +821,16 @@ For most deployments, you only need:
 | Variable                 | Default                       | Purpose                                                                                                                                      |
 | ------------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `REQUEST_TIMEOUT_MS`     | `600000`                      | Shared baseline for upstream response-start timeout, hidden Undici timeouts, TLS fingerprint requests, and API bridge request/proxy timeouts |
-| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before OmniRoute aborts the SSE stream                                                                  |
+| `STREAM_IDLE_TIMEOUT_MS` | inherits `REQUEST_TIMEOUT_MS` | Maximum gap between streaming chunks before SZRoute aborts the SSE stream                                                                  |
 
 Backward compatibility is preserved: existing `FETCH_TIMEOUT_MS`, `API_BRIDGE_PROXY_TIMEOUT_MS`, and other per-layer timeout vars still work and override the shared baseline.
 
-For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), OmniRoute also derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
+For Claude Code-compatible upstreams (`anthropic-compatible-cc-*`), SZRoute also derives the outbound `X-Stainless-Timeout` header from the resolved fetch timeout so provider-side read timeouts stay aligned with your env configuration.
 
-For third-party Claude Code-compatible reverse proxies, OmniRoute keeps the default
+For third-party Claude Code-compatible reverse proxies, SZRoute keeps the default
 `anthropic-beta` set conservative and, when `Client Cache Control` is left on `Auto`,
 only forwards client-provided `cache_control` markers. If the request does not include
-`cache_control`, OmniRoute does not inject bridge-owned markers.
+`cache_control`, SZRoute does not inject bridge-owned markers.
 
 Advanced overrides are available if you need finer control:
 
@@ -848,10 +848,10 @@ Advanced overrides are available if you need finer control:
 | `API_BRIDGE_SERVER_KEEPALIVE_TIMEOUT_MS` | `5000`                                     | Keep-alive timeout on the API bridge server                          |
 | `API_BRIDGE_SERVER_SOCKET_TIMEOUT_MS`    | `0`                                        | Socket inactivity timeout on the API bridge server (`0` disables it) |
 
-For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, OmniRoute will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
+For streaming requests, `FETCH_TIMEOUT_MS` only covers connection setup / waiting for the first upstream response. Once the stream is active, SZRoute will only abort on an actual stall (`STREAM_IDLE_TIMEOUT_MS`) or Undici body inactivity (`FETCH_BODY_TIMEOUT_MS`).
 
-If you run OmniRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy
-timeouts are also higher than your OmniRoute stream/fetch timeouts.
+If you run SZRoute behind Nginx, Caddy, Cloudflare, or another reverse proxy, make sure the proxy
+timeouts are also higher than your SZRoute stream/fetch timeouts.
 
 ### 2) Connect providers and create your API key
 
@@ -859,10 +859,10 @@ timeouts are also higher than your OmniRoute stream/fetch timeouts.
 2. Open Dashboard → `Endpoints` and create an API key.
 3. (Optional) Open Dashboard → `Combos` and set your fallback chain.
 
-### 3) Point your coding tool to OmniRoute
+### 3) Point your coding tool to SZRoute
 
 ```txt
-Base URL: http://localhost:20128/v1
+Base URL: http://localhost:21128/v1
 API Key:  [copy from Endpoint page]
 Model:    if/kimi-k2-thinking (or any provider/model prefix)
 ```
@@ -874,22 +874,22 @@ Works with Claude Code, Codex CLI, Gemini CLI, Cursor, Cline, OpenClaw, OpenCode
 **MCP (for tool-driven operations):**
 
 ```bash
-omniroute --mcp
+szroute --mcp
 ```
 
 Then connect your MCP client over `stdio` and test tools like:
 
-- `omniroute_get_health`
-- `omniroute_list_combos`
+- `szroute_get_health`
+- `szroute_list_combos`
 
 **A2A (for agent-to-agent workflows):**
 
 ```bash
-curl http://localhost:20128/.well-known/agent.json
+curl http://localhost:21128/.well-known/agent.json
 ```
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":"quickstart","method":"message/send","params":{"skill":"quota-management","messages":[{"role":"user","content":"Give me a short quota summary."}]}}'
 ```
@@ -907,17 +907,17 @@ This suite validates real MCP and A2A client flows against a running app.
 ```bash
 cp .env.example .env
 npm install
-PORT=20128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
+PORT=21128 DASHBOARD_PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
 ```
 
 <details>
 <summary><b>Void Linux (`xbps-src` template)</b></summary>
 
-For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/omniroute/template`:
+For Void Linux users, you can build a native package using `xbps-src`. Save this block as `srcpkgs/szroute/template`:
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'szroute'
+pkgname=szroute
 version=3.4.1
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -925,11 +925,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/sauravsz/SZRoute"
+distfiles="https://github.com/sauravsz/SZRoute/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_szroute"
+szroute_homedir="/var/lib/szroute"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -987,27 +987,27 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
+	vmkdir usr/lib/szroute/.next
 
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vcopy .next/standalone/. usr/lib/szroute/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/szroute/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/szroute" <<'EOF'
 #!/bin/sh
-export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export PORT="${PORT:-21128}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/szroute}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/szroute/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/szroute"
 }
 
 post_install() {
@@ -1021,18 +1021,18 @@ post_install() {
 
 ## 🐳 Docker
 
-OmniRoute is available as a public Docker image on [Docker Hub](https://hub.docker.com/r/diegosouzapw/omniroute).
+SZRoute is available as a public Docker image on [Docker Hub](https://hub.docker.com/r/diegosouzapw/szroute).
 
 **Quick run:**
 
 ```bash
 docker run -d \
-  --name omniroute \
+  --name szroute \
   --restart unless-stopped \
   --stop-timeout 40 \
-  -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -p 21128:21128 \
+  -v szroute-data:/app/data \
+  diegosouzapw/szroute:latest
 ```
 
 **With environment file:**
@@ -1042,13 +1042,13 @@ docker run -d \
 cp .env.example .env
 
 docker run -d \
-  --name omniroute \
+  --name szroute \
   --restart unless-stopped \
   --stop-timeout 40 \
   --env-file .env \
-  -p 20128:20128 \
-  -v omniroute-data:/app/data \
-  diegosouzapw/omniroute:latest
+  -p 21128:21128 \
+  -v szroute-data:/app/data \
+  diegosouzapw/szroute:latest
 ```
 
 **Using Docker Compose:**
@@ -1066,28 +1066,28 @@ Dashboard support for Docker deployments now includes a one-click **Cloudflare Q
 Notes:
 
 - Quick Tunnel URLs are temporary and change after every restart.
-- Quick Tunnels are not auto-restored after an OmniRoute or container restart. Re-enable them from the dashboard when needed.
+- Quick Tunnels are not auto-restored after an SZRoute or container restart. Re-enable them from the dashboard when needed.
 - Managed install currently supports Linux, macOS, and Windows on `x64` / `arm64`.
 - Managed Quick Tunnels default to HTTP/2 transport to avoid noisy QUIC UDP buffer warnings in constrained container environments. Set `CLOUDFLARED_PROTOCOL=quic` or `auto` if you want a different transport.
 - Docker images bundle system CA roots and pass them to managed `cloudflared`, which avoids TLS trust failures when the tunnel bootstraps inside the container.
-- SQLite runs in WAL mode. `docker stop` should be allowed to finish so OmniRoute can checkpoint the latest changes back into `storage.sqlite`.
+- SQLite runs in WAL mode. `docker stop` should be allowed to finish so SZRoute can checkpoint the latest changes back into `storage.sqlite`.
 - The bundled Compose files already set a 40s stop grace period. If you run the image directly, keep `--stop-timeout 40` (or similar) so manual stops do not cut off shutdown cleanup.
-- Set `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` if you want OmniRoute to use an existing binary instead of downloading one.
+- Set `CLOUDFLARED_BIN=/absolute/path/to/cloudflared` if you want SZRoute to use an existing binary instead of downloading one.
 
 **Using Docker Compose with Caddy (HTTPS Auto-TLS):**
 
-OmniRoute can be securely exposed using Caddy's automatic SSL provisioning. Ensure your domain's DNS A record points to your server's IP.
+SZRoute can be securely exposed using Caddy's automatic SSL provisioning. Ensure your domain's DNS A record points to your server's IP.
 
 ```yaml
 services:
-  omniroute:
-    image: diegosouzapw/omniroute:latest
-    container_name: omniroute
+  szroute:
+    image: diegosouzapw/szroute:latest
+    container_name: szroute
     restart: unless-stopped
     volumes:
-      - omniroute-data:/app/data
+      - szroute-data:/app/data
     environment:
-      - PORT=20128
+      - PORT=21128
       - NEXT_PUBLIC_BASE_URL=https://your-domain.com
 
   caddy:
@@ -1097,27 +1097,27 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    command: caddy reverse-proxy --from https://your-domain.com --to http://omniroute:20128
+    command: caddy reverse-proxy --from https://your-domain.com --to http://szroute:21128
 
 volumes:
-  omniroute-data:
+  szroute-data:
 ```
 
 | Image                    | Tag      | Size   | Description           |
 | ------------------------ | -------- | ------ | --------------------- |
-| `diegosouzapw/omniroute` | `latest` | ~250MB | Latest stable release |
-| `diegosouzapw/omniroute` | `3.6.2`  | ~250MB | Current version       |
+| `diegosouzapw/szroute` | `latest` | ~250MB | Latest stable release |
+| `diegosouzapw/szroute` | `3.6.2`  | ~250MB | Current version       |
 
 ---
 
 ## 🖥️ Desktop App — Offline & Always-On
 
-> 🆕 **NEW!** OmniRoute is now available as a **native desktop application** for Windows, macOS, and Linux.
+> 🆕 **NEW!** SZRoute is now available as a **native desktop application** for Windows, macOS, and Linux.
 
-Run OmniRoute as a standalone desktop app — no terminal, no browser, no internet required for local models. The Electron-based app includes:
+Run SZRoute as a standalone desktop app — no terminal, no browser, no internet required for local models. The Electron-based app includes:
 
 - 🖥️ **Native Window** — Dedicated app window with system tray integration
-- 🔄 **Auto-Start** — Launch OmniRoute on system login
+- 🔄 **Auto-Start** — Launch SZRoute on system login
 - 🔔 **Native Notifications** — Get alerts for quota exhaustion or provider issues
 - ⚡ **One-Click Install** — NSIS (Windows), DMG (macOS), AppImage (Linux)
 - 🌐 **Offline Mode** — Works fully offline with bundled server
@@ -1137,7 +1137,7 @@ npm run electron:build:linux   # Linux (.AppImage)
 
 ### System Tray
 
-When minimized, OmniRoute lives in your system tray with quick actions:
+When minimized, SZRoute lives in your system tray with quick actions:
 
 - Open dashboard
 - Change server port
@@ -1196,7 +1196,7 @@ NVIDIA NIM (nvidia/)   → 70+ open models — 40 RPM forever
 Cerebras (cerebras/)   → Llama/Qwen world-fastest — 1M tok/day
 ```
 
-**Zero cost. Never stops coding.** Configure this as one OmniRoute combo and all fallbacks happen automatically — no manual switching ever.
+**Zero cost. Never stops coding.** Configure this as one SZRoute combo and all fallbacks happen automatically — no manual switching ever.
 
 ---
 
@@ -1204,7 +1204,7 @@ Cerebras (cerebras/)   → Llama/Qwen world-fastest — 1M tok/day
 
 ## 🆓 Free Models — What You Actually Get
 
-> All models below are **100% free with zero credit card required**. OmniRoute auto-routes between them when one quota runs out — combine them all for an unbreakable $0 combo.
+> All models below are **100% free with zero credit card required**. SZRoute auto-routes between them when one quota runs out — combine them all for an unbreakable $0 combo.
 
 ### 🔵 CLAUDE MODELS (via Kiro — AWS Builder ID)
 
@@ -1353,7 +1353,7 @@ Then in `/dashboard/media` → **Transcription** tab: upload any audio or video 
 
 ## 💡 Key Features
 
-OmniRoute v3.6 is built as an operational platform, not just a relay proxy.
+SZRoute v3.6 is built as an operational platform, not just a relay proxy.
 
 ### 🆕 New — v3.6.x Highlights (Apr 2026)
 
@@ -1533,7 +1533,7 @@ Combo: "my-coding-stack"
   4. if/kimi-k2-thinking
 ```
 
-When quota, rate, or health fails, OmniRoute automatically moves to the next candidate without manual switching.
+When quota, rate, or health fails, SZRoute automatically moves to the next candidate without manual switching.
 
 #### Protocol management that is visible and operable
 
@@ -1558,11 +1558,11 @@ Plus protocol validation with real clients via `npm run test:protocols:e2e`.
 
 ## 🧪 Evaluations (Evals)
 
-OmniRoute includes a built-in evaluation framework to test LLM response quality against a golden set. Access it via **Analytics → Evals** in the dashboard.
+SZRoute includes a built-in evaluation framework to test LLM response quality against a golden set. Access it via **Analytics → Evals** in the dashboard.
 
 ### Built-in Golden Set
 
-The pre-loaded "OmniRoute Golden Set" contains test cases for:
+The pre-loaded "SZRoute Golden Set" contains test cases for:
 
 - Greetings, math, geography, code generation
 - JSON format compliance, translation, markdown generation
@@ -1589,14 +1589,14 @@ The pre-loaded "OmniRoute Golden Set" contains test cases for:
 Start MCP transport in stdio mode:
 
 ```bash
-omniroute --mcp
+szroute --mcp
 ```
 
 Recommended validation flow:
 
 1. Connect your MCP client over stdio.
-2. Run `omniroute_get_health`.
-3. Run `omniroute_list_combos`.
+2. Run `szroute_get_health`.
+3. Run `szroute_list_combos`.
 4. Open `/dashboard/mcp` to confirm heartbeat, activity, and audit.
 
 Useful APIs for automation:
@@ -1614,13 +1614,13 @@ Useful APIs for automation:
 Discover the agent:
 
 ```bash
-curl http://localhost:20128/.well-known/agent.json
+curl http://localhost:21128/.well-known/agent.json
 ```
 
 Send a task:
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":"setup-a2a","method":"message/send","params":{"skill":"quota-management","messages":[{"role":"user","content":"Summarize quota status."}]}}'
 ```
@@ -1671,7 +1671,7 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. OmniRoute tracks quota per model!
+**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. SZRoute tracks quota per model!
 
 ### OpenAI Codex (Plus/Pro)
 
@@ -1692,7 +1692,7 @@ Each Codex account now has policy toggles in `Dashboard -> Providers`:
 - `5h` (ON/OFF): enforce the 5-hour window threshold policy.
 - `Weekly` (ON/OFF): enforce the weekly window threshold policy.
 - Threshold behavior: when an enabled window reaches >=90% usage, that account is skipped.
-- Rotation behavior: OmniRoute routes to the next eligible Codex account automatically.
+- Rotation behavior: SZRoute routes to the next eligible Codex account automatically.
 - Reset behavior: when the provider `resetAt` time passes, the account becomes eligible again automatically.
 
 Scenarios:
@@ -1743,7 +1743,7 @@ Models:
 
 **Models:** `nvidia/llama-3.3-70b-instruct`, `nvidia/mistral-7b-instruct`, and 50+ more
 
-**Pro Tip:** OpenAI-compatible API — works seamlessly with OmniRoute's format translation!
+**Pro Tip:** OpenAI-compatible API — works seamlessly with SZRoute's format translation!
 
 ### DeepSeek
 
@@ -1894,8 +1894,8 @@ Cost: $0 forever!
 
 ```
 Settings → Models → Advanced:
-  OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from OmniRoute dashboard]
+  OpenAI API Base URL: http://localhost:21128/v1
+  OpenAI API Key: [from SZRoute dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -1906,8 +1906,8 @@ Use the **CLI Tools** page in the dashboard for one-click configuration, or edit
 ### Codex CLI
 
 ```bash
-export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_BASE_URL="http://localhost:21128"
+export OPENAI_API_KEY="your-szroute-api-key"
 
 codex "your prompt"
 ```
@@ -1926,9 +1926,9 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 {
   "models": {
     "providers": {
-      "omniroute": {
-        "baseUrl": "http://127.0.0.1:20128/v1",
-        "apiKey": "sk_omniroute",
+      "szroute": {
+        "baseUrl": "http://127.0.0.1:21128/v1",
+        "apiKey": "sk_szroute",
         "api": "openai-completions"
       }
     }
@@ -1936,26 +1936,26 @@ Dashboard → CLI Tools → OpenClaw → Select Model → Apply
 }
 ```
 
-> **Note:** OpenClaw only works with local OmniRoute. Use `127.0.0.1` instead of `localhost` to avoid IPv6 resolution issues.
+> **Note:** OpenClaw only works with local SZRoute. Use `127.0.0.1` instead of `localhost` to avoid IPv6 resolution issues.
 
 ### Cline / Continue / RooCode
 
 ```
 Settings → API Configuration:
   Provider: OpenAI Compatible
-  Base URL: http://localhost:20128/v1
-  API Key: [from OmniRoute dashboard]
+  Base URL: http://localhost:21128/v1
+  API Key: [from SZRoute dashboard]
   Model: if/kimi-k2-thinking
 ```
 
 ### OpenCode
 
-**Step 1:** Add OmniRoute as a custom provider:
+**Step 1:** Add SZRoute as a custom provider:
 
 ```bash
 opencode
 /connect
-# Select "Other" → Enter ID: "omniroute" → Enter your OmniRoute API key
+# Select "Other" → Enter ID: "szroute" → Enter your SZRoute API key
 ```
 
 **Step 2:** Create/edit `opencode.json` in your project root:
@@ -1964,11 +1964,11 @@ opencode
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "szroute": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "SZRoute",
       "options": {
-        "baseURL": "http://localhost:20128/v1"
+        "baseURL": "http://localhost:21128/v1"
       },
       "models": {
         "cc/claude-sonnet-4-20250514": { "name": "Claude Sonnet 4" },
@@ -1984,10 +1984,10 @@ opencode
 
 ```bash
 /models
-# Select any OmniRoute model from the list
+# Select any SZRoute model from the list
 ```
 
-> **Tip:** Add any model available in your OmniRoute `/v1/models` endpoint to the `models` section. Use the format `provider/model-id` from your OmniRoute dashboard.
+> **Tip:** Add any model available in your SZRoute `/v1/models` endpoint to the `models` section. Use the format `provider/model-id` from your SZRoute dashboard.
 
 </details>
 
@@ -2010,7 +2010,7 @@ opencode
 
 **OAuth token expired**
 
-- Auto-refreshed by OmniRoute
+- Auto-refreshed by SZRoute
 - If issues persist: Dashboard → Provider → Reconnect
 
 **High costs**
@@ -2049,7 +2049,7 @@ opencode
 **Connection test shows "Invalid" for OpenAI-compatible providers**
 
 - Many providers don't expose a `/models` endpoint
-- OmniRoute v1.0.6+ includes fallback validation via chat completions
+- SZRoute v1.0.6+ includes fallback validation via chat completions
 - Ensure base URL includes `/v1` suffix
 
 ### 🔐 OAuth on a Remote Server
@@ -2057,13 +2057,13 @@ opencode
 <a name="oauth-on-a-remote-server"></a>
 <a name="oauth-em-servidor-remoto"></a>
 
-> **⚠️ Important for users running OmniRoute on a VPS, Docker, or any remote server**
+> **⚠️ Important for users running SZRoute on a VPS, Docker, or any remote server**
 
 #### Why does Antigravity / Gemini CLI OAuth fail on remote servers?
 
 The **Antigravity** and **Gemini CLI** providers use **Google OAuth 2.0**. Google requires the `redirect_uri` in the OAuth flow to exactly match one of the pre-registered URIs in the app's Google Cloud Console.
 
-The OAuth credentials bundled in OmniRoute are registered **for `localhost` only**. When you access OmniRoute on a remote server (e.g. `https://omniroute.myserver.com`), Google rejects the authentication with:
+The OAuth credentials bundled in SZRoute are registered **for `localhost` only**. When you access SZRoute on a remote server (e.g. `https://szroute.myserver.com`), Google rejects the authentication with:
 
 ```
 Error 400: redirect_uri_mismatch
@@ -2083,7 +2083,7 @@ Go to: [https://console.cloud.google.com/apis/credentials](https://console.cloud
 
 - Click **"+ Create Credentials"** → **"OAuth client ID"**
 - Application type: **"Web application"**
-- Name: anything you like (e.g. `OmniRoute Remote`)
+- Name: anything you like (e.g. `SZRoute Remote`)
 
 **3. Add Authorized Redirect URIs**
 
@@ -2093,7 +2093,7 @@ In the **"Authorized redirect URIs"** field, add:
 https://your-server.com/callback
 ```
 
-> Replace `your-server.com` with your server's domain or IP (include the port if needed, e.g. `http://45.33.32.156:20128/callback`).
+> Replace `your-server.com` with your server's domain or IP (include the port if needed, e.g. `http://45.33.32.156:21128/callback`).
 
 **4. Save and copy the credentials**
 
@@ -2114,14 +2114,14 @@ GEMINI_OAUTH_CLIENT_SECRET=GOCSPX-your-secret
 GEMINI_CLI_OAUTH_CLIENT_SECRET=GOCSPX-your-secret
 ```
 
-**6. Restart OmniRoute**
+**6. Restart SZRoute**
 
 ```bash
 # npm:
 npm run dev
 
 # Docker:
-docker restart omniroute
+docker restart szroute
 ```
 
 **7. Try connecting again**
@@ -2136,10 +2136,10 @@ Google will now redirect correctly to `https://your-server.com/callback`.
 
 If you don't want to set up your own credentials right now, you can still use the **manual URL flow**:
 
-1. OmniRoute opens the Google authorization URL
+1. SZRoute opens the Google authorization URL
 2. After authorizing, Google tries to redirect to `localhost` (which fails on the remote server)
 3. **Copy the full URL** from your browser's address bar (even if the page doesn't load)
-4. Paste that URL into the field shown in the OmniRoute connection modal
+4. Paste that URL into the field shown in the SZRoute connection modal
 5. Click **"Connect"**
 
 > This works because the authorization code in the URL is valid regardless of whether the redirect page loaded.
@@ -2153,7 +2153,7 @@ If you don't want to set up your own credentials right now, you can still use th
 
 Os provedores **Antigravity** e **Gemini CLI** usam **Google OAuth 2.0** para autenticação. O Google exige que a `redirect_uri` usada no fluxo OAuth seja **exatamente** uma das URIs pré-cadastradas no Google Cloud Console do aplicativo.
 
-As credenciais OAuth embutidas no OmniRoute estão cadastradas **apenas para `localhost`**. Quando você acessa o OmniRoute em um servidor remoto (ex: `https://omniroute.meuservidor.com`), o Google rejeita a autenticação com:
+As credenciais OAuth embutidas no SZRoute estão cadastradas **apenas para `localhost`**. Quando você acessa o SZRoute em um servidor remoto (ex: `https://szroute.meuservidor.com`), o Google rejeita a autenticação com:
 
 ```
 Error 400: redirect_uri_mismatch
@@ -2173,7 +2173,7 @@ Abra: [https://console.cloud.google.com/apis/credentials](https://console.cloud.
 
 - Clique em **"+ Create Credentials"** → **"OAuth client ID"**
 - Tipo de aplicativo: **"Web application"**
-- Nome: escolha qualquer nome (ex: `OmniRoute Remote`)
+- Nome: escolha qualquer nome (ex: `SZRoute Remote`)
 
 **3. Adicione as Authorized Redirect URIs**
 
@@ -2183,7 +2183,7 @@ No campo **"Authorized redirect URIs"**, adicione:
 https://seu-servidor.com/callback
 ```
 
-> Substitua `seu-servidor.com` pelo domínio ou IP do seu servidor (inclua a porta se necessário, ex: `http://45.33.32.156:20128/callback`).
+> Substitua `seu-servidor.com` pelo domínio ou IP do seu servidor (inclua a porta se necessário, ex: `http://45.33.32.156:21128/callback`).
 
 **4. Salve e copie as credenciais**
 
@@ -2204,14 +2204,14 @@ GEMINI_OAUTH_CLIENT_SECRET=GOCSPX-seu-secret
 GEMINI_CLI_OAUTH_CLIENT_SECRET=GOCSPX-seu-secret
 ```
 
-**6. Reinicie o OmniRoute**
+**6. Reinicie o SZRoute**
 
 ```bash
 # Se usando npm:
 npm run dev
 
 # Se usando Docker:
-docker restart omniroute
+docker restart szroute
 ```
 
 **7. Tente conectar novamente**
@@ -2226,10 +2226,10 @@ Agora o Google redirecionará corretamente para `https://seu-servidor.com/callba
 
 Se não quiser criar credenciais próprias agora, ainda é possível usar o fluxo **manual de URL**:
 
-1. O OmniRoute abrirá a URL de autorização do Google
+1. O SZRoute abrirá a URL de autorização do Google
 2. Após você autorizar, o Google tentará redirecionar para `localhost` (que falha no servidor remoto)
 3. **Copie a URL completa** da barra de endereço do seu browser (mesmo que a página não carregue)
-4. Cole essa URL no campo que aparece no modal de conexão do OmniRoute
+4. Cole essa URL no campo que aparece no modal de conexão do SZRoute
 5. Clique em **"Connect"**
 
 > Este workaround funciona porque o código de autorização na URL é válido independente do redirect ter carregado ou não.
@@ -2255,9 +2255,9 @@ Se não quiser criar credenciais próprias agora, ainda é possível usar o flux
 - **Auth**: OAuth 2.0 (PKCE) + JWT + API Keys + MCP Scoped Authorization
 - **Testing**: Node.js test runner + Vitest (900+ tests including unit, integration, E2E)
 - **CI/CD**: GitHub Actions (auto npm publish + Docker Hub on release)
-- **Website**: [omniroute.online](https://omniroute.online)
-- **Package**: [npmjs.com/package/omniroute](https://www.npmjs.com/package/omniroute)
-- **Docker**: [hub.docker.com/r/diegosouzapw/omniroute](https://hub.docker.com/r/diegosouzapw/omniroute)
+- **Website**: [szroute.online](https://szroute.online)
+- **Package**: [npmjs.com/package/szroute](https://www.npmjs.com/package/szroute)
+- **Docker**: [hub.docker.com/r/diegosouzapw/szroute](https://hub.docker.com/r/diegosouzapw/szroute)
 - **Resilience**: Circuit breaker, exponential backoff, anti-thundering herd, TLS spoofing, auto-combo self-healing
 
 </details>
@@ -2290,7 +2290,7 @@ Se não quiser criar credenciais próprias agora, ainda é possível usar o flux
 
 ## 🗺️ Roadmap
 
-OmniRoute has **218+ features planned** across multiple development phases. Here are the key areas:
+SZRoute has **218+ features planned** across multiple development phases. Here are the key areas:
 
 | Category                      | Planned Features | Highlights                                                                                            |
 | ----------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
@@ -2315,7 +2315,7 @@ OmniRoute has **218+ features planned** across multiple development phases. Here
 
 ## 👥 Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=diegosouzapw/OmniRoute&max=100&columns=20&anon=1)](https://github.com/diegosouzapw/OmniRoute/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=sauravsz/SZRoute&max=100&columns=20&anon=1)](https://github.com/sauravsz/SZRoute/graphs/contributors)
 
 ### How to Contribute
 
@@ -2338,21 +2338,21 @@ gh release create v2.0.0 --title "v2.0.0" --generate-notes
 
 ## 📊 Star History
 
-<a href="https://www.star-history.com/?repos=diegosouzapw%2Fomniroute&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=diegosouzapw%2Fszroute&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/omniroute&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/szroute&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=diegosouzapw/szroute&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=diegosouzapw/szroute&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## 🌍 StarMapper
 
-<a href="https://starmapper.bruniaux.com/diegosouzapw/omniroute">
+<a href="https://starmapper.bruniaux.com/diegosouzapw/szroute">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute?theme=light" />
-    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/omniroute" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/szroute?theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/szroute?theme=light" />
+    <img alt="StarMapper" src="https://starmapper.bruniaux.com/api/map-image/diegosouzapw/szroute" />
   </picture>
 </a>
 
@@ -2371,6 +2371,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 <div align="center">
   <sub>Built with ❤️ for developers who code 24/7</sub>
   <br/>
-  <sub><a href="https://omniroute.online">omniroute.online</a></sub>
+  <sub><a href="https://szroute.online">szroute.online</a></sub>
 </div>
 <!-- GitHub Discussions enabled for community Q&A -->

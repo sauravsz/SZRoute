@@ -1,7 +1,7 @@
 import os from "node:os";
 import path from "node:path";
 
-const APP_NAME = "omniroute";
+const APP_NAME = "szroute";
 
 function normalizeConfiguredPath(value) {
   if (typeof value !== "string") return null;

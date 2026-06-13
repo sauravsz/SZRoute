@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────
-#  OmniRoute — Docker Compose
+#  SZRoute — Docker Compose
 # ──────────────────────────────────────────────────────────────────────
 #
 #  Profiles:
@@ -26,8 +26,8 @@ x-common: &common
   env_file: .env
   environment:
     - DATA_DIR=/app/data # Must match the volume mount below
-    - PORT=${PORT:-20128}
-    - DASHBOARD_PORT=${DASHBOARD_PORT:-20128}
+    - PORT=${PORT:-21128}
+    - DASHBOARD_PORT=${DASHBOARD_PORT:-21128}
     - API_PORT=${API_PORT:-20129}
     - API_HOST=${API_HOST:-0.0.0.0}
     - REDIS_URL=${REDIS_URL:-redis://redis:6379}
@@ -44,7 +44,7 @@ services:
   # ── Redis (Rate Limiter Backend) ──────────────────────────────────
   redis:
     image: docker.io/library/redis:7-alpine
-    container_name: omniroute-redis
+    container_name: szroute-redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -58,15 +58,15 @@ services:
       retries: 3
 
   # ── Profile: base (minimal, no CLI tools) ──────────────────────────
-  omniroute-base:
+  szroute-base:
     <<: *common
-    container_name: omniroute
+    container_name: szroute
     build:
       context: .
       target: runner-base
-    image: omniroute:base
+    image: szroute:base
     ports:
-      - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
+      - "${DASHBOARD_PORT:-21128}:${DASHBOARD_PORT:-21128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
     profiles:
       - base
@@ -75,53 +75,53 @@ services:
   # Required for web-cookie providers (gemini-web, claude-web, claude-turnstile).
   # The default `base` image ships without Chromium, so those providers fail
   # with "Executable doesn't exist at .../ms-playwright/chromium..." (#2832).
-  omniroute-web:
+  szroute-web:
     <<: *common
-    container_name: omniroute
+    container_name: szroute
     build:
       context: .
       target: runner-web
-    image: omniroute:web
+    image: szroute:web
     ports:
-      - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
+      - "${DASHBOARD_PORT:-21128}:${DASHBOARD_PORT:-21128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
     profiles:
       - web
 
   # ── Profile: cli (CLIs installed inside container) ─────────────────
-  omniroute-cli:
+  szroute-cli:
     <<: *common
-    container_name: omniroute
+    container_name: szroute
     build:
       context: .
       target: runner-cli
-    image: omniroute:cli
+    image: szroute:cli
     ports:
-      - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
+      - "${DASHBOARD_PORT:-21128}:${DASHBOARD_PORT:-21128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
     volumes:
       - ./data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins:ro
-      - ${AUTO_UPDATE_HOST_REPO_DIR:-.}:/workspace/omniroute:rw
+      - ${AUTO_UPDATE_HOST_REPO_DIR:-.}:/workspace/szroute:rw
     profiles:
       - cli
 
   # ── Profile: host (host-mounted CLI binaries, Linux-first) ────────
-  omniroute-host:
+  szroute-host:
     <<: *common
-    container_name: omniroute
+    container_name: szroute
     build:
       context: .
       target: runner-base
-    image: omniroute:base
+    image: szroute:base
     ports:
-      - "${DASHBOARD_PORT:-20128}:${DASHBOARD_PORT:-20128}"
+      - "${DASHBOARD_PORT:-21128}:${DASHBOARD_PORT:-21128}"
       - "${API_PORT:-20129}:${API_PORT:-20129}"
     environment:
       - DATA_DIR=/app/data
-      - PORT=${PORT:-20128}
-      - DASHBOARD_PORT=${DASHBOARD_PORT:-20128}
+      - PORT=${PORT:-21128}
+      - DASHBOARD_PORT=${DASHBOARD_PORT:-21128}
       - API_PORT=${API_PORT:-20129}
       - API_HOST=${API_HOST:-0.0.0.0}
       - CLI_MODE=host
@@ -175,4 +175,4 @@ volumes:
   cliproxyapi-data:
     name: cliproxyapi-data
   redis-data:
-    name: omniroute-redis-data
+    name: szroute-redis-data

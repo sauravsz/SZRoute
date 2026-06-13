@@ -1,29 +1,29 @@
 import { getModelInfo, getComboForModel } from "../services/model";
 import { clearAccountError, markAccountUnavailable } from "../services/auth";
-import { connectionHasExtraKeys } from "@omniroute/open-sse/services/apiKeyRotator.ts";
+import { connectionHasExtraKeys } from "@szroute/open-sse/services/apiKeyRotator.ts";
 import * as log from "../utils/logger";
 import { updateProviderCredentials } from "../services/tokenRefresh";
 import {
   detectFormatFromEndpoint,
   getTargetFormat,
-} from "@omniroute/open-sse/services/provider.ts";
+} from "@szroute/open-sse/services/provider.ts";
 import {
   getModelTargetFormat,
   PROVIDER_ID_TO_ALIAS,
-} from "@omniroute/open-sse/config/providerModels.ts";
-import { handleChatCore } from "@omniroute/open-sse/handlers/chatCore.ts";
+} from "@szroute/open-sse/config/providerModels.ts";
+import { handleChatCore } from "@szroute/open-sse/handlers/chatCore.ts";
 import {
   errorResponse,
   modelCooldownResponse,
   providerCircuitOpenResponse,
   unavailableResponse,
-} from "@omniroute/open-sse/utils/error.ts";
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
+} from "@szroute/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@szroute/open-sse/config/constants.ts";
 import {
   runWithProxyContext,
   runWithTlsTracking,
   isTlsFingerprintActive,
-} from "@omniroute/open-sse/utils/proxyFetch.ts";
+} from "@szroute/open-sse/utils/proxyFetch.ts";
 import { resolveProxyForConnection } from "@/lib/localDb";
 import { CircuitBreakerOpenError, getCircuitBreaker } from "../../shared/utils/circuitBreaker";
 import { classify429FromError, type FailureKind } from "../../shared/utils/classify429";
@@ -31,7 +31,7 @@ import { resolveUseUpstream429BreakerHints } from "../../shared/utils/providerHi
 
 import { logProxyEvent } from "../../lib/proxyLogger";
 import { logTranslationEvent } from "../../lib/translatorEvents";
-import { getRuntimeProviderProfile } from "@omniroute/open-sse/services/accountFallback.ts";
+import { getRuntimeProviderProfile } from "@szroute/open-sse/services/accountFallback.ts";
 
 // Models that explicitly cannot run on the codex/ChatGPT-Pro OAuth pool — when
 // a caller writes `codex/deepseek-v4-pro` we transparently reroute to the
@@ -654,7 +654,7 @@ export function withSessionHeader(response: Response, sessionId: string | null):
   if (!response || !sessionId) return response;
 
   try {
-    response.headers.set("X-OmniRoute-Session-Id", sessionId);
+    response.headers.set("X-SZRoute-Session-Id", sessionId);
     return response;
   } catch {
     const cloned = new Response(response.body, {
@@ -662,7 +662,7 @@ export function withSessionHeader(response: Response, sessionId: string | null):
       statusText: response.statusText,
       headers: response.headers,
     });
-    cloned.headers.set("X-OmniRoute-Session-Id", sessionId);
+    cloned.headers.set("X-SZRoute-Session-Id", sessionId);
     return cloned;
   }
 }

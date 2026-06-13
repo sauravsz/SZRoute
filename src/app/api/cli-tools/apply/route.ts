@@ -25,7 +25,7 @@ const TOOL_CONFIG_PATHS: Record<string, string> = {
 
 function ensureBackup(configPath: string): string | null {
   if (!fs.existsSync(configPath)) return null;
-  const backupDir = path.join(path.dirname(configPath), ".omniroute.bak");
+  const backupDir = path.join(path.dirname(configPath), ".szroute.bak");
   if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
   const backupPath = path.join(backupDir, path.basename(configPath) + ".bak");
   fs.copyFileSync(configPath, backupPath);
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const { toolId, baseUrl, apiKey, model, dryRun } = parsed.data;
 
     const result = await generateConfig(toolId, {
-      baseUrl: baseUrl || "http://localhost:20128/v1",
+      baseUrl: baseUrl || "http://localhost:21128/v1",
       apiKey,
       model,
     });

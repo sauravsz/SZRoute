@@ -1,5 +1,5 @@
 /**
- * Shared policy for OmniRoute npm publish artifact hygiene.
+ * Shared policy for SZRoute npm publish artifact hygiene.
  *
  * The package publishes the standalone runtime under dist/ (Layer 1: renamed from app/).
  * This policy keeps local backups, QA scratch files, and development-only
@@ -73,7 +73,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "README.md",
   "bin/mcp-server.mjs",
   "bin/nodeRuntimeSupport.mjs",
-  "bin/omniroute.mjs",
+  "bin/szroute.mjs",
   "bin/reset-password.mjs",
   "open-sse/mcp-server/README.md",
   "open-sse/mcp-server/audit.ts",
@@ -82,7 +82,7 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
   "open-sse/mcp-server/runtimeHeartbeat.ts",
   "open-sse/mcp-server/scopeEnforcement.ts",
   "open-sse/mcp-server/server.ts",
-  // Runtime polyfill eagerly imported by bin/omniroute.mjs (Node <22 compat);
+  // Runtime polyfill eagerly imported by bin/szroute.mjs (Node <22 compat);
   // shipped via package.json "files", so it must be allowed in the tarball.
   "open-sse/utils/setupPolyfill.ts",
   "package.json",
@@ -99,8 +99,8 @@ export const PACK_ARTIFACT_ROOT_ALLOWED_EXACT_PATHS: string[] = [
 ];
 
 export const PACK_ARTIFACT_ROOT_ALLOWED_PATH_PREFIXES: string[] = [
-  "@omniroute/opencode-plugin/",
-  "@omniroute/opencode-provider/",
+  "@szroute/opencode-plugin/",
+  "@szroute/opencode-provider/",
   "bin/cli/",
   // Broad open-sse + src source dirs added to package.json "files" in v3.8.21
   // to allow TypeScript-first imports from the published package.
@@ -125,7 +125,7 @@ export const PACK_ARTIFACT_REQUIRED_PATHS: string[] = [
   "bin/cli/program.mjs",
   "bin/mcp-server.mjs",
   "bin/nodeRuntimeSupport.mjs",
-  "bin/omniroute.mjs",
+  "bin/szroute.mjs",
   "package.json",
   "scripts/build/native-binary-compat.mjs",
   "scripts/build/postinstall.mjs",

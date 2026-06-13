@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 List routing combos
 
 ```bash
-curl https://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/combos \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/combos
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/combos \
 Create routing combo
 
 ```bash
-curl -X POST https://localhost:20128/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/combos \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -39,8 +39,8 @@ curl -X POST https://localhost:20128/api/combos \
 Update combo
 
 ```bash
-curl -X PATCH https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PATCH https://localhost:21128/api/combos/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -50,8 +50,8 @@ curl -X PATCH https://localhost:20128/api/combos/{id} \
 Delete combo
 
 ```bash
-curl -X DELETE https://localhost:20128/api/combos/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/combos/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/combos/metrics
@@ -59,8 +59,8 @@ curl -X DELETE https://localhost:20128/api/combos/{id} \
 Get combo metrics
 
 ```bash
-curl https://localhost:20128/api/combos/metrics \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/combos/metrics \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/combos/test
@@ -68,8 +68,8 @@ curl https://localhost:20128/api/combos/metrics \
 Test a combo configuration
 
 ```bash
-curl -X POST https://localhost:20128/api/combos/test \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/combos/test \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -81,8 +81,8 @@ List fallback chains
 Returns all registered fallback chains for model routing.
 
 ```bash
-curl https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/fallback/chains \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/fallback/chains
@@ -92,8 +92,8 @@ Create fallback chain
 Registers a fallback routing chain for a model.
 
 ```bash
-curl -X POST https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/fallback/chains \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -103,8 +103,8 @@ curl -X POST https://localhost:20128/api/fallback/chains \
 Delete fallback chain
 
 ```bash
-curl -X DELETE https://localhost:20128/api/fallback/chains \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/fallback/chains \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads
@@ -112,11 +112,11 @@ curl -X DELETE https://localhost:20128/api/fallback/chains \
 See the full OpenAPI specification at `GET /api/openapi/spec` or `docs/reference/openapi.yaml` for detailed request/response schemas.
 
 <!-- skill:custom-start -->
-<!-- Migrated from skills/omniroute-routing/SKILL.md (preserved curated content) -->
+<!-- Migrated from skills/szroute-routing/SKILL.md (preserved curated content) -->
 
-# OmniRoute — Routing & Combos
+# SZRoute — Routing & Combos
 
-Requires `OMNIROUTE_URL` and `OMNIROUTE_KEY`. See [entry-point SKILL](https://raw.githubusercontent.com/diegosouzapw/OmniRoute/main/skills/omniroute/SKILL.md) for setup.
+Requires `SZROUTE_URL` and `SZROUTE_KEY`. See [entry-point SKILL](https://raw.githubusercontent.com/sauravsz/SZRoute/main/skills/szroute/SKILL.md) for setup.
 
 ## What is a combo?
 
@@ -125,8 +125,8 @@ A combo is a named group of providers/models with a routing strategy. All reques
 ## List existing combos
 
 ```bash
-curl $OMNIROUTE_URL/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_KEY"
+curl $SZROUTE_URL/api/combos \
+  -H "Authorization: Bearer $SZROUTE_KEY"
 ```
 
 Response includes `id`, `name`, `strategy`, `enabled`, and per-target stats.
@@ -134,8 +134,8 @@ Response includes `id`, `name`, `strategy`, `enabled`, and per-target stats.
 ## Create a combo
 
 ```bash
-curl -X POST $OMNIROUTE_URL/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -X POST $SZROUTE_URL/api/combos \
+  -H "Authorization: Bearer $SZROUTE_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "my-combo",
@@ -171,8 +171,8 @@ curl -X POST $OMNIROUTE_URL/api/combos \
 Auto-combo scores each candidate on 9 factors every request:
 
 ```bash
-curl -X POST $OMNIROUTE_URL/api/combos \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -X POST $SZROUTE_URL/api/combos \
+  -H "Authorization: Bearer $SZROUTE_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "prod-auto",
@@ -188,8 +188,8 @@ curl -X POST $OMNIROUTE_URL/api/combos \
 Then call it with:
 
 ```bash
-curl -X POST $OMNIROUTE_URL/v1/chat/completions \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -X POST $SZROUTE_URL/v1/chat/completions \
+  -H "Authorization: Bearer $SZROUTE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "model": "prod-auto", "messages": [{ "role": "user", "content": "Hello" }] }'
 ```
@@ -198,16 +198,16 @@ curl -X POST $OMNIROUTE_URL/v1/chat/completions \
 
 ```bash
 # Activate
-curl -X PUT $OMNIROUTE_URL/api/combos/{id}/toggle \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -X PUT $SZROUTE_URL/api/combos/{id}/toggle \
+  -H "Authorization: Bearer $SZROUTE_KEY" \
   -d '{ "enabled": true }'
 ```
 
 ## Get combo metrics
 
 ```bash
-curl $OMNIROUTE_URL/api/combos/{id}/metrics \
-  -H "Authorization: Bearer $OMNIROUTE_KEY"
+curl $SZROUTE_URL/api/combos/{id}/metrics \
+  -H "Authorization: Bearer $SZROUTE_KEY"
 ```
 
 Returns p50/p95/p99 latency, success rate, cost, and per-target breakdown.
@@ -215,22 +215,22 @@ Returns p50/p95/p99 latency, success rate, cost, and per-target breakdown.
 ## Simulate routing (dry run)
 
 ```bash
-curl -X POST $OMNIROUTE_URL/api/routing/simulate \
-  -H "Authorization: Bearer $OMNIROUTE_KEY" \
+curl -X POST $SZROUTE_URL/api/routing/simulate \
+  -H "Authorization: Bearer $SZROUTE_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "comboId": "{id}", "messages": [{ "role": "user", "content": "test" }] }'
 ```
 
 Returns which provider would be selected and why — no actual API call is made.
 
-## Via MCP (if OmniRoute is your MCP server)
+## Via MCP (if SZRoute is your MCP server)
 
 ```
-omniroute_list_combos     → list all combos
-omniroute_switch_combo    → enable/disable a combo
-omniroute_set_routing_strategy → change strategy at runtime
-omniroute_simulate_route  → dry-run routing decision
-omniroute_best_combo_for_task → get recommendation by task type
+szroute_list_combos     → list all combos
+szroute_switch_combo    → enable/disable a combo
+szroute_set_routing_strategy → change strategy at runtime
+szroute_simulate_route  → dry-run routing decision
+szroute_best_combo_for_task → get recommendation by task type
 ```
 
 ## Errors

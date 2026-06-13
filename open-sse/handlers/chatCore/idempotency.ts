@@ -1,6 +1,6 @@
 import { getIdempotencyKey, checkIdempotency } from "@/lib/idempotencyLayer";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { buildOmniRouteResponseMetaHeaders } from "@/domain/omnirouteResponseMeta";
+import { buildSZRouteResponseMetaHeaders } from "@/domain/szrouteResponseMeta";
 
 /**
  * Resolve the request's idempotency key once and check the idempotency store. Returns the
@@ -46,8 +46,8 @@ export async function checkIdempotencyCache({
           status: cachedIdemp.status,
           headers: {
             "Content-Type": "application/json",
-            "X-OmniRoute-Idempotent": "true",
-            ...buildOmniRouteResponseMetaHeaders({
+            "X-SZRoute-Idempotent": "true",
+            ...buildSZRouteResponseMetaHeaders({
               provider,
               model,
               cacheHit: false,

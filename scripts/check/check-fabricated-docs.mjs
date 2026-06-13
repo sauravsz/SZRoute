@@ -8,7 +8,7 @@
 // What it checks:
 //   1. /api/... endpoint paths        → must match a route.ts file under src/app/api/
 //   2. UPPER_SNAKE env var names        → must have a process.env.X or env.X read
-//   3. CLI commands `omniroute ...`     → must exist in bin/cli/commands/ or bin/
+//   3. CLI commands `szroute ...`     → must exist in bin/cli/commands/ or bin/
 //   4. BUILTIN_EVENTS hook names        → must be exported from hooks.ts
 //   5. `src/.../foo.ts` file refs       → must exist (relative to repo root)
 //   6. `open-sse/.../bar.ts` file refs  → must exist
@@ -77,13 +77,13 @@ const ENV_VAR_ALLOWLIST = new Set([
   "DEBUG",
   "VERBOSE",
   "LOG_LEVEL",
-  "PORT", // generic, not OmniRoute-specific
+  "PORT", // generic, not SZRoute-specific
   "DATA_DIR",
   "REQUIRE_API_KEY",
-  "OMNIROUTE_BUILD_PROFILE", // build-time only
-  "OMNIROUTE_BUILD_SHA",
-  "OMNIROUTE_URL", // used by ad-hoc tooling, validated elsewhere
-  "OMNIROUTE_KEY", // ditto
+  "SZROUTE_BUILD_PROFILE", // build-time only
+  "SZROUTE_BUILD_SHA",
+  "SZROUTE_URL", // used by ad-hoc tooling, validated elsewhere
+  "SZROUTE_KEY", // ditto
   "OPENCODE_API_KEY", // ditto
 ]);
 
@@ -423,7 +423,7 @@ function buildCodebaseIndex() {
   walkForEnv("bin");
   walkForEnv("scripts");
 
-  // Set of `omniroute <subcommand>` strings that exist in bin/
+  // Set of `szroute <subcommand>` strings that exist in bin/
   const cliCommands = new Set();
   function walkCli(dir) {
     const abs = path.join(ROOT, dir);
@@ -461,8 +461,8 @@ const COARSE_PATTERNS = {
   apiPath: /(?<!\w)\/api\/[A-Za-z0-9_\-\/\[\]\{\}]+(?!\w)/g,
   // Catches ALL_CAPS env var names of length >= 3
   envVar: /\b([A-Z][A-Z0-9_]{2,})\b/g,
-  // omniroute <verb> <sub> ... — only on the same line, captures first 2 tokens
-  cliCmd: /\bomniroute\s+([a-z][a-z0-9-]+)(?:\s+([a-z][a-z0-9-]+))?/g,
+  // szroute <verb> <sub> ... — only on the same line, captures first 2 tokens
+  cliCmd: /\bszroute\s+([a-z][a-z0-9-]+)(?:\s+([a-z][a-z0-9-]+))?/g,
   // Built-in event names like onRequest, onFoo
   hookName: /\b(on[A-Z][a-zA-Z]+)\b/g,
   // File references like src/lib/foo.ts, open-sse/handlers/bar.ts, bin/cli/baz.mjs
@@ -530,9 +530,9 @@ function scanDocFile(absPath, index) {
     });
   }
 
-  // 3) CLI commands: `omniroute foo bar` — only flag when the line is in
+  // 3) CLI commands: `szroute foo bar` — only flag when the line is in
   //    a code-like context (inside backticks or a shell block). Bare prose
-  //    like "we use omniroute and..." is not a command claim.
+  //    like "we use szroute and..." is not a command claim.
   for (const m of textNoCode.matchAll(COARSE_PATTERNS.cliCmd)) {
     const sub = m[1];
     if (index.cliCommands.has(sub)) continue;
@@ -542,14 +542,14 @@ function scanDocFile(absPath, index) {
     const lineText = text.split("\n")[ln - 1] || "";
     // Only flag when on a line that looks like a shell command (starts with $, or
     // inside a shell block, or wrapped in `code`)
-    const isShellLike = /^[ \t]*\$\s|^```sh|^```bash|^```shell|`omniroute/.test(lineText);
+    const isShellLike = /^[ \t]*\$\s|^```sh|^```bash|^```shell|`szroute/.test(lineText);
     if (!isShellLike) continue;
     if (/example|placeholder|tbd/i.test(lineText)) continue;
     findings.push({
       kind: "cli-cmd",
-      value: `omniroute ${sub}`,
+      value: `szroute ${sub}`,
       line: ln,
-      msg: `omniroute subcommand '${sub}' not registered in bin/`,
+      msg: `szroute subcommand '${sub}' not registered in bin/`,
     });
   }
 
@@ -640,7 +640,7 @@ export function formatHumanReport(result) {
   const KIND_LABELS = {
     "api-path": "API endpoint paths not in src/app/api/",
     "env-var": "Env vars never read in code",
-    "cli-cmd": "omniroute subcommands not registered",
+    "cli-cmd": "szroute subcommands not registered",
     hook: "Hook names not in BUILTIN_EVENTS",
     "file-ref": "File references that don't exist",
   };

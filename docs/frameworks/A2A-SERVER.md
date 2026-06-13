@@ -1,12 +1,12 @@
 ---
-title: "OmniRoute A2A Server Documentation"
+title: "SZRoute A2A Server Documentation"
 version: 3.8.2
 lastUpdated: 2026-05-13
 ---
 
-# OmniRoute A2A Server Documentation
+# SZRoute A2A Server Documentation
 
-> Agent-to-Agent Protocol v0.3 — OmniRoute as an intelligent routing agent
+> Agent-to-Agent Protocol v0.3 — SZRoute as an intelligent routing agent
 
 The A2A surface has two faces:
 
@@ -18,10 +18,10 @@ Tasks are tracked by `A2ATaskManager` (`src/lib/a2a/taskManager.ts`, default 5-m
 ## Agent Discovery
 
 ```bash
-curl http://localhost:20128/.well-known/agent.json
+curl http://localhost:21128/.well-known/agent.json
 ```
 
-Returns the Agent Card describing OmniRoute's capabilities, skills, and authentication requirements.
+Returns the Agent Card describing SZRoute's capabilities, skills, and authentication requirements.
 
 The Agent Card's `version` field is sourced from `process.env.npm_package_version` (see `src/app/.well-known/agent.json/route.ts:13`), so it stays auto-synced with `package.json` on every release.
 
@@ -32,7 +32,7 @@ The Agent Card's `version` field is sourced from `process.env.npm_package_versio
 All `/a2a` requests require an API key via the `Authorization` header:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_SZROUTE_API_KEY
 ```
 
 If no API key is configured on the server, authentication is bypassed.
@@ -52,7 +52,7 @@ A2A is controlled by the **Endpoints → A2A** toggle and is disabled by default
 Sends a message to a skill and waits for the complete response.
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{
@@ -93,7 +93,7 @@ curl -X POST http://localhost:20128/a2a \
 Same as `message/send` but returns Server-Sent Events for real-time streaming.
 
 ```bash
-curl -N -X POST http://localhost:20128/a2a \
+curl -N -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{
@@ -120,7 +120,7 @@ data: {"jsonrpc":"2.0","method":"message/stream","params":{"task":{"id":"...","s
 ### `tasks/get` — Query Task Status
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{"jsonrpc":"2.0","id":"2","method":"tasks/get","params":{"taskId":"TASK_UUID"}}'
@@ -129,7 +129,7 @@ curl -X POST http://localhost:20128/a2a \
 ### `tasks/cancel` — Cancel a Task
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{"jsonrpc":"2.0","id":"3","method":"tasks/cancel","params":{"taskId":"TASK_UUID"}}'
@@ -139,22 +139,22 @@ curl -X POST http://localhost:20128/a2a \
 
 ## Available Skills
 
-OmniRoute exposes 6 A2A skills wired in `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Each skill module lives in `src/lib/a2a/skills/`.
+SZRoute exposes 6 A2A skills wired in `src/lib/a2a/taskExecution.ts::A2A_SKILL_HANDLERS`. Each skill module lives in `src/lib/a2a/skills/`.
 
 | Skill               | ID                    | Description                                                                                                   | Tags                    | Examples                                |
 | :------------------ | :-------------------- | :------------------------------------------------------------------------------------------------------------ | :---------------------- | :-------------------------------------- |
-| Smart Routing       | `smart-routing`       | Routes a prompt through the optimal provider/combo using OmniRoute's combo engine + scoring                   | routing, providers      | "Route this prompt via the best model"  |
+| Smart Routing       | `smart-routing`       | Routes a prompt through the optimal provider/combo using SZRoute's combo engine + scoring                   | routing, providers      | "Route this prompt via the best model"  |
 | Quota Management    | `quota-management`    | Reports per-provider quota state, helps callers decide when to throttle/switch                                | quota, providers        | "Check quota for anthropic"             |
 | Provider Discovery  | `provider-discovery`  | Lists installed providers with capabilities, free-tier flags, OAuth status                                    | providers, discovery    | "What providers are available?"         |
 | Cost Analysis       | `cost-analysis`       | Estimates cost of a request/conversation given the catalog + recent usage                                     | cost, usage             | "Estimate cost for this conversation"   |
 | Health Report       | `health-report`       | Aggregates circuit breaker, cooldown, lockout state per provider                                              | health, resilience      | "Show health status of all providers"   |
-| List Capabilities   | `list-capabilities`   | Returns the full 42-entry Agent Skills catalog as a markdown table with raw SKILL.md URLs for context injection | catalog, discovery, skills | "List all OmniRoute capabilities"    |
+| List Capabilities   | `list-capabilities`   | Returns the full 42-entry Agent Skills catalog as a markdown table with raw SKILL.md URLs for context injection | catalog, discovery, skills | "List all SZRoute capabilities"    |
 
 > Note: the Agent Card description currently advertises "36+ providers" (`src/app/.well-known/agent.json/route.ts:26` and `:55`). The actual catalog has grown to 180+ providers — the string should be updated in a follow-up change (tracked as a separate doc/code TODO; not modified here).
 
 ### `list-capabilities` Skill Detail
 
-The `list-capabilities` skill is particularly useful for external agents that need to discover what OmniRoute exposes before sending API calls. It returns a structured markdown table artifact:
+The `list-capabilities` skill is particularly useful for external agents that need to discover what SZRoute exposes before sending API calls. It returns a structured markdown table artifact:
 
 ```
 | ID | Name | Category | Area | Endpoints/Commands | Raw URL |
@@ -257,7 +257,7 @@ submitted → working → completed
 ```python
 import requests
 
-resp = requests.post("http://localhost:20128/a2a", json={
+resp = requests.post("http://localhost:21128/a2a", json={
     "jsonrpc": "2.0", "id": "1",
     "method": "message/send",
     "params": {
@@ -274,7 +274,7 @@ print(result["metadata"]["routing_explanation"])
 ### TypeScript (fetch)
 
 ```typescript
-const resp = await fetch("http://localhost:20128/a2a", {
+const resp = await fetch("http://localhost:21128/a2a", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

@@ -7,7 +7,7 @@ import { getProviderRegistry } from "./providerRegistryAccessor";
 import type { ConnectionFields } from "@/lib/db/encryption";
 import { NOAUTH_PROVIDERS } from "@/shared/constants/providers";
 import { hasUsableWebSessionCredential } from "@/shared/providers/webSessionCredentials";
-import { defaultLogger as log } from "@omniroute/open-sse/utils/logger";
+import { defaultLogger as log } from "@szroute/open-sse/utils/logger";
 import { getTokenLimit } from "../contextManager";
 import { getResolvedModelCapabilities } from "@/lib/modelCapabilities";
 

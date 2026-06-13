@@ -9,7 +9,7 @@ export function registerLogs(program) {
     .option("--filter <level>", t("logs.filter"))
     .option("--lines <n>", t("logs.lines"), "100")
     .option("--timeout <ms>", t("logs.timeout"), "30000")
-    .option("--base-url <url>", t("logs.baseUrl"), "http://localhost:20128")
+    .option("--base-url <url>", t("logs.baseUrl"), "http://localhost:21128")
     .option("--request-id <id>", t("logs.requestId"))
     .option("--api-key <key>", t("logs.apiKey"))
     .option("--combo <name>", t("logs.combo"))
@@ -67,7 +67,7 @@ function buildLogFilter(opts) {
 }
 
 export async function runLogsCommand(opts = {}) {
-  const baseUrl = opts.baseUrl || opts["base-url"] || "http://localhost:20128";
+  const baseUrl = opts.baseUrl || opts["base-url"] || "http://localhost:21128";
   const follow = opts.follow ?? false;
   const timeout = parseInt(String(opts.timeout || "30000"), 10);
   const isJson = opts.output === "json";

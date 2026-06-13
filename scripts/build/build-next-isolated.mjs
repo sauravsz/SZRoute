@@ -19,7 +19,7 @@ import {
 
 const projectRoot = process.cwd();
 const distDir = path.resolve(process.env.NEXT_DIST_DIR || ".build/next");
-const backupRoot = path.join(os.tmpdir(), `omniroute-build-isolated-${process.pid}-${Date.now()}`);
+const backupRoot = path.join(os.tmpdir(), `szroute-build-isolated-${process.pid}-${Date.now()}`);
 
 export function getTransientBuildPaths(rootDir = projectRoot, env = process.env) {
   const paths = [
@@ -30,7 +30,7 @@ export function getTransientBuildPaths(rootDir = projectRoot, env = process.env)
     },
   ];
 
-  if (env.OMNIROUTE_BUILD_MOVE_TASKS === "1") {
+  if (env.SZROUTE_BUILD_MOVE_TASKS === "1") {
     paths.push({
       label: "task planning workspace",
       sourcePath: path.join(rootDir, "_tasks"),
@@ -103,7 +103,7 @@ function runNextBuild() {
 }
 
 export function resolveNextBuildBundlerFlag(baseEnv = process.env) {
-  return baseEnv.OMNIROUTE_USE_TURBOPACK === "1" ? "--turbopack" : "--webpack";
+  return baseEnv.SZROUTE_USE_TURBOPACK === "1" ? "--turbopack" : "--webpack";
 }
 
 export function resolveNextBuildEnv(baseEnv = process.env) {

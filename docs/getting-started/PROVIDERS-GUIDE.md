@@ -1,12 +1,12 @@
-# Providers Guide: Connect AI Models to OmniRoute
+# Providers Guide: Connect AI Models to SZRoute
 
-> **TL;DR**: A provider is a connection to an AI service (like OpenAI, Anthropic, Google). You need at least one provider to use OmniRoute.
+> **TL;DR**: A provider is a connection to an AI service (like OpenAI, Anthropic, Google). You need at least one provider to use SZRoute.
 
 ---
 
 ## What Is a Provider?
 
-Think of a provider like a **phone carrier**. Just as you need a phone carrier to make calls, you need an AI provider to use AI models. OmniRoute is like a phone that works with **all carriers** — you can switch between them automatically.
+Think of a provider like a **phone carrier**. Just as you need a phone carrier to make calls, you need an AI provider to use AI models. SZRoute is like a phone that works with **all carriers** — you can switch between them automatically.
 
 ### Types of Providers
 
@@ -23,7 +23,7 @@ Think of a provider like a **phone carrier**. Just as you need a phone carrier t
 
 ### Option A: Free Provider (No Credit Card)
 
-1. Open the dashboard at `http://localhost:20128`
+1. Open the dashboard at `http://localhost:21128`
 2. Go to **Providers** → **Add Provider**
 3. Select one of these free providers:
    - **Kiro AI** — Free Claude models (no auth needed)
@@ -42,7 +42,7 @@ Think of a provider like a **phone carrier**. Just as you need a phone carrier t
    - **Google**: https://aistudio.google.com/apikey
    - **DeepSeek**: https://platform.deepseek.com/
    - **Groq**: https://console.groq.com/
-2. Open the dashboard at `http://localhost:20128`
+2. Open the dashboard at `http://localhost:21128`
 3. Go to **Providers** → **Add Provider**
 4. Select your provider
 5. Paste your API key
@@ -51,7 +51,7 @@ Think of a provider like a **phone carrier**. Just as you need a phone carrier t
 
 ### Option C: OAuth Provider (Subscription)
 
-1. Open the dashboard at `http://localhost:20128`
+1. Open the dashboard at `http://localhost:21128`
 2. Go to **Providers** → **Add Provider**
 3. Select your provider (e.g., Claude Code, GitHub Copilot)
 4. Click **Connect with OAuth**
@@ -99,7 +99,7 @@ These providers offer **high-quality models** with API keys:
 
 ### Step 1: Open the Dashboard
 
-Go to `http://localhost:20128` in your browser.
+Go to `http://localhost:21128` in your browser.
 
 ### Step 2: Go to Providers
 
@@ -131,12 +131,12 @@ Your provider is now connected. You can use it with `model: "auto"` or specify t
 
 ## Using Multiple Providers
 
-OmniRoute works best with **multiple providers**. This gives you:
+SZRoute works best with **multiple providers**. This gives you:
 
-- **Automatic fallback** — If one provider fails, OmniRoute tries the next
-- **Cost optimization** — OmniRoute picks the cheapest provider for each request
-- **Speed optimization** — OmniRoute picks the fastest provider for each request
-- **Quality optimization** — OmniRoute picks the best provider for each task
+- **Automatic fallback** — If one provider fails, SZRoute tries the next
+- **Cost optimization** — SZRoute picks the cheapest provider for each request
+- **Speed optimization** — SZRoute picks the fastest provider for each request
+- **Quality optimization** — SZRoute picks the best provider for each task
 
 ### Recommended Setup
 
@@ -146,7 +146,7 @@ Connect at least **3 providers** for the best experience:
 2. **One fast provider** (Groq, Cerebras) — For quick responses
 3. **One quality provider** (OpenAI, Anthropic, Google) — For complex tasks
 
-Then use `model: "auto"` and OmniRoute will automatically pick the best one for each request.
+Then use `model: "auto"` and SZRoute will automatically pick the best one for each request.
 
 ---
 
@@ -155,40 +155,40 @@ Then use `model: "auto"` and OmniRoute will automatically pick the best one for 
 ### OpenAI
 
 1. Get API key: https://platform.openai.com/api-keys
-2. In OmniRoute: Providers → Add Provider → OpenAI
+2. In SZRoute: Providers → Add Provider → OpenAI
 3. Paste API key → Connect
 
 ### Anthropic
 
 1. Get API key: https://console.anthropic.com/
-2. In OmniRoute: Providers → Add Provider → Anthropic
+2. In SZRoute: Providers → Add Provider → Anthropic
 3. Paste API key → Connect
 
 ### Google (Gemini)
 
 1. Get API key: https://aistudio.google.com/apikey
-2. In OmniRoute: Providers → Add Provider → Gemini
+2. In SZRoute: Providers → Add Provider → Gemini
 3. Paste API key → Connect
 
 ### DeepSeek
 
 1. Get API key: https://platform.deepseek.com/
-2. In OmniRoute: Providers → Add Provider → DeepSeek
+2. In SZRoute: Providers → Add Provider → DeepSeek
 3. Paste API key → Connect
 
 ### Groq
 
 1. Get API key: https://console.groq.com/
-2. In OmniRoute: Providers → Add Provider → Groq
+2. In SZRoute: Providers → Add Provider → Groq
 3. Paste API key → Connect
 
 ---
 
 ## Common Questions
 
-### "Do I need to pay to use OmniRoute?"
+### "Do I need to pay to use SZRoute?"
 
-**No!** OmniRoute is free and open-source. You can use free providers (Kiro, OpenCode Free, Pollinations) without paying anything. You only pay if you choose to use paid providers.
+**No!** SZRoute is free and open-source. You can use free providers (Kiro, OpenCode Free, Pollinations) without paying anything. You only pay if you choose to use paid providers.
 
 ### "Which provider should I start with?"
 
@@ -196,11 +196,11 @@ Start with **Kiro AI** — it's free, requires no API key, and gives you access 
 
 ### "Can I use multiple providers at once?"
 
-**Yes!** That's the whole point of OmniRoute. Connect multiple providers and use `model: "auto"` to let OmniRoute pick the best one for each request.
+**Yes!** That's the whole point of SZRoute. Connect multiple providers and use `model: "auto"` to let SZRoute pick the best one for each request.
 
 ### "What if a provider goes down?"
 
-OmniRoute automatically skips failed providers and tries the next one. You don't need to do anything.
+SZRoute automatically skips failed providers and tries the next one. You don't need to do anything.
 
 ### "How do I disconnect a provider?"
 
@@ -208,13 +208,13 @@ Go to Providers → click on the provider → click **Disconnect**.
 
 ### "Can I use my existing API keys?"
 
-**Yes!** If you already have API keys for OpenAI, Anthropic, Google, etc., you can use them in OmniRoute. Just paste them when connecting the provider.
+**Yes!** If you already have API keys for OpenAI, Anthropic, Google, etc., you can use them in SZRoute. Just paste them when connecting the provider.
 
 ---
 
 ## What's Next?
 
-- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — Let OmniRoute pick the best AI for you
+- **[Auto-Combo Guide](./AUTO-COMBO-GUIDE.md)** — Let SZRoute pick the best AI for you
 - **[Free Tiers Guide](./FREE-TIERS-GUIDE.md)** — Get free AI with no credit card
 - **[Troubleshooting](./TROUBLESHOOTING.md)** — Fix common issues
 - **[Provider Reference](../reference/PROVIDER_REFERENCE.md)** — Full list of 177 providers

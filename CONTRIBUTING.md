@@ -1,4 +1,4 @@
-# Contributing to OmniRoute
+# Contributing to SZRoute
 
 Thank you for your interest in contributing! This guide covers everything you need to get started.
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing! This guide covers everything you ne
 ### Clone & Install
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/sauravsz/SZRoute.git
+cd SZRoute
 npm install
 ```
 
@@ -35,8 +35,8 @@ Key variables for development:
 
 | Variable               | Development Default      | Description           |
 | ---------------------- | ------------------------ | --------------------- |
-| `PORT`                 | `20128`                  | Server port           |
-| `NEXT_PUBLIC_BASE_URL` | `http://localhost:20128` | Base URL for frontend |
+| `PORT`                 | `21128`                  | Server port           |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:21128` | Base URL for frontend |
 | `JWT_SECRET`           | (generate above)         | JWT signing secret    |
 | `INITIAL_PASSWORD`     | `CHANGEME`               | First login password  |
 | `APP_LOG_LEVEL`        | `info`                   | Log verbosity level   |
@@ -66,7 +66,7 @@ npm run start
 npm run build:release   # rm -rf .build dist && build + writes dist/BUILD_SHA
 
 # Common port configuration
-PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
+PORT=21128 NEXT_PUBLIC_BASE_URL=http://localhost:21128 npm run dev
 ```
 
 ### Build Output Layout
@@ -89,14 +89,14 @@ npm run build
 `npm run build:release` additionally cleans both directories first and writes
 `dist/BUILD_SHA` (= `git rev-parse --short HEAD`) as a deploy integrity sentinel.
 
-> **VPS deploy note:** the remote image directory `/usr/lib/node_modules/omniroute/app/`
+> **VPS deploy note:** the remote image directory `/usr/lib/node_modules/szroute/app/`
 > is unchanged. The deploy skills rsync the contents of `dist/` into it.
 > Only the in-repo build output path moved (`app/` → `dist/`).
 
 Default URLs:
 
-- **Dashboard**: `http://localhost:20128/dashboard`
-- **API**: `http://localhost:20128/v1`
+- **Dashboard**: `http://localhost:21128/dashboard`
+- **API**: `http://localhost:21128/v1`
 
 ---
 
@@ -240,7 +240,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @szroute/open-sse workspace
 ├── executors/              # 14 provider-specific request executors
 ├── handlers/               # 11 request handlers (chat, responses, embeddings, images, etc.)
 ├── mcp-server/             # MCP server (25 tools, 3 transports, 10 scopes)
@@ -262,7 +262,7 @@ tests/
 docs/
 ├── adr/                     # Architecture Decision Records
 ├── architecture/            # System architecture & resilience
-├── comparison/              # OmniRoute vs alternatives
+├── comparison/              # SZRoute vs alternatives
 ├── compression/             # Compression guides & rules
 ├── dev/                     # Development guides
 ├── diagrams/                # Architecture diagrams
@@ -353,5 +353,5 @@ Then use the `/deploy-vps-*-cc` skills which rsync `dist/` to the remote `app/` 
 - **API Reference**: See [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
 - **Security docs**: [`docs/security/CLI_TOKEN.md`](docs/security/CLI_TOKEN.md), [`docs/security/ROUTE_GUARD_TIERS.md`](docs/security/ROUTE_GUARD_TIERS.md), [`docs/security/ERROR_SANITIZATION.md`](docs/security/ERROR_SANITIZATION.md), [`docs/security/PUBLIC_CREDS.md`](docs/security/PUBLIC_CREDS.md)
 - **Ops docs**: [`docs/ops/SQLITE_RUNTIME.md`](docs/ops/SQLITE_RUNTIME.md)
-- **Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Issues**: [github.com/sauravsz/SZRoute/issues](https://github.com/sauravsz/SZRoute/issues)
 - **ADRs**: See `docs/adr/` for architectural decision records

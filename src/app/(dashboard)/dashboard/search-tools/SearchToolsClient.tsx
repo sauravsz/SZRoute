@@ -67,7 +67,7 @@ export default function SearchToolsClient() {
   // Build export state from current config (passed to TopBar for ExportCodeModal)
   const exportState: PlaygroundState = {
     endpoint: activeTab === "scrape" ? "web.fetch" : "search",
-    baseUrl: typeof window !== "undefined" ? window.location.origin : "http://localhost:20128",
+    baseUrl: typeof window !== "undefined" ? window.location.origin : "http://localhost:21128",
     searchProvider: configState.provider,
     searchType: configState.searchType,
     fetchFormat: configState.fetchFormat as PlaygroundState["fetchFormat"],

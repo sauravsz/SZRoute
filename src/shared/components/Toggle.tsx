@@ -57,7 +57,7 @@ export default function Toggle({
   return (
     <div
       className={cn(
-        "flex items-center gap-3",
+        "flex items-center gap-3 select-none",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
@@ -72,18 +72,18 @@ export default function Toggle({
         onClick={handleClick}
         className={cn(
           "relative inline-flex shrink-0 cursor-pointer rounded-full",
-          "transition-colors duration-200 ease-in-out",
-          "focus:outline-none focus:ring-1 focus:ring-primary/30",
-          checked ? "bg-primary" : "bg-black/10 dark:bg-white/20",
+          "transition-colors duration-200",
+          "focus-ring",
+          checked ? "bg-[#34C759] dark:bg-[#30D158]" : "bg-black/10 dark:bg-white/20 border border-black/5 dark:border-white/5 shadow-inner",
           sizes[size].track,
-          disabled && "cursor-not-allowed"
+          disabled && "cursor-not-allowed opacity-50"
         )}
       >
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none inline-block rounded-full bg-white shadow-sm",
-            "transform transition duration-200 ease-in-out",
+            "pointer-events-none inline-block rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.1)]",
+            "transform transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]",
             checked ? sizes[size].translate : "translate-x-0.5",
             sizes[size].thumb,
             "mt-0.5"

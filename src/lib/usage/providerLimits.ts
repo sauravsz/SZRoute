@@ -16,22 +16,22 @@ import { setQuotaCache } from "@/domain/quotaCache";
 import { buildClaudeExtraUsageConnectionUpdate } from "@/lib/providers/claudeExtraUsage";
 import { getMachineId } from "@/shared/utils/machine";
 import { USAGE_SUPPORTED_PROVIDERS } from "@/shared/constants/providers";
-import { getExecutor } from "@omniroute/open-sse/executors/index.ts";
-import { getUsageForProvider } from "@omniroute/open-sse/services/usage.ts";
+import { getExecutor } from "@szroute/open-sse/executors/index.ts";
+import { getUsageForProvider } from "@szroute/open-sse/services/usage.ts";
 import {
   rotationGroupFor,
   serializeRefresh,
-} from "@omniroute/open-sse/services/refreshSerializer.ts";
+} from "@szroute/open-sse/services/refreshSerializer.ts";
 import {
   extractCodeAssistOnboardTierId,
   extractCodeAssistSubscriptionTier,
-} from "@omniroute/open-sse/services/codeAssistSubscription.ts";
-import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
+} from "@szroute/open-sse/services/codeAssistSubscription.ts";
+import { runWithProxyContext } from "@szroute/open-sse/utils/proxyFetch.ts";
 import {
   isUserCallableAntigravityModelId,
   toClientAntigravityModelId,
-} from "@omniroute/open-sse/config/antigravityModelAliases.ts";
-import { isUserCallableAgyModelId } from "@omniroute/open-sse/config/agyModels.ts";
+} from "@szroute/open-sse/config/antigravityModelAliases.ts";
+import { isUserCallableAgyModelId } from "@szroute/open-sse/config/agyModels.ts";
 import { onUsageRecorded } from "./usageEvents";
 
 type JsonRecord = Record<string, unknown>;

@@ -1,12 +1,12 @@
 ---
-title: "OmniRoute Documentation"
+title: "SZRoute Documentation"
 version: 3.8.2
 lastUpdated: 2026-05-13
 ---
 
-# OmniRoute Documentation
+# SZRoute Documentation
 
-Navigable index of the OmniRoute documentation set. Topics are grouped by intent so you can find what you need quickly.
+Navigable index of the SZRoute documentation set. Topics are grouped by intent so you can find what you need quickly.
 
 > Looking for the project overview, install steps, or release notes? See the root [README.md](../README.md), [CHANGELOG.md](../CHANGELOG.md), and [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -24,21 +24,21 @@ How the system is put together — read these to understand the runtime, code la
 
 ## For Non-Tech Users
 
-Simple guides for using OmniRoute — no technical background needed.
+Simple guides for using SZRoute — no technical background needed.
 
 ### getting-started/
 
-- [QUICK-START.md](getting-started/QUICK-START.md) — install and run OmniRoute in 3 minutes.
-- [AUTO-COMBO-GUIDE.md](getting-started/AUTO-COMBO-GUIDE.md) — let OmniRoute pick the best AI for you.
+- [QUICK-START.md](getting-started/QUICK-START.md) — install and run SZRoute in 3 minutes.
+- [AUTO-COMBO-GUIDE.md](getting-started/AUTO-COMBO-GUIDE.md) — let SZRoute pick the best AI for you.
 - [PROVIDERS-GUIDE.md](getting-started/PROVIDERS-GUIDE.md) — how to connect AI providers.
 - [FREE-TIERS-GUIDE.md](getting-started/FREE-TIERS-GUIDE.md) — get free AI with no credit card.
 - [TROUBLESHOOTING.md](getting-started/TROUBLESHOOTING.md) — fix common issues.
 
 ### guides/
 
-- [SETUP_GUIDE.md](guides/SETUP_GUIDE.md) — first-time setup of OmniRoute.
+- [SETUP_GUIDE.md](guides/SETUP_GUIDE.md) — first-time setup of SZRoute.
 - [USER_GUIDE.md](guides/USER_GUIDE.md) — daily usage of the dashboard and API.
-- [DOCKER_GUIDE.md](guides/DOCKER_GUIDE.md) — running OmniRoute under Docker.
+- [DOCKER_GUIDE.md](guides/DOCKER_GUIDE.md) — running SZRoute under Docker.
 - [ELECTRON_GUIDE.md](guides/ELECTRON_GUIDE.md) — desktop (Electron) builds.
 - [TERMUX_GUIDE.md](guides/TERMUX_GUIDE.md) — running on Android via Termux.
 - [PWA_GUIDE.md](guides/PWA_GUIDE.md) — installing the dashboard as a PWA.

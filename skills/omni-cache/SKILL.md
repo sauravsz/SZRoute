@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 Get cache statistics
 
 ```bash
-curl https://localhost:20128/api/cache \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/cache \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### DELETE /api/cache
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/cache \
 Clear all caches
 
 ```bash
-curl -X DELETE https://localhost:20128/api/cache \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/cache \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/cache/stats
@@ -39,8 +39,8 @@ Get detailed cache statistics
 Returns detailed statistics for all cache layers.
 
 ```bash
-curl https://localhost:20128/api/cache/stats \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/cache/stats \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### DELETE /api/cache/stats
@@ -48,8 +48,8 @@ curl https://localhost:20128/api/cache/stats \
 Clear cache statistics
 
 ```bash
-curl -X DELETE https://localhost:20128/api/cache/stats \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/cache/stats \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads

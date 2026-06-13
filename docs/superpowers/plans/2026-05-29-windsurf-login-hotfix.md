@@ -136,7 +136,7 @@ import { WINDSURF_CONFIG } from "../constants/oauth";
  *
  *   1. User opens https://windsurf.com/show-auth-token in a browser
  *   2. Copies the displayed Windsurf API key (`sk-ws-...` style)
- *   3. Pastes it into OmniRoute via /api/oauth/windsurf/import-token
+ *   3. Pastes it into SZRoute via /api/oauth/windsurf/import-token
  *
  * The pasted token is stored as `accessToken` and used directly by `WindsurfExecutor`
  * (open-sse/executors/windsurf.ts) as the `Authorization: Bearer ...` header against
@@ -268,7 +268,7 @@ Append to `tests/unit/windsurf-devin-executors.test.ts`:
 import { GET as oauthGet } from "@/app/api/oauth/[provider]/[action]/route";
 
 test("OAuth route: windsurf/start-callback-server returns 410 Gone", async () => {
-  const url = "http://localhost:20128/api/oauth/windsurf/start-callback-server";
+  const url = "http://localhost:21128/api/oauth/windsurf/start-callback-server";
   const request = new Request(url, { method: "GET" });
   const response = await oauthGet(request, {
     params: Promise.resolve({ provider: "windsurf", action: "start-callback-server" }),
@@ -279,7 +279,7 @@ test("OAuth route: windsurf/start-callback-server returns 410 Gone", async () =>
 });
 
 test("OAuth route: devin-cli/authorize returns 410 Gone", async () => {
-  const url = "http://localhost:20128/api/oauth/devin-cli/authorize";
+  const url = "http://localhost:21128/api/oauth/devin-cli/authorize";
   const request = new Request(url, { method: "GET" });
   const response = await oauthGet(request, {
     params: Promise.resolve({ provider: "devin-cli", action: "authorize" }),
@@ -491,8 +491,8 @@ Run:
 ```bash
 npm run dev &
 sleep 8
-curl -s -o /dev/null -w "%{http_code}\n" http://localhost:20128/api/oauth/windsurf/start-callback-server
-curl -s -o /dev/null -w "%{http_code}\n" http://localhost:20128/api/oauth/devin-cli/authorize
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:21128/api/oauth/windsurf/start-callback-server
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:21128/api/oauth/devin-cli/authorize
 kill %1
 ```
 Expected: both `410`.
@@ -550,7 +550,7 @@ Replace any string mentioning "Sign in", "browser login", or `app.devin.ai` with
 1. Open https://windsurf.com/show-auth-token in your browser
 2. Sign in to your Windsurf account if prompted
 3. Copy the API token displayed on the page
-4. Paste it into the OmniRoute Windsurf connection form
+4. Paste it into the SZRoute Windsurf connection form
 ```
 
 - [ ] **Step 8.4: Sync the other 38 languages**
@@ -630,21 +630,21 @@ npm run dev &
 sleep 10
 # 1. Disabled PKCE actions return 410
 curl -s -o /dev/null -w "GET /windsurf/authorize: %{http_code}\n" \
-  http://localhost:20128/api/oauth/windsurf/authorize
+  http://localhost:21128/api/oauth/windsurf/authorize
 curl -s -o /dev/null -w "GET /windsurf/start-callback-server: %{http_code}\n" \
-  http://localhost:20128/api/oauth/windsurf/start-callback-server
+  http://localhost:21128/api/oauth/windsurf/start-callback-server
 curl -s -o /dev/null -w "GET /devin-cli/authorize: %{http_code}\n" \
-  http://localhost:20128/api/oauth/devin-cli/authorize
+  http://localhost:21128/api/oauth/devin-cli/authorize
 # 2. Codex still works (regression check)
 curl -s -o /dev/null -w "GET /codex/authorize: %{http_code}\n" \
-  http://localhost:20128/api/oauth/codex/authorize
+  http://localhost:21128/api/oauth/codex/authorize
 kill %1
 ```
 Expected: windsurf/devin-cli all `410`. Codex `200` (or whatever it returned before — must be unchanged).
 
 - [ ] **Step 9.6: Manual smoke — paste valid token**
 
-Manual steps in browser at `http://localhost:20128/dashboard/providers`:
+Manual steps in browser at `http://localhost:21128/dashboard/providers`:
 1. Click "Connect" on Windsurf provider
 2. Verify modal does NOT show "Sign in with browser"
 3. Verify "Get your Windsurf API token" link is present

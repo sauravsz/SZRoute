@@ -150,8 +150,8 @@ export async function runEvalRun(suiteId, opts, cmd) {
       await startEvalWatchTui({
         runId: run.id,
         suiteId: opts.suite,
-        baseUrl: globalOpts.baseUrl ?? "http://localhost:20128",
-        apiKey: globalOpts.apiKey ?? process.env.OMNIROUTE_API_KEY,
+        baseUrl: globalOpts.baseUrl ?? "http://localhost:21128",
+        apiKey: globalOpts.apiKey ?? process.env.SZROUTE_API_KEY,
       });
     } else {
       process.stderr.write("\nWatching run... (Ctrl+C to detach)\n");

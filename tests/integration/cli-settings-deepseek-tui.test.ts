@@ -9,7 +9,7 @@ import os from "node:os";
 import path from "node:path";
 
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-deepseek-tui-settings-")
+  path.join(os.tmpdir(), "szroute-deepseek-tui-settings-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-api-key-secret-deepseek-tui";
@@ -78,7 +78,7 @@ test("deepseek-tui-settings POST: 400 when model is missing", async () => {
     new Request("http://localhost/api/cli-tools/deepseek-tui-settings", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ baseUrl: "http://localhost:20128", apiKey: "sk-test" }),
+      body: JSON.stringify({ baseUrl: "http://localhost:21128", apiKey: "sk-test" }),
     })
   );
   assert.equal(res.status, 400, `Expected 400, got ${res.status}`);
@@ -97,7 +97,7 @@ test("deepseek-tui-settings POST: writes config.toml with valid body", async () 
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test-deepseek-key",
           model: "deepseek-coder-v2",
         }),
@@ -113,8 +113,8 @@ test("deepseek-tui-settings POST: writes config.toml with valid body", async () 
       const configPath = path.join(tmpHome, ".config", "deepseek-tui", "config.toml");
       if (fs.existsSync(configPath)) {
         const content = fs.readFileSync(configPath, "utf-8");
-        assert.ok(content.includes("managed by OmniRoute"), "Config should have OmniRoute marker");
-        assert.ok(content.includes("http://localhost:20128"), "Config should contain base URL");
+        assert.ok(content.includes("managed by SZRoute"), "Config should have SZRoute marker");
+        assert.ok(content.includes("http://localhost:21128"), "Config should contain base URL");
         assert.ok(content.includes("[openai]"), "Config should have [openai] section");
       }
     }
@@ -136,7 +136,7 @@ test("deepseek-tui-settings DELETE: removes config file", async () => {
     fs.mkdirSync(configDir, { recursive: true });
     fs.writeFileSync(
       path.join(configDir, "config.toml"),
-      "# managed by OmniRoute (plan 14)\n[openai]\nbase_url = \"http://localhost:20128\"\n"
+      "# managed by SZRoute (plan 14)\n[openai]\nbase_url = \"http://localhost:21128\"\n"
     );
 
     const res = await DELETE(

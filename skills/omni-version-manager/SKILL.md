@@ -21,8 +21,8 @@ Install 9Router from npm
 Installs the `9router` npm package under DATA_DIR/services/9router/. Uses execFile (no shell interpolation — hard rule #13). **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/install \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/install \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -34,8 +34,8 @@ Start 9Router
 Spawns the 9Router process. Idempotent if already running. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/start \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/start \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -47,8 +47,8 @@ Stop 9Router
 Gracefully stops 9Router (SIGTERM → 15 s → SIGKILL). Idempotent. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/stop \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/stop \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -60,8 +60,8 @@ Restart 9Router
 Equivalent to stop() then start() under the operation lock. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/restart \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/restart \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -73,8 +73,8 @@ Update 9Router to a newer npm version
 Stops the service (if running), installs the newer npm version, then restarts. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/update \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/update \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -86,8 +86,8 @@ Rotate the 9Router API key
 Generates a new API key, encrypts it at-rest, and restarts the service to apply it. The plaintext key is never returned. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/rotate-key \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/rotate-key \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -99,19 +99,19 @@ Get 9Router status
 Returns combined live supervisor state and DB metadata. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl https://localhost:20128/api/services/9router/status \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/services/9router/status \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/services/9router/auto-start
 
 Toggle 9Router auto-start
 
-When enabled, 9Router starts automatically on the next OmniRoute boot. **LOCAL_ONLY** — loopback only.
+When enabled, 9Router starts automatically on the next SZRoute boot. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/9router/auto-start \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/9router/auto-start \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -123,8 +123,8 @@ Install CLIProxyAPI from npm
 Installs the CLIProxyAPI package under DATA_DIR/services/cliproxy/. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/install \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/install \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -136,8 +136,8 @@ Start CLIProxyAPI
 Spawns the CLIProxyAPI process. Idempotent if already running. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/start \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/start \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -149,8 +149,8 @@ Stop CLIProxyAPI
 Gracefully stops CLIProxyAPI. Idempotent. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/stop \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/stop \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -162,8 +162,8 @@ Restart CLIProxyAPI
 stop() then start() under the operation lock. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/restart \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/restart \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -175,8 +175,8 @@ Update CLIProxyAPI to a newer npm version
 Stops, installs newer version, restarts. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/update \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/update \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -188,19 +188,19 @@ Get CLIProxyAPI status
 Returns live supervisor state and DB metadata (no apiKeyMasked — CLIProxyAPI does not use an injected API key). **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl https://localhost:20128/api/services/cliproxy/status \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/services/cliproxy/status \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/services/cliproxy/auto-start
 
 Toggle CLIProxyAPI auto-start
 
-When enabled, CLIProxyAPI starts automatically on the next OmniRoute boot. **LOCAL_ONLY** — loopback only.
+When enabled, CLIProxyAPI starts automatically on the next SZRoute boot. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl -X POST https://localhost:20128/api/services/cliproxy/auto-start \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/services/cliproxy/auto-start \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -212,8 +212,8 @@ Stream service logs via SSE
 Returns a Server-Sent Events stream from the service's in-memory ring buffer (5 MB, circular). Sends a `snapshot` event with historical lines first, then live `log` events, plus a `heartbeat` every 15 s. **LOCAL_ONLY** — loopback only.
 
 ```bash
-curl https://localhost:20128/api/services/{name}/logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/services/{name}/logs \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads

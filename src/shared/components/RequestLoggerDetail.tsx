@@ -256,7 +256,7 @@ export default function RequestLoggerDetail({
 
   const cacheSource = detail?.cacheSource || log.cacheSource || "upstream";
   const cacheSourceLabel =
-    cacheSource === "semantic" ? "Semantic (OmniRoute)" : "Upstream (Provider)";
+    cacheSource === "semantic" ? "Semantic (SZRoute)" : "Upstream (Provider)";
   const cacheSourceClassName =
     cacheSource === "semantic"
       ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
@@ -305,7 +305,7 @@ export default function RequestLoggerDetail({
               </div>
               {hasStatusDiscrepancy && (
                 <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
-                  OmniRoute returned {log.status} even though provider returned {providerStatus}
+                  SZRoute returned {log.status} even though provider returned {providerStatus}
                 </span>
               )}
             </div>

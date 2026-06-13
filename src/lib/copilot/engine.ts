@@ -1,5 +1,5 @@
 /**
- * OmniRoute Copilot — Chat Engine
+ * SZRoute Copilot — Chat Engine
  *
  * Processes user messages, classifies intent, executes tools,
  * queries CodeGraph, invokes CLI commands, or responds with
@@ -39,7 +39,7 @@ function getKnowledgeResponse(query: string): string | null {
     /architecture|arquitectura|pipeline/.test(q) ||
     (q.includes("request") && (q.includes("flow") || q.includes("path")))
   ) {
-    return `## OmniRoute Architecture
+    return `## SZRoute Architecture
 
 The request pipeline flows through:
 1. **API Route** → CORS → Zod validation → Auth (optional)
@@ -78,14 +78,14 @@ Combos chain multiple targets (provider+model) with a strategy:
 - \`context-relay\`: Relay context between models
 - \`lkgp\`: Last Known Good Provider
 
-Use \`createCombo\` tool or \`runOmniRouteCli\` to create them.`;
+Use \`createCombo\` tool or \`runSZRouteCli\` to create them.`;
   }
 
   // Provider questions
   if (/provider|proveedor/.test(q)) {
     return `## Providers (212+)
 
-OmniRoute supports 212+ providers across categories:
+SZRoute supports 212+ providers across categories:
 - **Free**: Qoder AI, Qwen Code, Gemini CLI, Kiro AI
 - **OAuth** (14): Claude Code, Antigravity, Codex, GitHub Copilot, Cursor, Kimi Coding, Windsurf, etc.
 - **API Key** (120+): OpenAI, Anthropic, Gemini, DeepSeek, Groq, xAI, Mistral, etc.
@@ -114,7 +114,7 @@ Use \`listProviders\` to see your configured ones.`;
   if (/codigo|código|codebase|cómo funciona|how does|where is|dónde está/.test(q)) {
     return `## Codebase Investigation
 
-I can use CodeGraph to explore the OmniRoute codebase. Just ask me:
+I can use CodeGraph to explore the SZRoute codebase. Just ask me:
 - "Busca la función handleChatCore"
 - "Quién llama a sanitizeMessage?"
 - "Qué funciones hay en combo.ts?"
@@ -212,14 +212,14 @@ const INTENT_PATTERNS: Array<{
   // ── CLI executor ──
   {
     pattern: /^(?:cli|terminal|ejecuta|run|exec)\s+(.+)/i,
-    tool: "runOmniRouteCli",
+    tool: "runSZRouteCli",
     extractArgs: (m) => ({ command: m[1].trim() }),
   },
 
   // ── Health / status ──
   {
     pattern: /^(?:health|status|salud|estado)$/i,
-    tool: "runOmniRouteCli",
+    tool: "runSZRouteCli",
     extractArgs: () => ({ command: "health" }),
   },
 
@@ -244,7 +244,7 @@ function classifyIntent(text: string): { tool: string; args: Record<string, unkn
 // ── Help Response ────────────────────────────────────────────────────────────
 
 function getHelpResponse(): string {
-  return `## OmniRoute Copilot — Comandos disponibles
+  return `## SZRoute Copilot — Comandos disponibles
 
 ### Configuración
 - "Lista los providers" → \`listProviders\`
@@ -262,12 +262,12 @@ function getHelpResponse(): string {
 - "Lista los archivos indexados" → \`listCodeGraphFiles\`
 
 ### CLI
-- "CLI health" → ejecuta \`omniroute health\`
-- "CLI list-combos" → ejecuta \`omniroute list-combos\`
-- "CLI set-budget 10" → ejecuta \`omniroute set-budget 10\`
+- "CLI health" → ejecuta \`szroute health\`
+- "CLI list-combos" → ejecuta \`szroute list-combos\`
+- "CLI set-budget 10" → ejecuta \`szroute set-budget 10\`
 
 ### Conocimiento
-- "Cómo funciona OmniRoute?" → explica la arquitectura
+- "Cómo funciona SZRoute?" → explica la arquitectura
 - "Qué son los combos?" → explica routing
 - "Cómo debuggeo un error?" → troubleshooting
 
@@ -298,7 +298,7 @@ export async function processCopilotChat(request: CopilotRequest): Promise<Copil
     }
     // Fallback: respond with help
     return {
-      message: `I understand you want help with OmniRoute.\n\n${getHelpResponse()}`,
+      message: `I understand you want help with SZRoute.\n\n${getHelpResponse()}`,
     };
   }
 
@@ -346,14 +346,14 @@ Puedes decirme algo como:
   }
 
   // Handle CLI executor — pass the full command
-  if (intent.tool === "runOmniRouteCli") {
-    const tool = getCopilotTool("runOmniRouteCli");
+  if (intent.tool === "runSZRouteCli") {
+    const tool = getCopilotTool("runSZRouteCli");
     if (!tool) return { message: "Error: CLI executor not found." };
 
     const result = await tool.handler(intent.args);
     return {
       message: result,
-      toolCalls: [{ name: "runOmniRouteCli", args: intent.args, result }],
+      toolCalls: [{ name: "runSZRouteCli", args: intent.args, result }],
     };
   }
 

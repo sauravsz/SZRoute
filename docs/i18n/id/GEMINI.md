@@ -22,4 +22,4 @@ Saat membuat _tes validasi_ atau skrip logika sekali pakai, default ke penggunaa
 
 | Lingkungan | URL                       | Kata Sandi |
 | ---------- | ------------------------- | ---------- |
-| VPS Lokal  | http://192.168.0.15:20128 | 123456     |
+| VPS Lokal  | http://192.168.0.15:21128 | 123456     |

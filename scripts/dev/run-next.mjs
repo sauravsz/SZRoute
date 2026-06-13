@@ -30,7 +30,7 @@ if (fs.existsSync(rootAppDir) && fs.statSync(rootAppDir).isDirectory()) {
   console.error(`A root-level 'app/' directory was found at: ${rootAppDir}`);
   console.error("This conflicts with the 'src/app/' directory on Windows environments.");
   console.error("Next.js will serve 404s for all pages because it prefers the root 'app/' folder.");
-  console.error("Please rename or delete the root 'app/' directory before starting OmniRoute.\n");
+  console.error("Please rename or delete the root 'app/' directory before starting SZRoute.\n");
   process.exit(1);
 }
 
@@ -55,8 +55,8 @@ for (const [key, value] of Object.entries(mergedEnv)) {
 
 const { dashboardPort } = runtimePorts;
 const hostname = process.env.HOST || "0.0.0.0";
-const useTurbopack = dev && mergedEnv.OMNIROUTE_USE_TURBOPACK === "1";
-process.env.OMNIROUTE_WS_BRIDGE_SECRET ||= randomUUID();
+const useTurbopack = dev && mergedEnv.SZROUTE_USE_TURBOPACK === "1";
+process.env.SZROUTE_WS_BRIDGE_SECRET ||= randomUUID();
 // Per-process secret used to prove the trusted peer-IP stamp came from this
 // server (read by the authz middleware in the same process). See peer-stamp.mjs.
 ensurePeerStampToken();
@@ -76,7 +76,7 @@ async function start() {
   const upgradeHandler = nextApp.getUpgradeHandler();
   const responsesWsProxy = createResponsesWsProxy({
     baseUrl: `http://127.0.0.1:${dashboardPort}`,
-    bridgeSecret: process.env.OMNIROUTE_WS_BRIDGE_SECRET,
+    bridgeSecret: process.env.SZROUTE_WS_BRIDGE_SECRET,
   });
   const wsBridge = createOmnirouteWsBridge({
     baseUrl: `http://127.0.0.1:${dashboardPort}`,

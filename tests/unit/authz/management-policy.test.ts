@@ -10,7 +10,7 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.API_KEY_SECRET = "test-secret";
 // API-key validation falls through to a Redis-backed cache otherwise — disable
 // it for the local test loop so isValidApiKey() does not stall on ETIMEDOUT.
-process.env.OMNIROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
+process.env.SZROUTE_DISABLE_REDIS_AUTH_CACHE = "1";
 
 const core = await import("../../../src/lib/db/core.ts");
 const apiKeysDb = await import("../../../src/lib/db/apiKeys.ts");
@@ -321,7 +321,7 @@ test("LOCAL_ONLY manage-scope bypass: loopback + no Bearer → allow (local CLI 
 
   const policy = await loadPolicy();
   const out = await policy.evaluate(
-    ctx(new Headers({ host: "localhost:20128" }), "GET", "/api/mcp/stream", {
+    ctx(new Headers({ host: "localhost:21128" }), "GET", "/api/mcp/stream", {
       socket: { remoteAddress: "127.0.0.1" },
     })
   );

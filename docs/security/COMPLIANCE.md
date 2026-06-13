@@ -9,7 +9,7 @@ lastUpdated: 2026-05-13
 > **Source of truth:** `src/lib/compliance/`, `src/app/api/compliance/`
 > **Last updated:** 2026-05-13 — v3.8.0
 
-OmniRoute records administrative actions, authentication events, provider
+SZRoute records administrative actions, authentication events, provider
 credential lifecycle changes, and MCP tool invocations to SQLite-backed audit
 tables. This page covers what gets logged, where it lives, how long it is
 retained, how API keys can opt out, and how to query the data.
@@ -129,7 +129,7 @@ into an in-memory set for hot-path lookups.
 
 ```bash
 # Create a no-log key (management auth required)
-curl -X POST http://localhost:20128/api/keys \
+curl -X POST http://localhost:21128/api/keys \
   -H "Cookie: auth_token=..." \
   -H "Content-Type: application/json" \
   -d '{"name": "Privacy key", "noLog": true}'
@@ -173,7 +173,7 @@ The response is a JSON array. Pagination metadata is returned in headers:
 `x-total-count`, `x-page-limit`, `x-page-offset`.
 
 ```bash
-curl "http://localhost:20128/api/compliance/audit-log?action=provider.credentials&from=2026-05-01" \
+curl "http://localhost:21128/api/compliance/audit-log?action=provider.credentials&from=2026-05-01" \
   -H "Cookie: auth_token=..."
 ```
 

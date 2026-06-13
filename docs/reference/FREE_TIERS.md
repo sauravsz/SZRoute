@@ -11,7 +11,7 @@ lastUpdated: 2026-06-05
 > **Last researched:** 2026-06-05 — per-provider web research of current free-tier quotas + ToS (98 providers).
 > **Source of truth (catalog):** `src/shared/constants/providers.ts` (`hasFree: true` + `freeNote`). The token-budget numbers below come from live web research and are an **approximation** — see [Methodology & caveats](#methodology--caveats).
 
-## TL;DR — how much free inference does OmniRoute actually aggregate?
+## TL;DR — how much free inference does SZRoute actually aggregate?
 
 | Metric | Tokens / month | Meaning |
 |---|---|---|
@@ -19,7 +19,7 @@ lastUpdated: 2026-06-05
 | **+ first month with signup credits** | **~2.53B** | Steady + one-time signup credits (DeepSeek 5M, Together, Jina, …), deduped per account. **First month only** — does not recur. |
 | Theoretical ceiling (all rate limits, 24/7) | ~10.87B | Sum of every provider rate limit extrapolated to non-stop use. **Not a guarantee** — do not headline this. |
 
-**Honest headline:** *OmniRoute aggregates **over 1.9B documented free tokens per month** (up to ~2.5B in your first month with signup credits) across 50+ free-tier pools — and RTK + Caveman compression (15–95% token savings) stretches that further.*
+**Honest headline:** *SZRoute aggregates **over 1.9B documented free tokens per month** (up to ~2.5B in your first month with signup credits) across 50+ free-tier pools — and RTK + Caveman compression (15–95% token savings) stretches that further.*
 
 > The earlier **~1.54B** figure was a conservative per-PROVIDER estimate (22 hand-picked providers). The **~1.94B** above is the per-MODEL catalog (530 models / 50 pools, `open-sse/config/freeModelCatalog.ts`) — now the canonical source. Both use pool deduplication; the per-model catalog is simply more complete.
 
@@ -44,7 +44,7 @@ Biggest **documented** contributors: `mistral` 1.00B, `longcat` 150M, `cloudflar
 
 ### ⚠️ Caution — personal-use / proxy clauses worth checking (19)
 
-> Their free access is real and OmniRoute can route to them; the clauses below are just worth knowing. The OAuth/keyless ones aren't token-quantifiable, so they're not in the headline number (not because they're unusable).
+> Their free access is real and SZRoute can route to them; the clauses below are just worth knowing. The OAuth/keyless ones aren't token-quantifiable, so they're not in the headline number (not because they're unusable).
 
 
 | Provider | Note |
@@ -60,7 +60,7 @@ Biggest **documented** contributors: `mistral` 1.00B, `longcat` 150M, `cloudflar
 | `friendliai` | ToS Section 8(e) and 8(f) explicitly prohibit using FriendliAI as a proxy or allowing third-party access on a standalone basis, and forbid reselling/… |
 | `gemini-cli` | Google explicitly prohibits using Gemini CLI's OAuth authentication with third-party software/proxies; violations result in account bans (mass bans w… |
 | `iflytek` | Section 2.4(3) of the iFlytek Spark LLM Service Agreement explicitly prohibits "using any automated or programmatic methods to extract data or output… |
-| `kiro` | Kiro FAQ explicitly prohibits use with "OpenClaw and similar tools that leverage third-party harnesses" — a self-hosted AI proxy (like OmniRoute) rou… |
+| `kiro` | Kiro FAQ explicitly prohibits use with "OpenClaw and similar tools that leverage third-party harnesses" — a self-hosted AI proxy (like SZRoute) rou… |
 | `modal` | ToS Section 1.3 explicitly prohibits "rent, resell or otherwise allow any third party direct access to or use of the Service" — building a self-hoste… |
 | `muse-spark-web` | Meta ToS explicitly prohibits automated access without prior permission, reverse engineering without written permission, and circumventing technologi… |
 | `nlpcloud` | ToS explicitly prohibits "setting up a proxy or other device that allows others to access the Service through it" and grants only a non-transferable,… |
@@ -266,7 +266,7 @@ Biggest **documented** contributors: `mistral` 1.00B, `longcat` 150M, `cloudflar
 
 - **`360ai`** — The shipped freeNote "Free 360 AI Brain models" appears outdated. Current access is application-gated and paid. The 2023 launch-era promotional tokens (100M–250M one-time) may have been the basis for…
 - **`agentrouter`** — Our shipped freeNote says "$200 free credits on signup." Current reality shows standard (non-referral) signups receive only $100; referral signups may get $200 but a community comment from April 2026…
-- **`agy`** — Our shipped freeNote says "(none)" implying no free tier, but Antigravity does have a free OAuth-gated tier. However, the ToS explicitly prohibits using this free tier through a proxy like OmniRoute …
+- **`agy`** — Our shipped freeNote says "(none)" implying no free tier, but Antigravity does have a free OAuth-gated tier. However, the ToS explicitly prohibits using this free tier through a proxy like SZRoute …
 - **`ai21`** — Tightened: trial window shrunk from "3 months" to 7 days. The $10 credit amount remains the same, but validity dropped sharply from ~90 days to 7 days.
 - **`aimlapi`** — Changed significantly. Shipped freeNote advertised "$0.025/day free credits — 200+ models" but the free tier is now paused/discontinued. The $0.025/day credit allocation (50,000 credits/day, 10 req/d…
 - **`amazon-q`** — Our shipped freeNote says "(none)" — the reality is worse: the product is now discontinued for new signups (May 15, 2026). Previously the free tier offered 50 agentic requests/month + unlimited inlin…

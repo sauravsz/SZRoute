@@ -20,7 +20,7 @@ import path from "node:path";
 
 // Set up a temp DATA_DIR so getDbInstance() initialises cleanly
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-improve-prompt-")
+  path.join(os.tmpdir(), "szroute-improve-prompt-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 // Disable mandatory auth for most tests
@@ -30,7 +30,7 @@ const { POST, OPTIONS } = await import(
   "../../src/app/api/playground/improve-prompt/route.ts"
 );
 
-const BASE_URL = "http://localhost:20128";
+const BASE_URL = "http://localhost:21128";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -267,7 +267,7 @@ test("upstream network error is sanitized", async () => {
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = (async () => {
-      throw new Error("ECONNREFUSED connect ECONNREFUSED 127.0.0.1:20128");
+      throw new Error("ECONNREFUSED connect ECONNREFUSED 127.0.0.1:21128");
     }) as typeof fetch;
 
     const res = await POST(

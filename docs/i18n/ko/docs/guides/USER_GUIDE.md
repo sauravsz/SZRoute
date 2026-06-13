@@ -4,7 +4,7 @@
 
 ---
 
-Complete guide for configuring providers, creating combos, integrating CLI tools, and deploying OmniRoute.
+Complete guide for configuring providers, creating combos, integrating CLI tools, and deploying SZRoute.
 
 ---
 
@@ -128,7 +128,7 @@ Models:
   cc/claude-haiku-4-5-20251001
 ```
 
-**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. OmniRoute tracks quota per model!
+**Pro Tip:** Use Opus for complex tasks, Sonnet for speed. SZRoute tracks quota per model!
 
 #### OpenAI Codex (Plus/Pro)
 
@@ -259,8 +259,8 @@ Cost: $0 forever!
 
 ```
 Settings → Models → Advanced:
-  OpenAI API Base URL: http://localhost:20128/v1
-  OpenAI API Key: [from omniroute dashboard]
+  OpenAI API Base URL: http://localhost:21128/v1
+  OpenAI API Key: [from szroute dashboard]
   Model: cc/claude-opus-4-7
 ```
 
@@ -270,16 +270,16 @@ Edit `~/.claude/config.json`:
 
 ```json
 {
-  "anthropic_api_base": "http://localhost:20128/v1",
-  "anthropic_api_key": "your-omniroute-api-key"
+  "anthropic_api_base": "http://localhost:21128/v1",
+  "anthropic_api_key": "your-szroute-api-key"
 }
 ```
 
 ### Codex CLI
 
 ```bash
-export OPENAI_BASE_URL="http://localhost:20128"
-export OPENAI_API_KEY="your-omniroute-api-key"
+export OPENAI_BASE_URL="http://localhost:21128"
+export OPENAI_API_KEY="your-szroute-api-key"
 codex "your prompt"
 ```
 
@@ -291,14 +291,14 @@ Edit `~/.openclaw/openclaw.json`:
 {
   "agents": {
     "defaults": {
-      "model": { "primary": "omniroute/if/glm-4.7" }
+      "model": { "primary": "szroute/if/glm-4.7" }
     }
   },
   "models": {
     "providers": {
-      "omniroute": {
-        "baseUrl": "http://localhost:20128/v1",
-        "apiKey": "your-omniroute-api-key",
+      "szroute": {
+        "baseUrl": "http://localhost:21128/v1",
+        "apiKey": "your-szroute-api-key",
         "api": "openai-completions",
         "models": [{ "id": "if/glm-4.7", "name": "glm-4.7" }]
       }
@@ -313,7 +313,7 @@ Edit `~/.openclaw/openclaw.json`:
 
 ```
 Provider: OpenAI Compatible
-Base URL: http://localhost:20128/v1
+Base URL: http://localhost:21128/v1
 API Key: [from dashboard]
 Model: cc/claude-opus-4-7
 ```
@@ -325,50 +325,50 @@ Model: cc/claude-opus-4-7
 ### Global npm install (Recommended)
 
 ```bash
-npm install -g omniroute
+npm install -g szroute
 
 # Create config directory
-mkdir -p ~/.omniroute
+mkdir -p ~/.szroute
 
 # Create .env file (see .env.example)
-cp .env.example ~/.omniroute/.env
+cp .env.example ~/.szroute/.env
 
 # Start server
-omniroute
+szroute
 # Or with custom port:
-omniroute --port 3000
+szroute --port 3000
 ```
 
-The CLI automatically loads `.env` from `~/.omniroute/.env` or `./.env`.
+The CLI automatically loads `.env` from `~/.szroute/.env` or `./.env`.
 
 ### Uninstalling
 
-When you no longer need OmniRoute, we provide two quick scripts for a clean removal:
+When you no longer need SZRoute, we provide two quick scripts for a clean removal:
 
 | Command                  | Action                                                                              |
 | ------------------------ | ----------------------------------------------------------------------------------- |
-| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.omniroute`.  |
+| `npm run uninstall`      | Removes the system app but **keeps your DB and configurations** in `~/.szroute`.  |
 | `npm run uninstall:full` | Removes the app AND permanently **erases all configurations, keys, and databases**. |
 
-> Note: To run these commands, navigate to the OmniRoute project folder (if you cloned it) and run them. Alternatively, if globally installed, you can simply run `npm uninstall -g omniroute`.
+> Note: To run these commands, navigate to the SZRoute project folder (if you cloned it) and run them. Alternatively, if globally installed, you can simply run `npm uninstall -g szroute`.
 
 ### VPS Deployment
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute && npm install && npm run build
+git clone https://github.com/sauravsz/SZRoute.git
+cd SZRoute && npm install && npm run build
 
 export JWT_SECRET="your-secure-secret-change-this"
 export INITIAL_PASSWORD="your-password"
-export DATA_DIR="/var/lib/omniroute"
-export PORT="20128"
+export DATA_DIR="/var/lib/szroute"
+export PORT="21128"
 export HOSTNAME="0.0.0.0"
 export NODE_ENV="production"
-export NEXT_PUBLIC_BASE_URL="http://localhost:20128"
+export NEXT_PUBLIC_BASE_URL="http://localhost:21128"
 export API_KEY_SECRET="endpoint-proxy-api-key-secret"
 
 npm run start
-# Or: pm2 start npm --name omniroute -- start
+# Or: pm2 start npm --name szroute -- start
 ```
 
 ### PM2 Deployment (Low Memory)
@@ -377,10 +377,10 @@ For servers with limited RAM, use the memory limit option:
 
 ```bash
 # With 512MB limit (default)
-pm2 start npm --name omniroute -- start
+pm2 start npm --name szroute -- start
 
 # Or with custom memory limit
-OMNIROUTE_MEMORY_MB=512 pm2 start npm --name omniroute -- start
+SZROUTE_MEMORY_MB=512 pm2 start npm --name szroute -- start
 
 # Or using ecosystem.config.js
 pm2 start ecosystem.config.js
@@ -392,12 +392,12 @@ Create `ecosystem.config.js`:
 module.exports = {
   apps: [
     {
-      name: "omniroute",
+      name: "szroute",
       script: "npm",
       args: "start",
       env: {
         NODE_ENV: "production",
-        OMNIROUTE_MEMORY_MB: "512",
+        SZROUTE_MEMORY_MB: "512",
         JWT_SECRET: "your-secret",
         INITIAL_PASSWORD: "your-password",
       },
@@ -412,24 +412,24 @@ module.exports = {
 
 ```bash
 # Build image (default = runner-cli with codex/claude/droid preinstalled)
-docker build -t omniroute:cli .
+docker build -t szroute:cli .
 
 # Portable mode (recommended)
-docker run -d --name omniroute -p 20128:20128 --env-file ./.env -v omniroute-data:/app/data omniroute:cli
+docker run -d --name szroute -p 21128:21128 --env-file ./.env -v szroute-data:/app/data szroute:cli
 ```
 
 For host-integrated mode with CLI binaries, see the Docker section in the main docs.
 
 ### Void Linux (xbps-src)
 
-Void Linux users can package and install OmniRoute natively using the `xbps-src` cross-compilation framework. This automates the Node.js standalone build along with the required `better-sqlite3` native bindings.
+Void Linux users can package and install SZRoute natively using the `xbps-src` cross-compilation framework. This automates the Node.js standalone build along with the required `better-sqlite3` native bindings.
 
 <details>
 <summary><b>View xbps-src template</b></summary>
 
 ```bash
-# Template file for 'omniroute'
-pkgname=omniroute
+# Template file for 'szroute'
+pkgname=szroute
 version=3.2.4
 revision=1
 hostmakedepends="nodejs python3 make"
@@ -437,11 +437,11 @@ depends="openssl"
 short_desc="Universal AI gateway with smart routing for multiple LLM providers"
 maintainer="zenobit <zenobit@disroot.org>"
 license="MIT"
-homepage="https://github.com/diegosouzapw/OmniRoute"
-distfiles="https://github.com/diegosouzapw/OmniRoute/archive/refs/tags/v${version}.tar.gz"
+homepage="https://github.com/sauravsz/SZRoute"
+distfiles="https://github.com/sauravsz/SZRoute/archive/refs/tags/v${version}.tar.gz"
 checksum=009400afee90a9f32599d8fe734145cfd84098140b7287990183dde45ae2245b
-system_accounts="_omniroute"
-omniroute_homedir="/var/lib/omniroute"
+system_accounts="_szroute"
+szroute_homedir="/var/lib/szroute"
 export NODE_ENV=production
 export npm_config_engine_strict=false
 export npm_config_loglevel=error
@@ -491,26 +491,26 @@ do_check() {
 }
 
 do_install() {
-	vmkdir usr/lib/omniroute/.next
-	vcopy .next/standalone/. usr/lib/omniroute/.next/standalone
+	vmkdir usr/lib/szroute/.next
+	vcopy .next/standalone/. usr/lib/szroute/.next/standalone
 
 	# Prevent removal of empty Next.js app router dirs by the post-install hook
 	for _d in \
 		.next/standalone/.next/server/app/dashboard \
 		.next/standalone/.next/server/app/dashboard/settings \
 		.next/standalone/.next/server/app/dashboard/providers; do
-		touch "${DESTDIR}/usr/lib/omniroute/${_d}/.keep"
+		touch "${DESTDIR}/usr/lib/szroute/${_d}/.keep"
 	done
 
-	cat > "${WRKDIR}/omniroute" <<'EOF'
+	cat > "${WRKDIR}/szroute" <<'EOF'
 #!/bin/sh
-export PORT="${PORT:-20128}"
-export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/omniroute}"
+export PORT="${PORT:-21128}"
+export DATA_DIR="${DATA_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/szroute}"
 export APP_LOG_TO_FILE="${APP_LOG_TO_FILE:-false}"
 mkdir -p "${DATA_DIR}"
-exec node /usr/lib/omniroute/.next/standalone/server.js "$@"
+exec node /usr/lib/szroute/.next/standalone/server.js "$@"
 EOF
-	vbin "${WRKDIR}/omniroute"
+	vbin "${WRKDIR}/szroute"
 }
 
 post_install() {
@@ -524,14 +524,14 @@ post_install() {
 
 | Variable                                | Default                              | Description                                                                                               |
 | --------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`                            | `omniroute-default-secret-change-me` | JWT signing secret (**change in production**)                                                             |
+| `JWT_SECRET`                            | `szroute-default-secret-change-me` | JWT signing secret (**change in production**)                                                             |
 | `INITIAL_PASSWORD`                      | `123456`                             | First login password                                                                                      |
-| `DATA_DIR`                              | `~/.omniroute`                       | Data directory (db, usage, logs)                                                                          |
-| `PORT`                                  | framework default                    | Service port (`20128` in examples)                                                                        |
+| `DATA_DIR`                              | `~/.szroute`                       | Data directory (db, usage, logs)                                                                          |
+| `PORT`                                  | framework default                    | Service port (`21128` in examples)                                                                        |
 | `HOSTNAME`                              | framework default                    | Bind host (Docker defaults to `0.0.0.0`)                                                                  |
 | `NODE_ENV`                              | runtime default                      | Set `production` for deploy                                                                               |
-| `BASE_URL`                              | `http://localhost:20128`             | Server-side internal base URL                                                                             |
-| `CLOUD_URL`                             | `https://omniroute.dev`              | Cloud sync endpoint base URL                                                                              |
+| `BASE_URL`                              | `http://localhost:21128`             | Server-side internal base URL                                                                             |
+| `CLOUD_URL`                             | `https://szroute.dev`              | Cloud sync endpoint base URL                                                                              |
 | `API_KEY_SECRET`                        | `endpoint-proxy-api-key-secret`      | HMAC secret for generated API keys                                                                        |
 | `REQUIRE_API_KEY`                       | `false`                              | Enforce Bearer API key on `/v1/*`                                                                         |
 | `ALLOW_API_KEY_REVEAL`                  | `false`                              | Allow Api Manager to copy full API keys on demand                                                         |
@@ -541,7 +541,7 @@ post_install() {
 | `AUTH_COOKIE_SECURE`                    | `false`                              | Force `Secure` auth cookie (behind HTTPS reverse proxy)                                                   |
 | `CLOUDFLARED_BIN`                       | unset                                | Use an existing `cloudflared` binary instead of managed download                                          |
 | `CLOUDFLARED_PROTOCOL`                  | `http2`                              | Transport for managed Quick Tunnels (`http2`, `quic`, or `auto`)                                          |
-| `OMNIROUTE_MEMORY_MB`                   | `512`                                | Node.js heap limit in MB                                                                                  |
+| `SZROUTE_MEMORY_MB`                   | `512`                                | Node.js heap limit in MB                                                                                  |
 | `PROMPT_CACHE_MAX_SIZE`                 | `50`                                 | Max prompt cache entries                                                                                  |
 | `SEMANTIC_CACHE_MAX_SIZE`               | `100`                                | Max semantic cache entries                                                                                |
 
@@ -604,12 +604,12 @@ Add any model ID to any provider without waiting for an app update:
 
 ```bash
 # Via API
-curl -X POST http://localhost:20128/api/provider-models \
+curl -X POST http://localhost:21128/api/provider-models \
   -H "Content-Type: application/json" \
   -d '{"provider": "openai", "modelId": "gpt-4.5-preview", "modelName": "GPT-4.5 Preview"}'
 
-# List: curl http://localhost:20128/api/provider-models?provider=openai
-# Remove: curl -X DELETE "http://localhost:20128/api/provider-models?provider=openai&model=gpt-4.5-preview"
+# List: curl http://localhost:21128/api/provider-models?provider=openai
+# Remove: curl -X DELETE "http://localhost:21128/api/provider-models?provider=openai&model=gpt-4.5-preview"
 ```
 
 Or use Dashboard: **Providers → [Provider] → Custom Models**.
@@ -624,9 +624,9 @@ Notes:
 Route requests directly to a specific provider with model validation:
 
 ```bash
-POST http://localhost:20128/v1/providers/openai/chat/completions
-POST http://localhost:20128/v1/providers/openai/embeddings
-POST http://localhost:20128/v1/providers/fireworks/images/generations
+POST http://localhost:21128/v1/providers/openai/chat/completions
+POST http://localhost:21128/v1/providers/openai/embeddings
+POST http://localhost:21128/v1/providers/fireworks/images/generations
 ```
 
 The provider prefix is auto-added if missing. Mismatched models return `400`.
@@ -635,15 +635,15 @@ The provider prefix is auto-added if missing. Mismatched models return `400`.
 
 ```bash
 # Set global proxy
-curl -X PUT http://localhost:20128/api/settings/proxy \
+curl -X PUT http://localhost:21128/api/settings/proxy \
   -d '{"global": {"type":"http","host":"proxy.example.com","port":"8080"}}'
 
 # Per-provider proxy
-curl -X PUT http://localhost:20128/api/settings/proxy \
+curl -X PUT http://localhost:21128/api/settings/proxy \
   -d '{"providers": {"openai": {"type":"socks5","host":"proxy.example.com","port":"1080"}}}'
 
 # Test proxy
-curl -X POST http://localhost:20128/api/settings/proxy/test \
+curl -X POST http://localhost:21128/api/settings/proxy/test \
   -d '{"proxy":{"type":"socks5","host":"proxy.example.com","port":"1080"}}'
 ```
 
@@ -652,7 +652,7 @@ curl -X POST http://localhost:20128/api/settings/proxy/test \
 ### Model Catalog API
 
 ```bash
-curl http://localhost:20128/api/models/catalog
+curl http://localhost:21128/api/models/catalog
 ```
 
 Returns models grouped by provider with types (`chat`, `embedding`, `image`).
@@ -668,7 +668,7 @@ Returns models grouped by provider with types (`chat`, `embedding`, `image`).
 - Available in **Dashboard → Endpoints** for Docker and other self-hosted deployments
 - Creates a temporary `https://*.trycloudflare.com` URL that forwards to your current OpenAI-compatible `/v1` endpoint
 - First enable installs `cloudflared` only when needed; later restarts reuse the same managed binary
-- Quick Tunnels are not auto-restored after an OmniRoute or container restart; re-enable them from the dashboard when needed
+- Quick Tunnels are not auto-restored after an SZRoute or container restart; re-enable them from the dashboard when needed
 - Tunnel URLs are ephemeral and change every time you stop/start the tunnel
 - Managed Quick Tunnels default to HTTP/2 transport to avoid noisy QUIC UDP buffer warnings in constrained containers
 - Set `CLOUDFLARED_PROTOCOL=quic` or `auto` if you want to override the managed transport choice
@@ -676,15 +676,15 @@ Returns models grouped by provider with types (`chat`, `embedding`, `image`).
 
 ### LLM Gateway Intelligence (Phase 9)
 
-- **Semantic Cache** — Auto-caches non-streaming, temperature=0 responses (bypass with `X-OmniRoute-No-Cache: true`)
+- **Semantic Cache** — Auto-caches non-streaming, temperature=0 responses (bypass with `X-SZRoute-No-Cache: true`)
 - **Request Idempotency** — Deduplicates requests within 5s via `Idempotency-Key` or `X-Request-Id` header
-- **Progress Tracking** — Opt-in SSE `event: progress` events via `X-OmniRoute-Progress: true` header
+- **Progress Tracking** — Opt-in SSE `event: progress` events via `X-SZRoute-Progress: true` header
 
 ---
 
 ### Translator Playground
 
-Access via **Dashboard → Translator**. Debug and visualize how OmniRoute translates API requests between providers.
+Access via **Dashboard → Translator**. Debug and visualize how SZRoute translates API requests between providers.
 
 | Mode             | Purpose                                                                                |
 | ---------------- | -------------------------------------------------------------------------------------- |
@@ -722,7 +722,7 @@ For external session affinity (for example, Claude Code/Codex agents behind reve
 X-Session-Id: your-session-key
 ```
 
-OmniRoute also accepts `x_session_id` and returns the effective session key in `X-OmniRoute-Session-Id`.
+SZRoute also accepts `x_session_id` and returns the effective session key in `X-SZRoute-Session-Id`.
 
 If you use Nginx and send underscore-form headers, enable:
 
@@ -758,7 +758,7 @@ Chain: production-fallback
 
 Configure via **Dashboard → Settings → Resilience**.
 
-OmniRoute implements provider-level resilience with five components:
+SZRoute implements provider-level resilience with five components:
 
 1. **Request Queue & Pacing** — System-level request shaping:
    - **Requests Per Minute (RPM)** — Maximum requests per minute per account
@@ -781,7 +781,7 @@ OmniRoute implements provider-level resilience with five components:
 
    The provider breaker runtime state is shown on **Dashboard → Health** only.
 
-4. **Wait For Cooldown** — If every candidate connection is already cooling down, OmniRoute can wait for the earliest cooldown and retry the same client request automatically.
+4. **Wait For Cooldown** — If every candidate connection is already cooling down, SZRoute can wait for the earliest cooldown and retry the same client request automatically.
 
 5. **Rate Limit Auto-Detection** — When upstream providers return explicit wait windows, those hints override the local connection cooldown when the setting is enabled.
 
@@ -801,13 +801,13 @@ Manage database backups in **Dashboard → Settings → System & Storage**.
 
 ```bash
 # API: Export database
-curl -o backup.sqlite http://localhost:20128/api/db-backups/export
+curl -o backup.sqlite http://localhost:21128/api/db-backups/export
 
 # API: Export all (full archive)
-curl -o backup.tar.gz http://localhost:20128/api/db-backups/exportAll
+curl -o backup.tar.gz http://localhost:21128/api/db-backups/exportAll
 
 # API: Import database
-curl -X POST http://localhost:20128/api/db-backups/import \
+curl -X POST http://localhost:21128/api/db-backups/import \
   -F "file=@backup.sqlite"
 ```
 
@@ -815,7 +815,7 @@ curl -X POST http://localhost:20128/api/db-backups/import \
 
 **Use Cases:**
 
-- Migrate OmniRoute between machines
+- Migrate SZRoute between machines
 - Create external backups for disaster recovery
 - Share configurations between team members (export all → share archive)
 
@@ -847,12 +847,12 @@ Access via **Dashboard → Costs**.
 
 ```bash
 # API: Set a budget
-curl -X POST http://localhost:20128/api/usage/budget \
+curl -X POST http://localhost:21128/api/usage/budget \
   -H "Content-Type: application/json" \
   -d '{"keyId": "key-123", "limit": 50.00, "period": "monthly"}'
 
 # API: Get current budget status
-curl http://localhost:20128/api/usage/budget
+curl http://localhost:21128/api/usage/budget
 ```
 
 **Cost Tracking:** Every request logs token usage and calculates cost using the pricing table. View breakdowns in **Dashboard → Usage** by provider, model, and API key.
@@ -861,7 +861,7 @@ curl http://localhost:20128/api/usage/budget
 
 ### Audio Transcription
 
-OmniRoute supports audio transcription via the OpenAI-compatible endpoint:
+SZRoute supports audio transcription via the OpenAI-compatible endpoint:
 
 ```bash
 POST /v1/audio/transcriptions
@@ -869,7 +869,7 @@ Authorization: Bearer your-api-key
 Content-Type: multipart/form-data
 
 # Example with curl
-curl -X POST http://localhost:20128/v1/audio/transcriptions \
+curl -X POST http://localhost:21128/v1/audio/transcriptions \
   -H "Authorization: Bearer your-api-key" \
   -F "file=@audio.mp3" \
   -F "model=deepgram/nova-3"
@@ -917,7 +917,7 @@ Access via **Dashboard → Health**. Real-time system health overview with 6 car
 
 ## 🖥️ Desktop Application (Electron)
 
-OmniRoute is available as a native desktop application for Windows, macOS, and Linux.
+SZRoute is available as a native desktop application for Windows, macOS, and Linux.
 
 ### 설치
 
@@ -960,7 +960,7 @@ Output → `electron/dist-electron/`
 
 | Variable              | Default | Description                      |
 | --------------------- | ------- | -------------------------------- |
-| `OMNIROUTE_PORT`      | `20128` | Server port                      |
-| `OMNIROUTE_MEMORY_MB` | `512`   | Node.js heap limit (64–16384 MB) |
+| `SZROUTE_PORT`      | `21128` | Server port                      |
+| `SZROUTE_MEMORY_MB` | `512`   | Node.js heap limit (64–16384 MB) |
 
 📖 Full documentation: [`electron/README.md`](../electron/README.md)

@@ -13,7 +13,7 @@ function defaultConfig() {
     version: CONFIG_VERSION,
     currentContext: "default",
     contexts: {
-      default: { baseUrl: `http://localhost:${process.env.PORT || "20128"}`, apiKey: null },
+      default: { baseUrl: `http://localhost:${process.env.PORT || "21128"}`, apiKey: null },
     },
   };
 }
@@ -39,5 +39,5 @@ export function saveContexts(cfg) {
 export function resolveActiveContext(overrideName) {
   const cfg = loadContexts();
   const name = overrideName || cfg.currentContext || "default";
-  return cfg.contexts?.[name] || cfg.contexts?.default || { baseUrl: "http://localhost:20128" };
+  return cfg.contexts?.[name] || cfg.contexts?.default || { baseUrl: "http://localhost:21128" };
 }

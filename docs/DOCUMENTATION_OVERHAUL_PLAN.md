@@ -1,4 +1,4 @@
-# OmniRoute Documentation Overhaul Plan
+# SZRoute Documentation Overhaul Plan
 
 > Goal: Make all docs accessible to non-tech users while preserving technical depth for developers.
 > Strategy: Two-tier docs (User Guide + Technical Reference) with cross-links.
@@ -33,7 +33,7 @@
 **Content**:
 - Install (npm, Docker, source)
 - Connect a free provider (3 steps)
-- Point your IDE to OmniRoute
+- Point your IDE to SZRoute
 - Verify it works
 - "What's next?" → link to other guides
 
@@ -218,7 +218,7 @@
 - PROVIDER_REFERENCE.md (→ link to PROVIDERS-GUIDE.md)
 
 ### 3.8 Other Docs (keep as-is)
-- `docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md` — Already user-friendly
+- `docs/comparison/SZROUTE_VS_ALTERNATIVES.md` — Already user-friendly
 - `docs/marketing/TIERS.md` — Already user-friendly
 - `docs/diagrams/README.md` — Keep as-is
 - `docs/dev/plugins.md` — Developer-only
@@ -284,7 +284,7 @@
 
 ## Success Metrics
 
-- [ ] User can install OmniRoute in < 5 minutes (QUICK-START.md)
+- [ ] User can install SZRoute in < 5 minutes (QUICK-START.md)
 - [ ] User can connect a provider in < 3 minutes (PROVIDERS-GUIDE.md)
 - [ ] User can use auto-combo in < 1 minute (AUTO-COMBO-GUIDE.md)
 - [ ] User can find free providers in < 2 minutes (FREE-TIERS-GUIDE.md)

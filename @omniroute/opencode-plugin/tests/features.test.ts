@@ -5,14 +5,14 @@
  * metadata fetchers + the MCP auto-emit branch on the config hook.
  *
  * Surfaces tested:
- *   - `parseOmniRoutePluginOptions({ features: ... })`  → schema accept/reject
+ *   - `parseSZRoutePluginOptions({ features: ... })`  → schema accept/reject
  *   - `applyEnrichment(model, entry)`                   → mutation semantics
  *   - `formatCompressionPipeline(steps)`                → display formatting
- *   - `createOmniRouteProviderHook` with mocked
+ *   - `createSZRouteProviderHook` with mocked
  *     `enrichmentFetcher` / `compressionMetaFetcher`    → overlay applied,
  *                                                         off-by-default
  *                                                         gating works.
- *   - `createOmniRouteConfigHook` with `features.mcpAutoEmit:true`
+ *   - `createSZRouteConfigHook` with `features.mcpAutoEmit:true`
  *                                                       → emits mcp entry
  *                                                       → falls back to
  *                                                         provider apiKey
@@ -34,31 +34,31 @@ import {
   buildAliasIndex,
   buildCanonicalToAliasMap,
   canonicalDedupSet,
-  createOmniRouteConfigHook,
-  createOmniRouteProviderHook,
-  defaultOmniRouteEnrichmentFetcher,
-  defaultOmniRouteCompressionMetaFetcher,
+  createSZRouteConfigHook,
+  createSZRouteProviderHook,
+  defaultSZRouteEnrichmentFetcher,
+  defaultSZRouteCompressionMetaFetcher,
   formatCompressionPipeline,
   lookupEnrichment,
-  parseOmniRoutePluginOptions,
+  parseSZRoutePluginOptions,
   PROVIDER_TAG_SEPARATOR,
   resolveProviderTagEntry,
-  type OmniRouteEnrichmentMap,
-  type OmniRouteCompressionCombo,
-  type OmniRouteRawModelEntry,
+  type SZRouteEnrichmentMap,
+  type SZRouteCompressionCombo,
+  type SZRouteRawModelEntry,
 } from "../src/index.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Zod schema — features block
 // ─────────────────────────────────────────────────────────────────────────
 
-test("parseOmniRoutePluginOptions: empty features object → preserved", () => {
-  const r = parseOmniRoutePluginOptions({ features: {} });
+test("parseSZRoutePluginOptions: empty features object → preserved", () => {
+  const r = parseSZRoutePluginOptions({ features: {} });
   assert.deepEqual(r, { features: {} });
 });
 
-test("parseOmniRoutePluginOptions: all boolean features set → preserved", () => {
-  const r = parseOmniRoutePluginOptions({
+test("parseSZRoutePluginOptions: all boolean features set → preserved", () => {
+  const r = parseSZRoutePluginOptions({
     features: {
       combos: true,
       enrichment: true,
@@ -74,37 +74,37 @@ test("parseOmniRoutePluginOptions: all boolean features set → preserved", () =
   assert.equal(r.features?.mcpAutoEmit, true);
 });
 
-test("parseOmniRoutePluginOptions: mcpToken string → preserved", () => {
-  const r = parseOmniRoutePluginOptions({
+test("parseSZRoutePluginOptions: mcpToken string → preserved", () => {
+  const r = parseSZRoutePluginOptions({
     features: { mcpAutoEmit: true, mcpToken: "sk-mcp-only-token-12345" },
   });
   assert.equal(r.features?.mcpToken, "sk-mcp-only-token-12345");
 });
 
-test("parseOmniRoutePluginOptions: unknown features key → throws (strict)", () => {
+test("parseSZRoutePluginOptions: unknown features key → throws (strict)", () => {
   assert.throws(
     () =>
-      parseOmniRoutePluginOptions({
+      parseSZRoutePluginOptions({
         features: { combos: true, unknown_field: "oops" },
       }),
-    /Invalid @omniroute\/opencode-plugin options/
+    /Invalid @szroute\/opencode-plugin options/
   );
 });
 
-test("parseOmniRoutePluginOptions: non-boolean for boolean feature → throws", () => {
+test("parseSZRoutePluginOptions: non-boolean for boolean feature → throws", () => {
   assert.throws(
     () =>
-      parseOmniRoutePluginOptions({
+      parseSZRoutePluginOptions({
         features: { combos: "yes" as unknown as boolean },
       }),
-    /Invalid @omniroute\/opencode-plugin options/
+    /Invalid @szroute\/opencode-plugin options/
   );
 });
 
-test("parseOmniRoutePluginOptions: empty mcpToken → throws (min 1)", () => {
+test("parseSZRoutePluginOptions: empty mcpToken → throws (min 1)", () => {
   assert.throws(
-    () => parseOmniRoutePluginOptions({ features: { mcpToken: "" } }),
-    /Invalid @omniroute\/opencode-plugin options/
+    () => parseSZRoutePluginOptions({ features: { mcpToken: "" } }),
+    /Invalid @szroute\/opencode-plugin options/
   );
 });
 
@@ -130,7 +130,7 @@ const baseModel = () => ({
   options: {},
   headers: {},
   release_date: "",
-  providerID: "omniroute",
+  providerID: "szroute",
   api: {
     id: "openai-compatible" as const,
     url: "https://or.example.com/v1",
@@ -339,7 +339,7 @@ test("formatCompressionPipeline: unknown intensity falls back to raw text", () =
 // Provider hook — enrichment applied via injected fetcher
 // ─────────────────────────────────────────────────────────────────────────
 
-const SAMPLE_RAW: OmniRouteRawModelEntry[] = [
+const SAMPLE_RAW: SZRouteRawModelEntry[] = [
   {
     id: "claude-sonnet-4-6",
     object: "model",
@@ -360,11 +360,11 @@ const apiAuth = (key: string) => ({ type: "api" as const, key });
 
 test("provider hook: enrichment fetcher called when features.enrichment !== false", async () => {
   let called = 0;
-  const enrichment: OmniRouteEnrichmentMap = new Map([
+  const enrichment: SZRouteEnrichmentMap = new Map([
     ["claude-sonnet-4-6", { name: "Claude Sonnet 4.6", pricing: { input: 3, output: 15 } }],
   ]);
-  const hook = createOmniRouteProviderHook(
-    { providerId: "omniroute", baseURL: "https://or.example.com/v1" },
+  const hook = createSZRouteProviderHook(
+    { providerId: "szroute", baseURL: "https://or.example.com/v1" },
     {
       fetcher: async () => SAMPLE_RAW,
       combosFetcher: async () => [],
@@ -384,9 +384,9 @@ test("provider hook: enrichment fetcher called when features.enrichment !== fals
 
 test("provider hook: enrichment fetcher NOT called when features.enrichment:false", async () => {
   let called = 0;
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     {
-      providerId: "omniroute",
+      providerId: "szroute",
       baseURL: "https://or.example.com/v1",
       features: { enrichment: false },
     },
@@ -406,8 +406,8 @@ test("provider hook: enrichment fetcher NOT called when features.enrichment:fals
 
 test("provider hook: compression metadata fetcher NOT called by default (opt-in)", async () => {
   let called = 0;
-  const hook = createOmniRouteProviderHook(
-    { providerId: "omniroute", baseURL: "https://or.example.com/v1" },
+  const hook = createSZRouteProviderHook(
+    { providerId: "szroute", baseURL: "https://or.example.com/v1" },
     {
       fetcher: async () => SAMPLE_RAW,
       combosFetcher: async () => [],
@@ -424,7 +424,7 @@ test("provider hook: compression metadata fetcher NOT called by default (opt-in)
 
 test("provider hook: compression metadata fetcher called when opted in", async () => {
   let called = 0;
-  const compressionCombos: OmniRouteCompressionCombo[] = [
+  const compressionCombos: SZRouteCompressionCombo[] = [
     {
       id: "default-caveman",
       name: "Standard Savings",
@@ -435,9 +435,9 @@ test("provider hook: compression metadata fetcher called when opted in", async (
       isDefault: true,
     },
   ];
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     {
-      providerId: "omniroute",
+      providerId: "szroute",
       baseURL: "https://or.example.com/v1",
       features: { compressionMetadata: true },
     },
@@ -473,12 +473,12 @@ test("provider hook: compression metadata fetcher called when opted in", async (
 // ─────────────────────────────────────────────────────────────────────────
 
 const stubAuthJson = (apiKey: string) => async () => ({
-  omniroute: { type: "api" as const, key: apiKey },
+  szroute: { type: "api" as const, key: apiKey },
 });
 
 test("config hook: MCP auto-emit OFF by default (no mcp entry)", async () => {
-  const hook = createOmniRouteConfigHook(
-    { providerId: "omniroute", baseURL: "https://or.example.com/v1" },
+  const hook = createSZRouteConfigHook(
+    { providerId: "szroute", baseURL: "https://or.example.com/v1" },
     {
       readAuthJson: stubAuthJson("sk-prod"),
       fetcher: async () => SAMPLE_RAW,
@@ -488,14 +488,14 @@ test("config hook: MCP auto-emit OFF by default (no mcp entry)", async () => {
   );
   const input: { provider?: Record<string, unknown>; mcp?: Record<string, unknown> } = {};
   await hook(input as never);
-  assert.ok(input.provider?.omniroute, "provider block written");
+  assert.ok(input.provider?.szroute, "provider block written");
   assert.equal(input.mcp, undefined, "no mcp block written");
 });
 
 test("config hook: features.mcpAutoEmit:true writes mcp entry with provider apiKey", async () => {
-  const hook = createOmniRouteConfigHook(
+  const hook = createSZRouteConfigHook(
     {
-      providerId: "omniroute",
+      providerId: "szroute",
       baseURL: "https://or.example.com/v1",
       features: { mcpAutoEmit: true },
     },
@@ -508,7 +508,7 @@ test("config hook: features.mcpAutoEmit:true writes mcp entry with provider apiK
   );
   const input: { provider?: Record<string, unknown>; mcp?: Record<string, unknown> } = {};
   await hook(input as never);
-  const entry = input.mcp?.omniroute as
+  const entry = input.mcp?.szroute as
     | { type: string; url: string; enabled: boolean; headers: Record<string, string> }
     | undefined;
   assert.ok(entry, "mcp entry written");
@@ -523,9 +523,9 @@ test("config hook: features.mcpAutoEmit:true writes mcp entry with provider apiK
 });
 
 test("config hook: features.mcpToken overrides provider apiKey in mcp Bearer", async () => {
-  const hook = createOmniRouteConfigHook(
+  const hook = createSZRouteConfigHook(
     {
-      providerId: "omniroute",
+      providerId: "szroute",
       baseURL: "https://or.example.com/v1",
       features: { mcpAutoEmit: true, mcpToken: "sk-mcp-narrower" },
     },
@@ -538,7 +538,7 @@ test("config hook: features.mcpToken overrides provider apiKey in mcp Bearer", a
   );
   const input: { provider?: Record<string, unknown>; mcp?: Record<string, unknown> } = {};
   await hook(input as never);
-  const entry = input.mcp?.omniroute as { headers: Record<string, string> };
+  const entry = input.mcp?.szroute as { headers: Record<string, string> };
   assert.equal(
     entry.headers.Authorization,
     "Bearer sk-mcp-narrower",
@@ -547,9 +547,9 @@ test("config hook: features.mcpToken overrides provider apiKey in mcp Bearer", a
 });
 
 test("config hook: existing operator mcp.<providerId> wins (no overwrite)", async () => {
-  const hook = createOmniRouteConfigHook(
+  const hook = createSZRouteConfigHook(
     {
-      providerId: "omniroute",
+      providerId: "szroute",
       baseURL: "https://or.example.com/v1",
       features: { mcpAutoEmit: true },
     },
@@ -561,26 +561,26 @@ test("config hook: existing operator mcp.<providerId> wins (no overwrite)", asyn
     }
   );
   const input: { provider?: Record<string, unknown>; mcp?: Record<string, unknown> } = {
-    mcp: { omniroute: { type: "custom-user-entry", url: "https://manual.example/mcp" } },
+    mcp: { szroute: { type: "custom-user-entry", url: "https://manual.example/mcp" } },
   };
   await hook(input as never);
   assert.deepEqual(
-    input.mcp?.omniroute,
+    input.mcp?.szroute,
     { type: "custom-user-entry", url: "https://manual.example/mcp" },
     "operator override preserved"
   );
 });
 
 test("config hook: features.mcpAutoEmit:true with /v1 in baseURL → strips correctly", async () => {
-  const hook = createOmniRouteConfigHook(
+  const hook = createSZRouteConfigHook(
     {
-      providerId: "omniroute-preprod",
+      providerId: "szroute-preprod",
       baseURL: "https://or-preprod.example.com/v1",
       features: { mcpAutoEmit: true },
     },
     {
       readAuthJson: async () => ({
-        "omniroute-preprod": { type: "api" as const, key: "sk-preprod" },
+        "szroute-preprod": { type: "api" as const, key: "sk-preprod" },
       }),
       fetcher: async () => SAMPLE_RAW,
       combosFetcher: async () => [],
@@ -589,7 +589,7 @@ test("config hook: features.mcpAutoEmit:true with /v1 in baseURL → strips corr
   );
   const input: { provider?: Record<string, unknown>; mcp?: Record<string, unknown> } = {};
   await hook(input as never);
-  const entry = input.mcp?.["omniroute-preprod"] as { url: string };
+  const entry = input.mcp?.["szroute-preprod"] as { url: string };
   assert.equal(
     entry.url,
     "https://or-preprod.example.com/api/mcp/stream",
@@ -601,18 +601,18 @@ test("config hook: features.mcpAutoEmit:true with /v1 in baseURL → strips corr
 // Default fetchers — soft-fail behavior (no real network)
 // ─────────────────────────────────────────────────────────────────────────
 
-test("defaultOmniRouteEnrichmentFetcher: empty baseURL → empty map", async () => {
-  const m = await defaultOmniRouteEnrichmentFetcher("", "sk", 100);
+test("defaultSZRouteEnrichmentFetcher: empty baseURL → empty map", async () => {
+  const m = await defaultSZRouteEnrichmentFetcher("", "sk", 100);
   assert.equal(m.size, 0);
 });
 
-test("defaultOmniRouteEnrichmentFetcher: empty apiKey → empty map", async () => {
-  const m = await defaultOmniRouteEnrichmentFetcher("https://or.example.com", "", 100);
+test("defaultSZRouteEnrichmentFetcher: empty apiKey → empty map", async () => {
+  const m = await defaultSZRouteEnrichmentFetcher("https://or.example.com", "", 100);
   assert.equal(m.size, 0);
 });
 
-test("defaultOmniRouteCompressionMetaFetcher: empty baseURL → empty array", async () => {
-  const arr = await defaultOmniRouteCompressionMetaFetcher("", "sk", 100);
+test("defaultSZRouteCompressionMetaFetcher: empty baseURL → empty array", async () => {
+  const arr = await defaultSZRouteCompressionMetaFetcher("", "sk", 100);
   assert.equal(arr.length, 0);
 });
 
@@ -623,7 +623,7 @@ test("defaultOmniRouteCompressionMetaFetcher: empty baseURL → empty array", as
 // installed on globalThis.
 // ─────────────────────────────────────────────────────────────────────────
 
-test("defaultOmniRouteEnrichmentFetcher: merges names from /api/pricing/models and prices from /api/pricing", async () => {
+test("defaultSZRouteEnrichmentFetcher: merges names from /api/pricing/models and prices from /api/pricing", async () => {
   const origFetch = globalThis.fetch;
   const calls: string[] = [];
   globalThis.fetch = (async (input: unknown) => {
@@ -669,7 +669,7 @@ test("defaultOmniRouteEnrichmentFetcher: merges names from /api/pricing/models a
   }) as typeof fetch;
 
   try {
-    const map = await defaultOmniRouteEnrichmentFetcher(
+    const map = await defaultSZRouteEnrichmentFetcher(
       "https://or.example.com/v1",
       "sk-test",
       5_000
@@ -703,7 +703,7 @@ test("defaultOmniRouteEnrichmentFetcher: merges names from /api/pricing/models a
   }
 });
 
-test("defaultOmniRouteEnrichmentFetcher: name-only when pricing endpoint 5xxs", async () => {
+test("defaultSZRouteEnrichmentFetcher: name-only when pricing endpoint 5xxs", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = (async (input: unknown) => {
     const url = typeof input === "string" ? input : (input as { url: string }).url;
@@ -718,7 +718,7 @@ test("defaultOmniRouteEnrichmentFetcher: name-only when pricing endpoint 5xxs", 
     return new Response("boom", { status: 500 });
   }) as typeof fetch;
   try {
-    const map = await defaultOmniRouteEnrichmentFetcher("https://or.example.com", "sk-test", 5_000);
+    const map = await defaultSZRouteEnrichmentFetcher("https://or.example.com", "sk-test", 5_000);
     const opus = map.get("cc/claude-opus-4-7");
     assert.equal(opus?.name, "Claude Opus 4.7", "name still present");
     assert.equal(opus?.pricing, undefined, "no pricing when /api/pricing fails");
@@ -727,7 +727,7 @@ test("defaultOmniRouteEnrichmentFetcher: name-only when pricing endpoint 5xxs", 
   }
 });
 
-test("defaultOmniRouteEnrichmentFetcher: pricing-only when catalog endpoint 5xxs", async () => {
+test("defaultSZRouteEnrichmentFetcher: pricing-only when catalog endpoint 5xxs", async () => {
   const origFetch = globalThis.fetch;
   globalThis.fetch = (async (input: unknown) => {
     const url = typeof input === "string" ? input : (input as { url: string }).url;
@@ -740,7 +740,7 @@ test("defaultOmniRouteEnrichmentFetcher: pricing-only when catalog endpoint 5xxs
     return new Response("boom", { status: 500 });
   }) as typeof fetch;
   try {
-    const map = await defaultOmniRouteEnrichmentFetcher("https://or.example.com", "sk-test", 5_000);
+    const map = await defaultSZRouteEnrichmentFetcher("https://or.example.com", "sk-test", 5_000);
     const opus = map.get("cc/claude-opus-4-7");
     assert.equal(opus?.pricing?.input, 5);
     assert.equal(opus?.pricing?.output, 25);
@@ -762,8 +762,8 @@ function makeEnrichmentMap(
     providerCanonical?: string;
     providerDisplayName?: string;
   }>
-): OmniRouteEnrichmentMap {
-  const map: OmniRouteEnrichmentMap = new Map();
+): SZRouteEnrichmentMap {
+  const map: SZRouteEnrichmentMap = new Map();
   for (const e of entries) {
     map.set(e.key, {
       name: e.name,
@@ -867,9 +867,9 @@ test("canonicalDedupSet: drops canonical row when alias twin present", () => {
     { key: "cc/claude-opus-4-7", providerAlias: "cc", providerCanonical: "claude" },
   ]);
   const c2a = buildCanonicalToAliasMap(map);
-  const raw: OmniRouteRawModelEntry[] = [
-    { id: "cc/claude-opus-4-7" } as OmniRouteRawModelEntry,
-    { id: "claude/claude-opus-4-7" } as OmniRouteRawModelEntry,
+  const raw: SZRouteRawModelEntry[] = [
+    { id: "cc/claude-opus-4-7" } as SZRouteRawModelEntry,
+    { id: "claude/claude-opus-4-7" } as SZRouteRawModelEntry,
   ];
   const drop = canonicalDedupSet(raw, c2a);
   assert.equal(drop.has("claude/claude-opus-4-7"), true);
@@ -884,17 +884,17 @@ test("canonicalDedupSet: keeps standalone canonical row (no alias twin) — neve
     { key: "cc/claude-opus-4-7", providerAlias: "cc", providerCanonical: "claude" },
   ]);
   const c2a = buildCanonicalToAliasMap(map);
-  const raw: OmniRouteRawModelEntry[] = [
-    { id: "claude/claude-opus-99" } as OmniRouteRawModelEntry, // canonical only — no `cc/claude-opus-99`
+  const raw: SZRouteRawModelEntry[] = [
+    { id: "claude/claude-opus-99" } as SZRouteRawModelEntry, // canonical only — no `cc/claude-opus-99`
   ];
   const drop = canonicalDedupSet(raw, c2a);
   assert.equal(drop.size, 0);
 });
 
 test("canonicalDedupSet: no enrichment / empty canonicalToAlias → no drops", () => {
-  const raw: OmniRouteRawModelEntry[] = [
-    { id: "claude/claude-opus-4-7" } as OmniRouteRawModelEntry,
-    { id: "cc/claude-opus-4-7" } as OmniRouteRawModelEntry,
+  const raw: SZRouteRawModelEntry[] = [
+    { id: "claude/claude-opus-4-7" } as SZRouteRawModelEntry,
+    { id: "cc/claude-opus-4-7" } as SZRouteRawModelEntry,
   ];
   const drop = canonicalDedupSet(raw, new Map());
   assert.equal(drop.size, 0);
@@ -907,13 +907,13 @@ test("canonicalDedupSet: multi-provider — drops all canonical twins where alia
     { key: "pol/openai-large", providerAlias: "pol", providerCanonical: "pollinations" },
   ]);
   const c2a = buildCanonicalToAliasMap(map);
-  const raw: OmniRouteRawModelEntry[] = [
-    { id: "cc/claude-opus-4-7" } as OmniRouteRawModelEntry,
-    { id: "claude/claude-opus-4-7" } as OmniRouteRawModelEntry,
-    { id: "cx/gpt-5.5" } as OmniRouteRawModelEntry,
-    { id: "codex/gpt-5.5" } as OmniRouteRawModelEntry,
-    { id: "pol/openai-large" } as OmniRouteRawModelEntry,
-    { id: "pollinations/openai-large" } as OmniRouteRawModelEntry,
+  const raw: SZRouteRawModelEntry[] = [
+    { id: "cc/claude-opus-4-7" } as SZRouteRawModelEntry,
+    { id: "claude/claude-opus-4-7" } as SZRouteRawModelEntry,
+    { id: "cx/gpt-5.5" } as SZRouteRawModelEntry,
+    { id: "codex/gpt-5.5" } as SZRouteRawModelEntry,
+    { id: "pol/openai-large" } as SZRouteRawModelEntry,
+    { id: "pollinations/openai-large" } as SZRouteRawModelEntry,
   ];
   const drop = canonicalDedupSet(raw, c2a);
   assert.equal(drop.has("claude/claude-opus-4-7"), true);

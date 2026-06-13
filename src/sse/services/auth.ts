@@ -29,21 +29,21 @@ import {
   hasPerModelQuota,
   getRuntimeProviderProfile,
   recordModelLockoutFailure,
-} from "@omniroute/open-sse/services/accountFallback.ts";
-import { isLocalProvider } from "@omniroute/open-sse/config/providerRegistry.ts";
-import { COOLDOWN_MS } from "@omniroute/open-sse/config/constants.ts";
+} from "@szroute/open-sse/services/accountFallback.ts";
+import { isLocalProvider } from "@szroute/open-sse/config/providerRegistry.ts";
+import { COOLDOWN_MS } from "@szroute/open-sse/config/constants.ts";
 import {
   preflightQuota,
   isQuotaPreflightEnabled,
-} from "@omniroute/open-sse/services/quotaPreflight.ts";
+} from "@szroute/open-sse/services/quotaPreflight.ts";
 import { resolveResilienceSettings } from "@/lib/resilience/settings";
-import { syncHealthFromDB, type KeyHealth } from "@omniroute/open-sse/services/apiKeyRotator.ts";
+import { syncHealthFromDB, type KeyHealth } from "@szroute/open-sse/services/apiKeyRotator.ts";
 import {
   classifyProviderError,
   PROVIDER_ERROR_TYPES,
-} from "@omniroute/open-sse/services/errorClassifier.ts";
+} from "@szroute/open-sse/services/errorClassifier.ts";
 import { looksLikeQuotaExhausted } from "@/shared/utils/classify429";
-import { getCodexModelScope } from "@omniroute/open-sse/executors/codex.ts";
+import { getCodexModelScope } from "@szroute/open-sse/executors/codex.ts";
 import {
   getProviderById,
   getProviderAlias,
@@ -268,7 +268,7 @@ export function extractSessionAffinityKey(
   const headerKey = normalizeSessionKey(
     readHeaderValue(headers, "x-codex-session-id") ??
       readHeaderValue(headers, "x-session-id") ??
-      readHeaderValue(headers, "x-omniroute-session"),
+      readHeaderValue(headers, "x-szroute-session"),
     "header"
   );
   if (headerKey) return headerKey;
@@ -2129,7 +2129,7 @@ function readNonEmptyUrlToken(request: AuthRequestLike): string | null {
  *
  * Honors explicit auth headers and (for client-facing routes only) a
  * path-scoped URL token:
- * - `Authorization: Bearer <key>` (OpenAI / OmniRoute / Codex CLI / Bearer clients)
+ * - `Authorization: Bearer <key>` (OpenAI / SZRoute / Codex CLI / Bearer clients)
  * - `x-api-key: <key>` (Anthropic Messages API contract — Claude Code,
  *   `@anthropic-ai/sdk`, any SDK that sets `anthropic-version`)
  * - `/vscode/<key>/...` (path-scoped tokenized aliases — only when `allowUrl`)
@@ -2141,7 +2141,7 @@ function readNonEmptyUrlToken(request: AuthRequestLike): string | null {
  * speaking the Anthropic Messages API contract. Without this scoping,
  * non-Anthropic SDKs that happen to set `x-api-key` (or local-mode tools
  * with placeholder keys) would be treated as authenticated attempts and
- * rejected by per-route gates that compare against OmniRoute keys.
+ * rejected by per-route gates that compare against SZRoute keys.
  *
  * `opts.allowUrl` (default `true`) gates the path-scoped URL token. Management
  * auth MUST pass `allowUrl: false` — a credential in the URL must never
@@ -2182,7 +2182,7 @@ export function extractApiKey(request: AuthRequestLike, opts?: { allowUrl?: bool
 
 /**
  * Validate API key (optional - for local use can skip).
- * Feature #1350: Supports OMNIROUTE_API_KEY / ROUTER_API_KEY env vars as
+ * Feature #1350: Supports SZROUTE_API_KEY / ROUTER_API_KEY env vars as
  * persistent passthrough keys that always validate, surviving Docker
  * restarts and backup restores without DB dependency.
  */
@@ -2190,7 +2190,7 @@ export async function isValidApiKey(apiKey: string) {
   if (!apiKey) return false;
 
   // Persistent env-var key — always valid regardless of DB state (#1350)
-  const envKey = process.env.OMNIROUTE_API_KEY || process.env.ROUTER_API_KEY;
+  const envKey = process.env.SZROUTE_API_KEY || process.env.ROUTER_API_KEY;
   if (envKey && apiKey === envKey) return true;
 
   return await validateApiKey(apiKey);

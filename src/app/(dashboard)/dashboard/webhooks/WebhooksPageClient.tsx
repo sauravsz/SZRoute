@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card, ConfirmModal } from "@/shared/components";
+import { Card } from "@/shared/components";
+import { useSystemDialog } from "@/shared/hooks/useElectron";
 import { AddWebhookWizard } from "./components/AddWebhookWizard";
 import { HowItWorksSidebar } from "./components/HowItWorksSidebar";
 import { WebhooksList } from "./components/WebhooksList";
@@ -24,8 +25,8 @@ export function WebhooksPageClient() {
   const [testingId, setTestingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<WebhookItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const { showMessageBox } = useSystemDialog();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -101,16 +102,26 @@ export function WebhooksPageClient() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
+  const handleDelete = async (target: WebhookItem) => {
+    const result = await showMessageBox({
+      type: "question",
+      message: t("delete"),
+      detail: t("deleteConfirm"),
+      buttons: [t("delete"), t("wizard.cancel")],
+      defaultId: 1,
+      cancelId: 1,
+    });
+
+    // result === 0 means they clicked the first button (Delete)
+    if (result !== 0) return;
+
     setDeleting(true);
     setFeedback(null);
     try {
-      const res = await fetch(`/api/webhooks/${deleteTarget.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/webhooks/${target.id}`, { method: "DELETE" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || t("deleteFailed"));
-      setWebhooks((prev) => prev.filter((w) => w.id !== deleteTarget.id));
-      setDeleteTarget(null);
+      setWebhooks((prev) => prev.filter((w) => w.id !== target.id));
       setFeedback({ type: "success", message: t("deleteSuccess") });
     } catch (err) {
       setFeedback({
@@ -222,7 +233,7 @@ export function WebhooksPageClient() {
                 onTest={(wh) => void handleTest(wh)}
                 onToggleEnabled={(wh) => void handleToggleEnabled(wh)}
                 onEdit={() => setWizardOpen(true)}
-                onDelete={setDeleteTarget}
+                onDelete={(wh) => void handleDelete(wh)}
               />
             </div>
           </Card>
@@ -242,17 +253,6 @@ export function WebhooksPageClient() {
           await load();
         }}
         t={tFn}
-      />
-
-      <ConfirmModal
-        isOpen={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-        title={t("delete")}
-        message={t("deleteConfirm")}
-        confirmText={t("delete")}
-        cancelText={t("wizard.cancel")}
-        loading={deleting}
       />
     </div>
   );

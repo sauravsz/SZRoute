@@ -1,16 +1,16 @@
-# @omniroute/opencode-plugin
+# @szroute/opencode-plugin
 
-> **Recommended way to use OmniRoute with OpenCode.** Pulls a live model catalog from `/v1/models` (including `-low`/`-medium`/`-high`/`-thinking` variants as first-class IDs), aggregates combos via `/api/combos` using a least-common-denominator capability/limit join, sanitizes Gemini tool schemas in flight, and supports multiple side-by-side OmniRoute instances out of the box.
+> **Recommended way to use SZRoute with OpenCode.** Pulls a live model catalog from `/v1/models` (including `-low`/`-medium`/`-high`/`-thinking` variants as first-class IDs), aggregates combos via `/api/combos` using a least-common-denominator capability/limit join, sanitizes Gemini tool schemas in flight, and supports multiple side-by-side SZRoute instances out of the box.
 
-## Why this and not `@omniroute/opencode-provider`?
+## Why this and not `@szroute/opencode-provider`?
 
-`@omniroute/opencode-provider` is the legacy config-generator package — it writes a frozen `provider.omniroute` block into `opencode.json` with a **hardcoded list of 8 models** ([`OMNIROUTE_DEFAULT_OPENCODE_MODELS`](https://github.com/diegosouzapw/OmniRoute/blob/main/%40omniroute/opencode-provider/src/index.ts#L48-L56)). It works on the CLI but in the **OpenCode Desktop / Web** builds (Tauri / Electron) the runtime re-runs the model picker and the static block surfaces only a few of those — and they drift behind the live OmniRoute catalog.
+`@szroute/opencode-provider` is the legacy config-generator package — it writes a frozen `provider.szroute` block into `opencode.json` with a **hardcoded list of 8 models** ([`SZROUTE_DEFAULT_OPENCODE_MODELS`](https://github.com/sauravsz/SZRoute/blob/main/%40szroute/opencode-provider/src/index.ts#L48-L56)). It works on the CLI but in the **OpenCode Desktop / Web** builds (Tauri / Electron) the runtime re-runs the model picker and the static block surfaces only a few of those — and they drift behind the live SZRoute catalog.
 
 This plugin solves that by:
 
 - Fetching `/v1/models` and `/api/combos` **at OpenCode startup, in Node.js** — no CORS, no WebView restrictions
-- Emitting the provider block **dynamically** in the plugin's `config`/`provider` hook — so `opencode.json` only needs the plugin entry, not a static `provider.omniroute`
-- Re-fetching on a configurable TTL (default 5 min), so new models / combo changes in the OmniRoute UI appear without restarting OpenCode
+- Emitting the provider block **dynamically** in the plugin's `config`/`provider` hook — so `opencode.json` only needs the plugin entry, not a static `provider.szroute`
+- Re-fetching on a configurable TTL (default 5 min), so new models / combo changes in the SZRoute UI appear without restarting OpenCode
 - Computing `limit.context` for combos as `min(member.context_length)` from the live catalog (no more `null` values that cause 4K-token truncation)
 - **Auto-pickup of `interleaved` capability** for thinking models (merged via PR #3138)
 
@@ -21,15 +21,15 @@ This plugin solves that by:
 Once published to npm:
 
 ```sh
-npm install @omniroute/opencode-plugin
+npm install @szroute/opencode-plugin
 ```
 
 Until then (or for local development), reference the built artifact directly. Either extract the package into your OpenCode plugins dir and point at the extracted `dist/index.js`:
 
 ```sh
-# from inside the OmniRoute repo
-cd @omniroute/opencode-plugin && npm run build && npm pack
-# then extract into ~/.config/opencode/plugins/omniroute-opencode-plugin/
+# from inside the SZRoute repo
+cd @szroute/opencode-plugin && npm run build && npm pack
+# then extract into ~/.config/opencode/plugins/szroute-opencode-plugin/
 ```
 
 Peer dep: `@opencode-ai/plugin` (managed by your OpenCode install).
@@ -42,9 +42,9 @@ Peer dep: `@opencode-ai/plugin` (managed by your OpenCode install).
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     [
-      "@omniroute/opencode-plugin",
+      "@szroute/opencode-plugin",
       {
-        "providerId": "omniroute",
+        "providerId": "szroute",
         "baseURL": "https://or.example.com",
       },
     ],
@@ -53,13 +53,13 @@ Peer dep: `@opencode-ai/plugin` (managed by your OpenCode install).
 ```
 
 ```sh
-opencode auth login --provider omniroute
-# prompts for the OmniRoute API key, writes to ~/.local/share/opencode/auth.json
+opencode auth login --provider szroute
+# prompts for the SZRoute API key, writes to ~/.local/share/opencode/auth.json
 ```
 
-> ⚠ Use the `--provider` flag explicitly. `opencode auth login omniroute` is parsed as a positional `url` argument by current OC releases (≤1.15.5) and fails with `fetch() URL is invalid`. Tracked upstream.
+> ⚠ Use the `--provider` flag explicitly. `opencode auth login szroute` is parsed as a positional `url` argument by current OC releases (≤1.15.5) and fails with `fetch() URL is invalid`. Tracked upstream.
 
-Restart OpenCode. `/models` lists the full live catalog. Variants (`-low`, `-medium`, `-high`, `-thinking`) and combos appear as first-class IDs — OmniRoute is the source of truth, no client-side synthesis.
+Restart OpenCode. `/models` lists the full live catalog. Variants (`-low`, `-medium`, `-high`, `-thinking`) and combos appear as first-class IDs — SZRoute is the source of truth, no client-side synthesis.
 
 ## Multi-instance (prod + preprod side-by-side)
 
@@ -71,16 +71,16 @@ Pack the plugin once, extract it twice into named directories, then point each `
 
 ```sh
 # 1. Build + pack the plugin (run from the plugin worktree)
-cd /path/to/OmniRoute/@omniroute/opencode-plugin
+cd /path/to/SZRoute/@szroute/opencode-plugin
 npm run build
 npm pack
-# produces omniroute-opencode-plugin-0.1.0.tgz
+# produces szroute-opencode-plugin-0.1.0.tgz
 
-# 2. Extract one copy per OmniRoute endpoint
-mkdir -p ~/.config/opencode/plugins/omniroute-opencode-plugin-prod
-mkdir -p ~/.config/opencode/plugins/omniroute-opencode-plugin-preprod
-tar -xzf omniroute-opencode-plugin-0.1.0.tgz -C ~/.config/opencode/plugins/omniroute-opencode-plugin-prod    --strip-components=1
-tar -xzf omniroute-opencode-plugin-0.1.0.tgz -C ~/.config/opencode/plugins/omniroute-opencode-plugin-preprod --strip-components=1
+# 2. Extract one copy per SZRoute endpoint
+mkdir -p ~/.config/opencode/plugins/szroute-opencode-plugin-prod
+mkdir -p ~/.config/opencode/plugins/szroute-opencode-plugin-preprod
+tar -xzf szroute-opencode-plugin-0.1.0.tgz -C ~/.config/opencode/plugins/szroute-opencode-plugin-prod    --strip-components=1
+tar -xzf szroute-opencode-plugin-0.1.0.tgz -C ~/.config/opencode/plugins/szroute-opencode-plugin-preprod --strip-components=1
 ```
 
 Then in `~/.config/opencode/opencode.json` reference each directory by absolute path:
@@ -90,18 +90,18 @@ Then in `~/.config/opencode/opencode.json` reference each directory by absolute 
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     [
-      "./plugins/omniroute-opencode-plugin-prod/dist/index.js",
+      "./plugins/szroute-opencode-plugin-prod/dist/index.js",
       {
-        "providerId": "omniroute",
-        "displayName": "OmniRoute",
+        "providerId": "szroute",
+        "displayName": "SZRoute",
         "baseURL": "https://or.example.com",
       },
     ],
     [
-      "./plugins/omniroute-opencode-plugin-preprod/dist/index.js",
+      "./plugins/szroute-opencode-plugin-preprod/dist/index.js",
       {
-        "providerId": "omniroute-preprod",
-        "displayName": "OmniRoute Preprod",
+        "providerId": "szroute-preprod",
+        "displayName": "SZRoute Preprod",
         "baseURL": "https://or-preprod.example.com",
       },
     ],
@@ -112,31 +112,31 @@ Then in `~/.config/opencode/opencode.json` reference each directory by absolute 
 Paths are relative to `~/.config/opencode/`. Each entry now resolves to a distinct module file, so OC loads them as two separate plugin instances. Authenticate each:
 
 ```sh
-opencode auth login --provider omniroute
-opencode auth login --provider omniroute-preprod
+opencode auth login --provider szroute
+opencode auth login --provider szroute-preprod
 ```
 
 Each entry gets its own provider id, its own model picker entry, its own slot in `auth.json`, and its own TTL cache. Closures are isolated per plugin instance — no cross-talk.
 
-### After publish (`@omniroute/opencode-plugin` npm)
+### After publish (`@szroute/opencode-plugin` npm)
 
 Once the package is published, the dual-install becomes two `npm install --prefix` commands instead of `tar -xzf`:
 
 ```sh
-mkdir -p ~/.config/opencode/plugins/omniroute-opencode-plugin-prod
-mkdir -p ~/.config/opencode/plugins/omniroute-opencode-plugin-preprod
-npm install --prefix ~/.config/opencode/plugins/omniroute-opencode-plugin-prod    @omniroute/opencode-plugin
-npm install --prefix ~/.config/opencode/plugins/omniroute-opencode-plugin-preprod @omniroute/opencode-plugin
+mkdir -p ~/.config/opencode/plugins/szroute-opencode-plugin-prod
+mkdir -p ~/.config/opencode/plugins/szroute-opencode-plugin-preprod
+npm install --prefix ~/.config/opencode/plugins/szroute-opencode-plugin-prod    @szroute/opencode-plugin
+npm install --prefix ~/.config/opencode/plugins/szroute-opencode-plugin-preprod @szroute/opencode-plugin
 ```
 
-`opencode.json` paths become `./plugins/omniroute-opencode-plugin-prod/node_modules/@omniroute/opencode-plugin/dist/index.js` (and the preprod equivalent).
+`opencode.json` paths become `./plugins/szroute-opencode-plugin-prod/node_modules/@szroute/opencode-plugin/dist/index.js` (and the preprod equivalent).
 
 ## Features
 
 | Feature                                     | What it does                                                                                                                                                                                                                                                                                                                                                                                                | Hook                         |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
 | Dynamic `/v1/models`                        | Pulls live catalog (455+ entries on prod) on each refresh, TTL-cached                                                                                                                                                                                                                                                                                                                                       | `provider.models`            |
-| Variants pass-through                       | `-low`/`-medium`/`-high`/`-thinking` ship as first-class IDs from OmniRoute (no client synthesis)                                                                                                                                                                                                                                                                                                           | `provider.models`            |
+| Variants pass-through                       | `-low`/`-medium`/`-high`/`-thinking` ship as first-class IDs from SZRoute (no client synthesis)                                                                                                                                                                                                                                                                                                           | `provider.models`            |
 | Combo LCD aggregation                       | Combos appear with intersected capabilities + min context/output across members                                                                                                                                                                                                                                                                                                                             | `provider.models` + `config` |
 | `combo/<slug>` namespace + `Combo: ` prefix | Combos surface under `combo/claude-primary` (not the upstream UUID) and the picker shows `Combo: claude-primary` so they stand apart from raw provider/model pairs                                                                                                                                                                                                                                          | both hooks                   |
 | Nice names + cost                           | `/api/pricing/models` display names AND `/api/pricing` per-million-token cost overlaid onto the live catalog                                                                                                                                                                                                                                                                                                | both hooks                   |
@@ -154,10 +154,10 @@ npm install --prefix ~/.config/opencode/plugins/omniroute-opencode-plugin-prepro
 
 | Option          | Type     | Default                                    | Description                                                |
 | --------------- | -------- | ------------------------------------------ | ---------------------------------------------------------- |
-| `providerId`    | `string` | `"omniroute"`                              | OpenCode provider id; must be unique across plugin entries |
-| `displayName`   | `string` | `"OmniRoute"` or `OmniRoute (<id>)`        | Label in the OC UI                                         |
+| `providerId`    | `string` | `"szroute"`                              | OpenCode provider id; must be unique across plugin entries |
+| `displayName`   | `string` | `"SZRoute"` or `SZRoute (<id>)`        | Label in the OC UI                                         |
 | `modelCacheTtl` | `number` | `300000` (5 min)                           | `/v1/models` TTL in ms                                     |
-| `baseURL`       | `string` | resolved from `auth.json` after `/connect` | Override OmniRoute base URL                                |
+| `baseURL`       | `string` | resolved from `auth.json` after `/connect` | Override SZRoute base URL                                |
 | `features`      | `object` | see below                                  | Feature toggles (all opt-in/out, defaults preserve v0.1.0) |
 
 ### `features` block
@@ -171,7 +171,7 @@ Every field is optional. Defaults mirror v0.1.0 behaviour so existing `opencode.
 | `compressionMetadata` | `boolean` | `false` | Pull `/api/context/combos` so combo names get tagged with their compression pipeline, e.g. `Combo: claude-primary [rtk🟡 → caveman🟠]`. Intensity tokens render as traffic-light emoji (🟢 lite/minimal · 🟡 standard · 🟠 aggressive/full · 🔴 ultra) so the picker advertises "how compressed" each combo is at a glance.                                                                                                                                                                                                                                                  |
 | `providerTag`         | `boolean` | `true`  | Prepend a short upstream-provider label to the enriched display name with `" - "` separator, so `cc/claude-opus-4-7 → Claude - Claude Opus 4.7` differs visibly from `kr/claude-opus-4-7 → Kiro - Claude Opus 4.7` in the OC TUI model picker. Label resolution: use `/api/pricing/models[<alias>].name` verbatim when ≤8 chars (e.g. `Claude`, `Kiro`, `Codex`, `Qwen`), otherwise fall back to `UPPER(alias)` (e.g. `GitHub Models` → `GHM`, `Gemini-cli` → `GEMINI-CLI`). Idempotent. Combos intentionally skipped (the `Combo: ` prefix already conveys multi-upstream). |
 | `usableOnly`          | `boolean` | `false` | Read `/api/providers` and filter the catalog to providers that have at least one connection with `isActive: true` AND `testStatus: 'active'`. Subtract-filter semantics: providers unknown to BOTH the pricing-models catalog AND the connection table pass through (so synthetic prefixes like `agentrouter/*` survive). On fetch failure the filter is disabled for the refresh — never hides the whole catalog.                                                                                                                                                           |
-| `diskCache`           | `boolean` | `true`  | Persist the last successful `/v1/models` + `/api/combos` + enrichment + connections + compression snapshot to `${OPENCODE_DATA_DIR ?? ~/.local/share/opencode}/plugins/omniroute-<providerId>.json`. On a subsequent cold start where `/v1/models` throws (network down / IP whitelist drop / 5xx) the static block hydrates from the snapshot so OC's model picker survives offline. Soft-fail on read/write — never blocks publishing.                                                                                                                                     |
+| `diskCache`           | `boolean` | `true`  | Persist the last successful `/v1/models` + `/api/combos` + enrichment + connections + compression snapshot to `${OPENCODE_DATA_DIR ?? ~/.local/share/opencode}/plugins/szroute-<providerId>.json`. On a subsequent cold start where `/v1/models` throws (network down / IP whitelist drop / 5xx) the static block hydrates from the snapshot so OC's model picker survives offline. Soft-fail on read/write — never blocks publishing.                                                                                                                                     |
 | `geminiSanitization`  | `boolean` | `true`  | Strip `$schema`/`$ref`/`additionalProperties` from tool params when the model id matches `gemini`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `mcpAutoEmit`         | `boolean` | `false` | Auto-write an `mcp.<providerId>` remote entry into the OC config pointing at `<baseURL>/api/mcp/stream` with the resolved Bearer token                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `mcpToken`            | `string`  | _unset_ | Optional separate Bearer for the auto-emitted MCP entry. Falls back to the provider's `apiKey` (from `auth.json`) when unset                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -183,9 +183,9 @@ Every field is optional. Defaults mirror v0.1.0 behaviour so existing `opencode.
 {
   "plugin": [
     [
-      "@omniroute/opencode-plugin",
+      "@szroute/opencode-plugin",
       {
-        "providerId": "omniroute",
+        "providerId": "szroute",
         "baseURL": "https://or.example.com",
         "features": {
           "combos": true,
@@ -199,11 +199,11 @@ Every field is optional. Defaults mirror v0.1.0 behaviour so existing `opencode.
 }
 ```
 
-With `mcpAutoEmit: true`, the plugin synthesises an `mcp.omniroute` entry equivalent to a manual:
+With `mcpAutoEmit: true`, the plugin synthesises an `mcp.szroute` entry equivalent to a manual:
 
 ```jsonc
 "mcp": {
-  "omniroute": {
+  "szroute": {
     "type": "remote",
     "url": "https://or.example.com/api/mcp/stream",
     "enabled": true,
@@ -212,7 +212,7 @@ With `mcpAutoEmit: true`, the plugin synthesises an `mcp.omniroute` entry equiva
 }
 ```
 
-If you want a narrower-scoped Bearer for MCP (different from the chat/inference key), set `features.mcpToken`. Operator overrides win: if you already set `mcp.omniroute` in `opencode.json`, the plugin will not overwrite it.
+If you want a narrower-scoped Bearer for MCP (different from the chat/inference key), set `features.mcpToken`. Operator overrides win: if you already set `mcp.szroute` in `opencode.json`, the plugin will not overwrite it.
 
 #### Example — production-leaning defaults (clean picker, offline resilience)
 
@@ -220,9 +220,9 @@ If you want a narrower-scoped Bearer for MCP (different from the chat/inference 
 {
   "plugin": [
     [
-      "@omniroute/opencode-plugin",
+      "@szroute/opencode-plugin",
       {
-        "providerId": "omniroute",
+        "providerId": "szroute",
         "baseURL": "https://or.example.com",
         "features": {
           "combos": true,
@@ -237,16 +237,16 @@ If you want a narrower-scoped Bearer for MCP (different from the chat/inference 
 }
 ```
 
-- `usableOnly: true` drops models whose canonical provider has no healthy connection in your OmniRoute instance — your `/models` picker stays focused on what you can actually call.
-- `diskCache: true` (default) writes a snapshot to `${OPENCODE_DATA_DIR}/plugins/omniroute-<providerId>.json` on every healthy refresh. On a cold start where `/v1/models` is unreachable (laptop offline, IP whitelist drop), the snapshot hydrates the static block so OC still shows the catalog instead of a stub.
-- `compressionMetadata: true` annotates combo display names with their pipeline using traffic-light emoji for intensity (e.g. `Combo: claude-primary [rtk🟡 → caveman🟠]`) so the picker advertises which compression each combo applies and how heavy it is at a glance. Palette: 🟢 lite/minimal · 🟡 standard · 🟠 aggressive/full · 🔴 ultra. Unknown intensities fall through to raw text (`[rtk:custom-thing]`) so the plugin never hides a value OmniRoute knows but the plugin doesn't.
+- `usableOnly: true` drops models whose canonical provider has no healthy connection in your SZRoute instance — your `/models` picker stays focused on what you can actually call.
+- `diskCache: true` (default) writes a snapshot to `${OPENCODE_DATA_DIR}/plugins/szroute-<providerId>.json` on every healthy refresh. On a cold start where `/v1/models` is unreachable (laptop offline, IP whitelist drop), the snapshot hydrates the static block so OC still shows the catalog instead of a stub.
+- `compressionMetadata: true` annotates combo display names with their pipeline using traffic-light emoji for intensity (e.g. `Combo: claude-primary [rtk🟡 → caveman🟠]`) so the picker advertises which compression each combo applies and how heavy it is at a glance. Palette: 🟢 lite/minimal · 🟡 standard · 🟠 aggressive/full · 🔴 ultra. Unknown intensities fall through to raw text (`[rtk:custom-thing]`) so the plugin never hides a value SZRoute knows but the plugin doesn't.
 - `providerTag: true` (default) prepends a short upstream-provider label so the picker shows `Claude - Claude Opus 4.7` for `cc/claude-opus-4-7`, `Kiro - Claude Opus 4.7` for `kr/claude-opus-4-7`, and `GHM - GPT 5` for `ghm/gpt-5` (slot.name `GitHub Models` > 8 chars → abbreviated). Critical when the same model id is sold through multiple upstream connections with different cost/auth/rate-limit profiles. Set to `false` to keep the pre-v3.8.3 unsuffixed format.
 
-## Comparison vs `@omniroute/opencode-provider`
+## Comparison vs `@szroute/opencode-provider`
 
-[`@omniroute/opencode-provider`](https://github.com/diegosouzapw/OmniRoute/tree/main/%40omniroute/opencode-provider) is the existing config-generator package — it writes a frozen `provider.<id>` block into `opencode.json` at build time. This plugin is the runtime integration.
+[`@szroute/opencode-provider`](https://github.com/sauravsz/SZRoute/tree/main/%40szroute/opencode-provider) is the existing config-generator package — it writes a frozen `provider.<id>` block into `opencode.json` at build time. This plugin is the runtime integration.
 
-|                   | `@omniroute/opencode-plugin` (this) | `@omniroute/opencode-provider`    |
+|                   | `@szroute/opencode-plugin` (this) | `@szroute/opencode-provider`    |
 | ----------------- | ----------------------------------- | --------------------------------- |
 | Type              | OC plugin                           | Config generator (CLI/build-time) |
 | Models            | Live from `/v1/models`              | Frozen at scaffold                |

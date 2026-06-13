@@ -1,5 +1,5 @@
 /**
- * OmniRoute Electron Types
+ * SZRoute Electron Types
  *
  * TypeScript definitions for the Electron API exposed to the renderer process.
  *
@@ -27,6 +27,9 @@ export interface ElectronAPI {
   openExternal(url: string): Promise<void>;
   getDataDir(): Promise<string>;
   restartServer(): Promise<{ success: boolean }>;
+  showMessageBox(options: Electron.MessageBoxSyncOptions): Promise<number>;
+  openWindow(route: string, options?: any): Promise<boolean>;
+  promptTouchId(reason?: string): Promise<boolean>;
 
   // ── Send (fire-and-forget) ─────────────────────────────
   minimizeWindow(): void;

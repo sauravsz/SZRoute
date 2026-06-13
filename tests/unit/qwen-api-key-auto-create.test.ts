@@ -8,7 +8,7 @@ import { getOrCreateApiKey, resolveApiKey } from "../../src/shared/services/apiK
 import { validateApiKey } from "../../src/lib/db/apiKeys";
 import { getDbInstance } from "../../src/lib/db/core";
 
-const DUMMY_HOME = path.join(os.tmpdir(), "omniroute-qwen-key-test-" + Date.now());
+const DUMMY_HOME = path.join(os.tmpdir(), "szroute-qwen-key-test-" + Date.now());
 const originalJwtSecret = process.env.JWT_SECRET;
 
 async function createAuthCookie() {
@@ -38,7 +38,7 @@ test.afterEach(async () => {
   os.homedir = originalHomedir;
   if (originalJwtSecret === undefined) delete process.env.JWT_SECRET;
   else process.env.JWT_SECRET = originalJwtSecret;
-  if (process.env.DATA_DIR?.includes("omniroute-qwen-key-test")) {
+  if (process.env.DATA_DIR?.includes("szroute-qwen-key-test")) {
     delete process.env.DATA_DIR;
   }
 });
@@ -46,8 +46,8 @@ test.afterEach(async () => {
 test("getOrCreateApiKey() creates DB-backed key when no keyId provided", async () => {
   const apiKey = await getOrCreateApiKey(null);
 
-  // Key should NOT be the placeholder "sk_omniroute"
-  assert.notEqual(apiKey, "sk_omniroute", "Should not return placeholder");
+  // Key should NOT be the placeholder "sk_szroute"
+  assert.notEqual(apiKey, "sk_szroute", "Should not return placeholder");
   assert.ok(apiKey.startsWith("sk-"), "Key should start with sk- prefix");
 
   // Key should be valid in DB
@@ -78,7 +78,7 @@ test("Qwen guide-settings POST creates valid DB-backed key (no keyId)", async ()
     method: "POST",
     headers: { "Content-Type": "application/json", cookie },
     body: JSON.stringify({
-      baseUrl: "http://localhost:20128/v1",
+      baseUrl: "http://localhost:21128/v1",
       model: "qwen3-coder-flash",
       // No keyId provided - should auto-create
     }),
@@ -95,13 +95,13 @@ test("Qwen guide-settings POST creates valid DB-backed key (no keyId)", async ()
   assert.ok(content.security?.auth?.apiKey, "Should have an API key");
   assert.equal(
     content.security?.auth?.baseUrl,
-    "http://localhost:20128/v1",
+    "http://localhost:21128/v1",
     "Should have base URL"
   );
   assert.equal(content.model?.name, "qwen3-coder-flash", "Should have model name");
 
   const apiKey = content.security.auth.apiKey;
-  assert.notEqual(apiKey, "sk_omniroute", "Should not use placeholder");
+  assert.notEqual(apiKey, "sk_szroute", "Should not use placeholder");
   assert.ok(apiKey.startsWith("sk-"), "Key should start with sk- prefix");
 
   // Verify the key is valid in DB
@@ -129,7 +129,7 @@ test("Qwen guide-settings POST with keyId uses existing key", async () => {
     method: "POST",
     headers: { "Content-Type": "application/json", cookie },
     body: JSON.stringify({
-      baseUrl: "http://localhost:20128/v1",
+      baseUrl: "http://localhost:21128/v1",
       model: "qwen3-coder-plus",
       keyId: row.id,
     }),
@@ -148,6 +148,6 @@ test("Qwen guide-settings POST with keyId uses existing key", async () => {
     existingKey,
     "Should use existing key when keyId provided"
   );
-  assert.equal(content.security?.auth?.baseUrl, "http://localhost:20128/v1");
+  assert.equal(content.security?.auth?.baseUrl, "http://localhost:21128/v1");
   assert.equal(content.model?.name, "qwen3-coder-plus");
 });

@@ -3,12 +3,12 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  default: "bg-black/5 dark:bg-white/10 text-text-muted",
-  primary: "bg-primary/10 text-primary",
-  success: "bg-green-500/10 text-green-600 dark:text-green-400",
-  warning: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  error: "bg-red-500/10 text-red-600 dark:text-red-400",
-  info: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  default: "bg-black/5 dark:bg-white/10 text-text-muted border border-black/5 dark:border-white/5",
+  primary: "bg-[#007AFF]/10 text-[#007AFF] dark:bg-[#0A84FF]/20 dark:text-[#0A84FF] border border-[#007AFF]/20",
+  success: "bg-[#34C759]/10 text-[#34C759] dark:bg-[#30D158]/20 dark:text-[#30D158] border border-[#34C759]/20",
+  warning: "bg-[#FFCC00]/10 text-[#D4A000] dark:bg-[#FFD60A]/20 dark:text-[#FFD60A] border border-[#FFCC00]/20",
+  error: "bg-[#FF3B30] text-white shadow-sm border border-[#D70015]/50", // High impact red for notification counters
+  info: "bg-[#5AC8FA]/10 text-[#007AFF] dark:bg-[#64D2FF]/20 dark:text-[#64D2FF] border border-[#5AC8FA]/20",
 };
 
 const sizes = {

@@ -2,7 +2,7 @@
 
 > **Para workers agênticos:** SUB-SKILL OBRIGATÓRIA: use `superpowers:subagent-driven-development` (recomendado) ou `superpowers:executing-plans` para executar este plano tarefa-a-tarefa. Os passos usam checkbox (`- [ ]`) para rastreio. **Cada fix de bug obedece à Hard Rule #18** (teste falha→passa OU validação ao vivo no VPS). Não burle Husky (`--no-verify`) sem aprovação. Veja o diagnóstico completo em [`RELATORIO-QUALITY-GATES.md`](./RELATORIO-QUALITY-GATES.md).
 
-**Goal:** Generalizar a catraca de qualidade do OmniRoute (hoje só para `any`) para todas as métricas relevantes — cobertura, duplicação, tamanho de arquivo, complexidade — e adicionar gates determinísticos anti-alucinação, tudo no padrão `check-*.mjs` já existente, sem SaaS novo.
+**Goal:** Generalizar a catraca de qualidade do SZRoute (hoje só para `any`) para todas as métricas relevantes — cobertura, duplicação, tamanho de arquivo, complexidade — e adicionar gates determinísticos anti-alucinação, tudo no padrão `check-*.mjs` já existente, sem SaaS novo.
 
 **Architecture:** Camadas incrementais. (0) reativa/reconcilia o que já existe; (1) constrói o **motor de catraca** (`quality-baseline.json` commitado + coletor + comparador genérico que clona o `check-t11-any-budget.mjs`); (2) adiciona gates determinísticos que matam os ímãs de alucinação (provider-consistency, fetch-targets, openapi-routes); (3) catraca de duplicação+tamanho; (4) catraca de cobertura + anti test-masking; (5) skill `/babysit` + evidência. Toda catraca é **só-regressão** (baseline congelado) — nunca um piso absoluto que exija limpeza flag-day.
 
@@ -401,7 +401,7 @@ git commit -m "feat(quality): freeze initial quality baseline (eslint warnings +
         with: { name: quality-ratchet, path: .artifacts/quality-ratchet.md }
 ```
 
-- [ ] **Step 2: Adicionar comentário no PR** clonando o job `coverage-pr-comment` (marcador `<!-- omniroute-quality-ratchet -->`, lê `.artifacts/quality-ratchet.md`). Reuse o mesmo `github-script` de upsert de comentário.
+- [ ] **Step 2: Adicionar comentário no PR** clonando o job `coverage-pr-comment` (marcador `<!-- szroute-quality-ratchet -->`, lê `.artifacts/quality-ratchet.md`). Reuse o mesmo `github-script` de upsert de comentário.
 
 - [ ] **Step 3: Validar num PR de teste** — confirmar que o job aparece, o step summary mostra a tabela, e o comentário é postado.
 

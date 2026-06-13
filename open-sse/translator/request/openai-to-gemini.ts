@@ -32,7 +32,7 @@ import {
 import { buildGeminiTools, sanitizeGeminiToolName } from "../helpers/geminiToolsSanitizer.ts";
 
 // Observed Antigravity wrapper output cap, not an underlying model capability.
-// Keep this bridge-local: capMaxOutputTokens() falls back to OmniRoute's generic
+// Keep this bridge-local: capMaxOutputTokens() falls back to SZRoute's generic
 // 8192 default for unknown Claude-family IDs, while Antigravity currently caps
 // visible output around 16K. See: https://github.com/keisksw/antigravity-output-analysis
 const ANTIGRAVITY_CLAUDE_MAX_OUTPUT_TOKENS = 16_384;
@@ -678,7 +678,7 @@ function wrapInCloudCodeEnvelope(model, geminiCLI, credentials = null, isAntigra
 
   if (!projectId) {
     console.warn(
-      `[OmniRoute] ${isAntigravity ? "Antigravity" : "GeminiCLI"} account is missing projectId. ` +
+      `[SZRoute] ${isAntigravity ? "Antigravity" : "GeminiCLI"} account is missing projectId. ` +
         `Attempting request with empty project — reconnect OAuth to resolve.`
     );
     projectId = "";

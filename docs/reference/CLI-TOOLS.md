@@ -1,20 +1,20 @@
 ---
-title: "CLI Tools — OmniRoute v3.8.6"
+title: "CLI Tools — SZRoute v3.8.6"
 version: 3.8.6
 lastUpdated: 2026-05-28
 ---
 
-# CLI Tools — OmniRoute v3.8.6
+# CLI Tools — SZRoute v3.8.6
 
 Last updated: 2026-05-28
 
-OmniRoute integrates with three categories of CLI tools spread across three dedicated dashboard pages:
+SZRoute integrates with three categories of CLI tools spread across three dedicated dashboard pages:
 
 | Page | Route | Concept | Count |
 |------|-------|---------|-------|
-| **CLI Code's** | `/dashboard/cli-code` | Coding tools you point at OmniRoute (Client → CLI → OmniRoute → Provider) | 19 |
-| **CLI Agents** | `/dashboard/cli-agents` | Autonomous agents you point at OmniRoute (same flow, broader scope) | 6 |
-| **ACP Agents** | `/dashboard/acp-agents` | CLIs that OmniRoute spawns as backend via stdio/ACP (reverse flow) | see registry |
+| **CLI Code's** | `/dashboard/cli-code` | Coding tools you point at SZRoute (Client → CLI → SZRoute → Provider) | 19 |
+| **CLI Agents** | `/dashboard/cli-agents` | Autonomous agents you point at SZRoute (same flow, broader scope) | 6 |
+| **ACP Agents** | `/dashboard/acp-agents` | CLIs that SZRoute spawns as backend via stdio/ACP (reverse flow) | see registry |
 
 Legacy routes redirect via 308: `/dashboard/cli-tools` → `/dashboard/cli-code`, `/dashboard/agents` → `/dashboard/acp-agents`.
 
@@ -26,14 +26,14 @@ Legacy routes redirect via 308: `/dashboard/cli-tools` → `/dashboard/cli-code`
 CLI Code's / CLI Agents (consumption flow):
 Claude / Codex / OpenCode / Cline / KiloCode / Continue / Hermes Agent / Goose / ...
            │
-           ▼  (all point to OmniRoute)
-    http://YOUR_SERVER:20128/v1
+           ▼  (all point to SZRoute)
+    http://YOUR_SERVER:21128/v1
            │
-           ▼  (OmniRoute routes to the right provider)
+           ▼  (SZRoute routes to the right provider)
     Anthropic / OpenAI / Gemini / DeepSeek / Groq / Mistral / ...
 
 ACP Agents (reverse spawn flow):
-    Client request → OmniRoute → spawns CLI via stdio/ACP → response
+    Client request → SZRoute → spawns CLI via stdio/ACP → response
 ```
 
 **Benefits:**
@@ -111,7 +111,7 @@ Autonomous agents that appear in `/dashboard/cli-agents`:
 
 ## 3. ACP Agents (/dashboard/acp-agents)
 
-This page (renamed from `/dashboard/agents`) shows CLIs that OmniRoute can **spawn** as backend execution engines via stdio/ACP protocol. The catalog is maintained separately in `src/lib/acp/registry.ts` and is **not** the same as `CLI_TOOLS`.
+This page (renamed from `/dashboard/agents`) shows CLIs that SZRoute can **spawn** as backend execution engines via stdio/ACP protocol. The catalog is maintained separately in `src/lib/acp/registry.ts` and is **not** the same as `CLI_TOOLS`.
 
 Current ACP-spawnable CLIs (from `acpSpawnable: true` in `CLI_TOOLS` + ACP registry): codex, claude, goose, gemini-cli, openclaw, aider, opencode, cline, qwen-code, forge, interpreter, cursor-cli, warp.
 
@@ -231,7 +231,7 @@ Full PT-BR and EN translations are provided. 39 other locales fall back to EN au
 
 ## 9. Quick Start
 
-### Step 1 — Get an OmniRoute API Key
+### Step 1 — Get an SZRoute API Key
 
 1. Open `/dashboard/api-manager` → **Create API Key**
 2. Give it a name (e.g. `cli-tools`) and select all permissions
@@ -281,7 +281,7 @@ cargo install smelt  # Rust-based
 
 ### Step 3 — Configure via Dashboard
 
-1. Go to `http://localhost:20128/dashboard/cli-code`
+1. Go to `http://localhost:21128/dashboard/cli-code`
 2. Find your tool in the grid
 3. Click the card to open the tool detail page
 4. Select your API key and base URL
@@ -292,17 +292,17 @@ cargo install smelt  # Rust-based
 ### Step 4 — Set Global Environment Variables
 
 ```bash
-# OmniRoute Universal Endpoint
-export OPENAI_BASE_URL="http://localhost:20128/v1"
-export OPENAI_API_KEY="sk-your-omniroute-key"
-export ANTHROPIC_BASE_URL="http://localhost:20128"
-export ANTHROPIC_AUTH_TOKEN="sk-your-omniroute-key"
-export GEMINI_BASE_URL="http://localhost:20128/v1"
-export GEMINI_API_KEY="sk-your-omniroute-key"
+# SZRoute Universal Endpoint
+export OPENAI_BASE_URL="http://localhost:21128/v1"
+export OPENAI_API_KEY="sk-your-szroute-key"
+export ANTHROPIC_BASE_URL="http://localhost:21128"
+export ANTHROPIC_AUTH_TOKEN="sk-your-szroute-key"
+export GEMINI_BASE_URL="http://localhost:21128/v1"
+export GEMINI_API_KEY="sk-your-szroute-key"
 ```
 
-> For a **remote server** replace `localhost:20128` with the server IP or domain,
-> e.g. `http://<your-server-ip>:20128`.
+> For a **remote server** replace `localhost:21128` with the server IP or domain,
+> e.g. `http://<your-server-ip>:21128`.
 
 ---
 
@@ -315,8 +315,8 @@ export GEMINI_API_KEY="sk-your-omniroute-key"
 mkdir -p ~/.claude && cat > ~/.claude/settings.json << EOF
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:20128",
-    "ANTHROPIC_AUTH_TOKEN": "sk-your-omniroute-key"
+    "ANTHROPIC_BASE_URL": "http://localhost:21128",
+    "ANTHROPIC_AUTH_TOKEN": "sk-your-szroute-key"
   }
 }
 EOF
@@ -333,8 +333,8 @@ Use the unified Anthropic gateway root for Claude Code. Do not append `/v1` here
 ```bash
 mkdir -p ~/.codex && cat > ~/.codex/config.yaml << EOF
 model: auto
-apiKey: sk-your-omniroute-key
-apiBaseUrl: http://localhost:20128/v1
+apiKey: sk-your-szroute-key
+apiBaseUrl: http://localhost:21128/v1
 EOF
 ```
 
@@ -349,12 +349,12 @@ mkdir -p ~/.config/opencode && cat > ~/.config/opencode/opencode.json << EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "provider": {
-    "omniroute": {
+    "szroute": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "OmniRoute",
+      "name": "SZRoute",
       "options": {
-        "baseURL": "http://localhost:20128/v1",
-        "apiKey": "sk-your-omniroute-key"
+        "baseURL": "http://localhost:21128/v1",
+        "apiKey": "sk-your-szroute-key"
       },
       "models": {
         "claude-sonnet-4-5": { "name": "claude-sonnet-4-5" },
@@ -369,7 +369,7 @@ EOF
 
 **Test:** `opencode`
 
-> Use `opencode run "your prompt" --model omniroute/claude-sonnet-4-5-thinking --variant high`
+> Use `opencode run "your prompt" --model szroute/claude-sonnet-4-5-thinking --variant high`
 > to send thinking variants.
 
 ---
@@ -382,16 +382,16 @@ EOF
 mkdir -p ~/.cline/data && cat > ~/.cline/data/globalState.json << EOF
 {
   "apiProvider": "openai",
-  "openAiBaseUrl": "http://localhost:20128/v1",
-  "openAiApiKey": "sk-your-omniroute-key"
+  "openAiBaseUrl": "http://localhost:21128/v1",
+  "openAiApiKey": "sk-your-szroute-key"
 }
 EOF
 ```
 
 **VS Code mode:**
-Cline extension settings → API Provider: `OpenAI Compatible` → Base URL: `http://localhost:20128/v1`
+Cline extension settings → API Provider: `OpenAI Compatible` → Base URL: `http://localhost:21128/v1`
 
-Or use the OmniRoute dashboard → **CLI Tools → Cline → Apply Config**.
+Or use the SZRoute dashboard → **CLI Tools → Cline → Apply Config**.
 
 ---
 
@@ -400,19 +400,19 @@ Or use the OmniRoute dashboard → **CLI Tools → Cline → Apply Config**.
 **CLI mode:**
 
 ```bash
-kilocode --api-base http://localhost:20128/v1 --api-key sk-your-omniroute-key
+kilocode --api-base http://localhost:21128/v1 --api-key sk-your-szroute-key
 ```
 
 **VS Code settings:**
 
 ```json
 {
-  "kilo-code.openAiBaseUrl": "http://localhost:20128/v1",
-  "kilo-code.apiKey": "sk-your-omniroute-key"
+  "kilo-code.openAiBaseUrl": "http://localhost:21128/v1",
+  "kilo-code.apiKey": "sk-your-szroute-key"
 }
 ```
 
-Or use the OmniRoute dashboard → **CLI Tools → KiloCode → Apply Config**.
+Or use the SZRoute dashboard → **CLI Tools → KiloCode → Apply Config**.
 
 ---
 
@@ -422,11 +422,11 @@ Edit `~/.continue/config.yaml`:
 
 ```yaml
 models:
-  - name: OmniRoute
+  - name: SZRoute
     provider: openai
     model: auto
-    apiBase: http://localhost:20128/v1
-    apiKey: sk-your-omniroute-key
+    apiBase: http://localhost:21128/v1
+    apiKey: sk-your-szroute-key
     default: true
 ```
 
@@ -436,25 +436,25 @@ Restart VS Code after editing.
 
 #### VS Code Insiders (`chatLanguageModels.json`)
 
-Use this when VS Code Insiders is configured for custom endpoint models and you want OmniRoute to work without a custom header field.
+Use this when VS Code Insiders is configured for custom endpoint models and you want SZRoute to work without a custom header field.
 
 **Recommended location:**
 
 - Linux: `~/.config/Code - Insiders/User/chatLanguageModels.json`
 - Windows: `%APPDATA%/Code - Insiders/User/chatLanguageModels.json`
 
-**Example using the tokenized OmniRoute alias:**
+**Example using the tokenized SZRoute alias:**
 
 ```json
 [
   {
     "vendor": "customendpoint",
     "id": "auto",
-    "name": "OmniRoute Auto",
+    "name": "SZRoute Auto",
     "family": "gpt-4",
     "version": "1.0.0",
-    "url": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/chat/completions",
-    "modelsUrl": "http://localhost:20128/api/v1/vscode/sk-your-omniroute-key/models",
+    "url": "http://localhost:21128/api/v1/vscode/sk-your-szroute-key/chat/completions",
+    "modelsUrl": "http://localhost:21128/api/v1/vscode/sk-your-szroute-key/models",
     "requestFormat": "openai-chat-completions",
     "contextWindow": 256000,
     "maxOutputTokens": 32768,
@@ -467,7 +467,7 @@ Use this when VS Code Insiders is configured for custom endpoint models and you 
 
 **Notes:**
 
-- Replace `sk-your-omniroute-key` with an API key created in OmniRoute.
+- Replace `sk-your-szroute-key` with an API key created in SZRoute.
 - The `url` field should point to `/api/v1/vscode/{token}/chat/completions`.
 - The `modelsUrl` field should point to `/api/v1/vscode/{token}/models`.
 - Prefer the normal `/v1` + Bearer header flow when the client supports custom headers.
@@ -481,12 +481,12 @@ Use this when VS Code Insiders is configured for custom endpoint models and you 
 # Login to your AWS/Kiro account:
 kiro-cli login
 
-# The CLI uses its own auth — OmniRoute is not needed as backend for Kiro CLI itself.
-# Use kiro-cli alongside OmniRoute for other tools.
+# The CLI uses its own auth — SZRoute is not needed as backend for Kiro CLI itself.
+# Use kiro-cli alongside SZRoute for other tools.
 kiro-cli status
 ```
 
-For the **Kiro IDE** desktop app, use the MITM endpoint exposed by OmniRoute
+For the **Kiro IDE** desktop app, use the MITM endpoint exposed by SZRoute
 under `/dashboard/cli-tools → Kiro`.
 
 ---
@@ -495,7 +495,7 @@ under `/dashboard/cli-tools → Kiro`.
 
 Qwen Code supports OpenAI-compatible API endpoints via environment variables or `settings.json`.
 
-> Qwen OAuth free tier was discontinued on 2026-04-15. Use OmniRoute with
+> Qwen OAuth free tier was discontinued on 2026-04-15. Use SZRoute with
 > `bailian-coding-plan` / `alibaba` / `alibaba-cn` / `openrouter` / `anthropic` /
 > `gemini` providers instead.
 
@@ -503,8 +503,8 @@ Qwen Code supports OpenAI-compatible API endpoints via environment variables or 
 
 ```bash
 mkdir -p ~/.qwen && cat > ~/.qwen/.env << EOF
-OPENAI_API_KEY="sk-your-omniroute-key"
-OPENAI_BASE_URL="http://localhost:20128/v1"
+OPENAI_API_KEY="sk-your-szroute-key"
+OPENAI_BASE_URL="http://localhost:21128/v1"
 OPENAI_MODEL="auto"
 EOF
 ```
@@ -517,8 +517,8 @@ EOF
   "security": {
     "auth": {
       "selectedType": "openai",
-      "apiKey": "sk-your-omniroute-key",
-      "baseUrl": "http://localhost:20128/v1"
+      "apiKey": "sk-your-szroute-key",
+      "baseUrl": "http://localhost:21128/v1"
     }
   },
   "model": {
@@ -530,40 +530,40 @@ EOF
 **Option 3: Inline CLI flags**
 
 ```bash
-OPENAI_BASE_URL="http://localhost:20128/v1" \
-OPENAI_API_KEY="sk-your-omniroute-key" \
+OPENAI_BASE_URL="http://localhost:21128/v1" \
+OPENAI_API_KEY="sk-your-szroute-key" \
 OPENAI_MODEL="auto" \
 qwen
 ```
 
-> For a **remote server** replace `localhost:20128` with the server IP or domain.
+> For a **remote server** replace `localhost:21128` with the server IP or domain.
 
 ---
 
-## 10. Internal OmniRoute CLI
+## 10. Internal SZRoute CLI
 
-The `omniroute` binary provides commands for server lifecycle, setup, diagnostics, and provider management. Entry point: `bin/omniroute.mjs`.
+The `szroute` binary provides commands for server lifecycle, setup, diagnostics, and provider management. Entry point: `bin/szroute.mjs`.
 
 ```bash
-omniroute                              # Start server (default port 20128)
-omniroute setup                        # Interactive setup wizard
-omniroute doctor                       # Check config, DB, ports, runtime
-omniroute providers list               # Configured provider connections
-omniroute providers test-all           # Test every active connection
-omniroute reset-password               # Reset the admin password
-omniroute logs                         # Stream request logs
-omniroute health                       # Detailed health (breakers, cache, memory)
-omniroute --version                    # Print version
-omniroute --help                       # Show all commands
+szroute                              # Start server (default port 21128)
+szroute setup                        # Interactive setup wizard
+szroute doctor                       # Check config, DB, ports, runtime
+szroute providers list               # Configured provider connections
+szroute providers test-all           # Test every active connection
+szroute reset-password               # Reset the admin password
+szroute logs                         # Stream request logs
+szroute health                       # Detailed health (breakers, cache, memory)
+szroute --version                    # Print version
+szroute --help                       # Show all commands
 ```
 
 ### Setup & Initialization
 
 ```bash
-omniroute setup                        # Interactive setup wizard
-omniroute setup --non-interactive      # CI/automation mode (reads env vars + flags)
-omniroute setup --password '<value>'   # Set admin password directly
-omniroute setup --add-provider \
+szroute setup                        # Interactive setup wizard
+szroute setup --non-interactive      # CI/automation mode (reads env vars + flags)
+szroute setup --password '<value>'   # Set admin password directly
+szroute setup --add-provider \
   --provider openai \
   --api-key '<value>' \
   --test-provider                      # Add and test a provider in one shot
@@ -573,22 +573,22 @@ Recognized environment variables for non-interactive setup:
 
 | Var                           | Purpose                                      |
 | ----------------------------- | -------------------------------------------- |
-| `OMNIROUTE_SETUP_PASSWORD`    | Admin password (>=8 chars)                   |
-| `OMNIROUTE_PROVIDER`          | Provider id (e.g. `openai`, `anthropic`)     |
-| `OMNIROUTE_PROVIDER_NAME`     | Display name for the connection              |
-| `OMNIROUTE_PROVIDER_BASE_URL` | Optional OpenAI-compatible base URL override |
-| `OMNIROUTE_API_KEY`           | Provider API key                             |
-| `OMNIROUTE_DEFAULT_MODEL`     | Optional default model                       |
-| `DATA_DIR`                    | Override the OmniRoute data directory        |
+| `SZROUTE_SETUP_PASSWORD`    | Admin password (>=8 chars)                   |
+| `SZROUTE_PROVIDER`          | Provider id (e.g. `openai`, `anthropic`)     |
+| `SZROUTE_PROVIDER_NAME`     | Display name for the connection              |
+| `SZROUTE_PROVIDER_BASE_URL` | Optional OpenAI-compatible base URL override |
+| `SZROUTE_API_KEY`           | Provider API key                             |
+| `SZROUTE_DEFAULT_MODEL`     | Optional default model                       |
+| `DATA_DIR`                    | Override the SZRoute data directory        |
 
 ### Diagnostics
 
 ```bash
-omniroute doctor                       # Check config, DB, ports, runtime, memory, liveness
-omniroute doctor --json                # Machine-readable JSON
-omniroute doctor --no-liveness         # Skip the HTTP health probe
-omniroute doctor --host 0.0.0.0        # Override liveness host
-omniroute doctor --liveness-url <url>  # Full health endpoint URL override
+szroute doctor                       # Check config, DB, ports, runtime, memory, liveness
+szroute doctor --json                # Machine-readable JSON
+szroute doctor --no-liveness         # Skip the HTTP health probe
+szroute doctor --host 0.0.0.0        # Override liveness host
+szroute doctor --liveness-url <url>  # Full health endpoint URL override
 ```
 
 The doctor runs these checks: `Config`, `Database`, `Storage/encryption`,
@@ -598,62 +598,62 @@ The doctor runs these checks: `Config`, `Database`, `Storage/encryption`,
 ### Provider Management
 
 ```bash
-omniroute providers available                       # OmniRoute provider catalog
-omniroute providers available --search openai       # Filter catalog by id/name/alias/category
-omniroute providers available --category api-key    # Filter by category (api-key, oauth, free, ...)
-omniroute providers available --json                # Machine-readable JSON
+szroute providers available                       # SZRoute provider catalog
+szroute providers available --search openai       # Filter catalog by id/name/alias/category
+szroute providers available --category api-key    # Filter by category (api-key, oauth, free, ...)
+szroute providers available --json                # Machine-readable JSON
 
-omniroute providers list                            # Configured provider connections
-omniroute providers list --json
+szroute providers list                            # Configured provider connections
+szroute providers list --json
 
-omniroute providers test <id|name>                  # Test one configured connection
-omniroute providers test-all                        # Test every active connection
-omniroute providers validate                        # Local-only structural validation
+szroute providers test <id|name>                  # Test one configured connection
+szroute providers test-all                        # Test every active connection
+szroute providers validate                        # Local-only structural validation
 ```
 
-> `providers available` reads the OmniRoute catalog; `providers list/test/test-all/validate`
+> `providers available` reads the SZRoute catalog; `providers list/test/test-all/validate`
 > read the local SQLite database directly and do not require the server to be running.
 
 ### Recovery & Reset
 
 ```bash
-omniroute reset-password                # Reset the admin password (legacy alias still works)
-omniroute reset-encrypted-columns       # Show warning + dry-run for encrypted credential reset
-omniroute reset-encrypted-columns --force  # Actually null out encrypted credentials in SQLite
+szroute reset-password                # Reset the admin password (legacy alias still works)
+szroute reset-encrypted-columns       # Show warning + dry-run for encrypted credential reset
+szroute reset-encrypted-columns --force  # Actually null out encrypted credentials in SQLite
 ```
 
 ### Other subcommands
 
-These assume a running OmniRoute server, unless noted otherwise:
+These assume a running SZRoute server, unless noted otherwise:
 
 ```bash
-omniroute status                       # Comprehensive runtime status
-omniroute logs                         # Stream request logs (--json, --search, --follow)
-omniroute config show                  # Display current configuration
+szroute status                       # Comprehensive runtime status
+szroute logs                         # Stream request logs (--json, --search, --follow)
+szroute config show                  # Display current configuration
 
-omniroute provider list                # List available providers (alias of providers list)
-omniroute provider add                 # Register OmniRoute as a provider on a tool
-omniroute keys add | list | remove     # Manage API keys
-omniroute models [provider]            # List models (--json, --search)
-omniroute combo list | switch | create | delete
+szroute provider list                # List available providers (alias of providers list)
+szroute provider add                 # Register SZRoute as a provider on a tool
+szroute keys add | list | remove     # Manage API keys
+szroute models [provider]            # List models (--json, --search)
+szroute combo list | switch | create | delete
 
-omniroute backup                       # Snapshot config + DB
-omniroute restore                      # Restore from a previous snapshot
+szroute backup                       # Snapshot config + DB
+szroute restore                      # Restore from a previous snapshot
 
-omniroute health                       # Detailed health (breakers, cache, memory)
-omniroute quota                        # Provider quota usage
-omniroute cache                        # Cache status
-omniroute cache clear                  # Clear semantic + signature caches
+szroute health                       # Detailed health (breakers, cache, memory)
+szroute quota                        # Provider quota usage
+szroute cache                        # Cache status
+szroute cache clear                  # Clear semantic + signature caches
 
-omniroute mcp status | restart         # MCP server status / restart
-omniroute a2a status | card            # A2A server status / agent card
+szroute mcp status | restart         # MCP server status / restart
+szroute a2a status | card            # A2A server status / agent card
 
-omniroute tunnel list | create | stop  # Manage tunnels (cloudflare/tailscale/ngrok)
-omniroute env show | get <k> | set <k> <v>  # Inspect / set env vars (temporary)
+szroute tunnel list | create | stop  # Manage tunnels (cloudflare/tailscale/ngrok)
+szroute env show | get <k> | set <k> <v>  # Inspect / set env vars (temporary)
 
-omniroute test                         # Provider connectivity smoke test
-omniroute update                       # Check for updates
-omniroute completion                   # Generate shell completion
+szroute test                         # Provider connectivity smoke test
+szroute update                       # Check for updates
+szroute completion                   # Generate shell completion
 ```
 
 ### Common flags
@@ -661,7 +661,7 @@ omniroute completion                   # Generate shell completion
 | Flag                | Description                                            |
 | ------------------- | ------------------------------------------------------ |
 | `--no-open`         | Don't auto-open the browser on start                   |
-| `--port <n>`        | Override the API port (default 20128)                  |
+| `--port <n>`        | Override the API port (default 21128)                  |
 | `--mcp`             | Run as MCP server over stdio (for IDEs)                |
 | `--non-interactive` | CI mode (no prompts; reads from env/flags)             |
 | `--json`            | Machine-readable JSON output (doctor, providers, etc.) |
@@ -682,17 +682,17 @@ omniroute completion                   # Generate shell completion
 | `/v1/audio/speech`         | Text-to-speech                | ElevenLabs, OpenAI TTS      |
 | `/v1/audio/transcriptions` | Speech-to-text                | Deepgram, AssemblyAI        |
 
-Ready-to-paste examples with a tokenized OmniRoute URL:
+Ready-to-paste examples with a tokenized SZRoute URL:
 
 ```txt
 Token example: sk-a3ab3c080beaee3a-69f4a4-070d71af
 
-Standard OpenAI base: http://localhost:20128/v1
-VS Code models: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/models
-VS Code chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/chat/completions
-VS Code responses: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/responses
-Ollama tags: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/api/tags
-Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/api/chat
+Standard OpenAI base: http://localhost:21128/v1
+VS Code models: http://localhost:21128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/models
+VS Code chat: http://localhost:21128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/chat/completions
+VS Code responses: http://localhost:21128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/responses
+Ollama tags: http://localhost:21128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/api/tags
+Ollama chat: http://localhost:21128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070d71af/api/chat
 ```
 
 ---
@@ -701,7 +701,7 @@ Ollama chat: http://localhost:20128/api/v1/vscode/sk-a3ab3c080beaee3a-69f4a4-070
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `Connection refused` | OmniRoute not running | `omniroute serve` |
+| `Connection refused` | SZRoute not running | `szroute serve` |
 | `401 Unauthorized` | Wrong API key | Check in `/dashboard/api-manager` |
 | `No combo configured` | No active routing combo | Set up in `/dashboard/combos` |
 | CLI shows "not installed" | Binary not in PATH | Check `which <command>` |

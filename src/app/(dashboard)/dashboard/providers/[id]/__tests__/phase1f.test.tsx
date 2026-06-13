@@ -317,7 +317,7 @@ describe("useProviderModels — initial state", () => {
 // ---------------------------------------------------------------------------
 
 const HOOKS_DIR =
-  "/home/diegosouzapw/dev/proxys/OmniRoute/.worktrees/fix-3501-phase1f/src/app/(dashboard)/dashboard/providers/[id]/hooks";
+  "/home/diegosouzapw/dev/proxys/SZRoute/.worktrees/fix-3501-phase1f/src/app/(dashboard)/dashboard/providers/[id]/hooks";
 
 describe("Cycle-safety — hooks do not import ProviderDetailPageClient", () => {
   // We allow the name in JSDoc comments; what we forbid is an actual ES import statement.

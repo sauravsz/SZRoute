@@ -1,5 +1,5 @@
 /**
- * OmniRoute Electron Desktop App - Main Process
+ * SZRoute Electron Desktop App - Main Process
  *
  * This is the entry point for the Electron desktop application.
  * It manages the main window, system tray, server lifecycle, and IPC communication.
@@ -13,7 +13,7 @@
  * #8  Removed dead isProduction variable
  * #9  Platform-conditional titleBarStyle
  * #10 stdio: pipe + stdout/stderr capture for readiness detection
- * #14 Removed dead omniroute:// protocol (no handler existed)
+ * #14 Removed dead szroute:// protocol (no handler existed)
  * #15 Content Security Policy via session headers
  */
 
@@ -27,6 +27,8 @@ const {
   shell,
   session,
   Notification,
+  systemPreferences,
+  globalShortcut,
 } = require("electron");
 const path = require("path");
 const { spawn } = require("child_process");
@@ -64,7 +66,7 @@ const NEXT_SERVER_PATH = path.join(RESOURCES_PATH, "app");
 let mainWindow = null;
 let tray = null;
 let nextServer = null;
-let serverPort = 20128;
+let serverPort = 21128;
 let isServerStopped = false;
 
 const getServerUrl = () => `http://localhost:${serverPort}`;
@@ -74,7 +76,7 @@ function resolveNodeExecutable(env = process.env) {
   // instead of a randomly found system Node to prevent ABI architecture mismatches.
   //
   // On macOS packaged builds, process.execPath is the main Electron binary
-  // (e.g. OmniRoute.app/Contents/MacOS/OmniRoute). Spawning it with
+  // (e.g. SZRoute.app/Contents/MacOS/SZRoute). Spawning it with
   // ELECTRON_RUN_AS_NODE causes macOS to show a second dock icon and/or
   // flash a shell window. Use the Helper binary instead — macOS treats
   // Helper processes as background tasks with no visible UI artifacts.
@@ -140,13 +142,13 @@ function resolveDataDir(overridePath, env = process.env) {
 
   if (process.platform === "win32") {
     const appData = env.APPDATA || path.join(require("os").homedir(), "AppData", "Roaming");
-    return path.join(appData, "omniroute");
+    return path.join(appData, "szroute");
   }
 
   const xdg = env.XDG_CONFIG_HOME?.trim();
-  if (xdg) return path.join(path.resolve(xdg), "omniroute");
+  if (xdg) return path.join(path.resolve(xdg), "szroute");
 
-  return path.join(require("os").homedir(), ".omniroute");
+  return path.join(require("os").homedir(), ".szroute");
 }
 
 function getPreferredEnvFilePath(env = process.env) {
@@ -203,7 +205,7 @@ async function waitForServerExit(proc, timeoutMs = 5000) {
       setTimeout(() => {
         try {
           // #3347: force-kill the whole tree (Windows leaves grandchildren alive on a
-          // bare SIGKILL of the direct child, keeping omniroute.exe locked).
+          // bare SIGKILL of the direct child, keeping szroute.exe locked).
           killProcessTree(proc, { signal: "SIGKILL" });
         } catch {
           /* already dead */
@@ -246,7 +248,7 @@ function setupAutoUpdater() {
 
     if (Notification.isSupported()) {
       const notification = new Notification({
-        title: "OmniRoute Update Ready",
+        title: "SZRoute Update Ready",
         body: `Version ${info.version} is ready to install. Click to restart.`,
       });
       notification.on("click", () => {
@@ -291,7 +293,7 @@ async function downloadUpdate() {
 function installUpdate() {
   if (nextServer) {
     // #3347: tree-kill before quitAndInstall — a surviving server child (and its
-    // grandchildren) keeps omniroute.exe locked and the updater fails with "file in use".
+    // grandchildren) keeps szroute.exe locked and the updater fails with "file in use".
     killProcessTree(nextServer, { signal: "SIGTERM" });
     nextServer = null;
   }
@@ -304,7 +306,7 @@ function setupContentSecurityPolicy() {
     // React/Next.js needs 'unsafe-eval' only for source maps + HMR in development.
     // Gate it on the real dev flag (isDev = NODE_ENV==="development" || !app.isPackaged),
     // NOT on the request URL: a packaged production build still talks to its embedded
-    // server on localhost:20128, so a URL-substring check would silently grant
+    // server on localhost:21128, so a URL-substring check would silently grant
     // 'unsafe-eval' in production and open a code-injection vector via XSS.
     const scriptSrc = isDev
       ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:"
@@ -320,7 +322,7 @@ function setupContentSecurityPolicy() {
       "form-action 'self'",
       // Single connect-src: a duplicate directive is ignored by the browser (first wins),
       // which previously dropped the 127.0.0.1 origins. Keep both loopback forms here.
-      `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://*.omniroute.online https://*.omniroute.dev`,
+      `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://*.szroute.online https://*.szroute.dev`,
       scriptSrc,
       "script-src-attr 'none'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -345,15 +347,22 @@ function createWindow() {
   // Platform-conditional options (#9)
   const platformWindowOptions =
     process.platform === "darwin"
-      ? { titleBarStyle: "hiddenInset", trafficLightPosition: { x: 16, y: 16 } }
-      : { titleBarStyle: "default" };
+      ? { 
+          titleBarStyle: "hiddenInset", 
+          trafficLightPosition: { x: 16, y: 16 },
+          vibrancy: "sidebar",
+          visualEffectState: "followWindow",
+          backgroundColor: "#00000000",
+          transparent: true
+        }
+      : { titleBarStyle: "default", backgroundColor: "#0a0a0a" };
 
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    minWidth: 1024,
-    minHeight: 700,
-    title: "OmniRoute",
+    minWidth: 800,
+    minHeight: 600,
+    title: "SZRoute",
     icon: path.join(RESOURCES_PATH, "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -363,7 +372,6 @@ function createWindow() {
       webviewTag: false,
     },
     show: false,
-    backgroundColor: "#0a0a0a",
     ...platformWindowOptions,
   });
 
@@ -440,7 +448,7 @@ function createTray() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "Open OmniRoute",
+      label: "Open SZRoute",
       click: () => {
         if (mainWindow) {
           mainWindow.show();
@@ -458,7 +466,7 @@ function createTray() {
       submenu: [
         { label: `Port: ${serverPort}`, enabled: false },
         { type: "separator" },
-        { label: "20128", click: () => changePort(20128) },
+        { label: "21128", click: () => changePort(21128) },
         { label: "3000", click: () => changePort(3000) },
         { label: "8080", click: () => changePort(8080) },
       ],
@@ -478,7 +486,7 @@ function createTray() {
     },
   ]);
 
-  tray.setToolTip("OmniRoute");
+  tray.setToolTip("SZRoute");
   tray.setContextMenu(contextMenu);
 
   tray.on("double-click", () => {
@@ -596,11 +604,11 @@ function startNextServer() {
     console.log("[Electron] ✨ API_KEY_SECRET auto-generated");
   }
   if (changed) {
-    serverEnv.OMNIROUTE_BOOTSTRAPPED = "true";
+    serverEnv.SZROUTE_BOOTSTRAPPED = "true";
     try {
       fs.mkdirSync(dataDir, { recursive: true });
       const lines = [
-        "# Auto-generated by OmniRoute bootstrap",
+        "# Auto-generated by SZRoute bootstrap",
         "",
         ...Object.entries(persisted).map(([k, v]) => `${k}=${v}`),
         "",
@@ -647,10 +655,10 @@ function startNextServer() {
       const isHeadless =
         process.argv.includes("--headless") ||
         process.argv.includes("--cli") ||
-        process.env.OMNIROUTE_HEADLESS === "true";
+        process.env.SZROUTE_HEADLESS === "true";
       if (isHeadless && !global.loggedHeadlessReady) {
         global.loggedHeadlessReady = true;
-        console.log("\n\x1b[32m✔ OmniRoute Headless CLI Server is ready and listening!\x1b[0m");
+        console.log("\n\x1b[32m✔ SZRoute Headless CLI Server is ready and listening!\x1b[0m");
         console.log(`  \x1b[1mPort:\x1b[0m       http://localhost:${serverPort}`);
         console.log(`  \x1b[1mAPI Base:\x1b[0m   http://localhost:${serverPort}/v1`);
         console.log("  \x1b[2mPress Ctrl+C to terminate the process.\x1b[0m\n");
@@ -677,8 +685,8 @@ function startNextServer() {
 function stopNextServer() {
   if (nextServer) {
     // #3347: kill the whole tree, not just the direct child. On Windows the server
-    // (omniroute.exe-as-node) spawns grandchildren that a bare SIGTERM leaves alive,
-    // holding a lock on omniroute.exe and blocking updates.
+    // (szroute.exe-as-node) spawns grandchildren that a bare SIGTERM leaves alive,
+    // holding a lock on szroute.exe and blocking updates.
     killProcessTree(nextServer, { signal: "SIGTERM" });
     nextServer = null;
   }
@@ -698,15 +706,15 @@ function enableLinuxDesktopAutostart() {
       [
         "[Desktop Entry]",
         "Type=Application",
-        "Name=OmniRoute",
-        "Comment=OmniRoute Desktop Client",
+        "Name=SZRoute",
+        "Comment=SZRoute Desktop Client",
         `Exec="${execPath}" --hidden`,
         "Terminal=false",
         "Hidden=false",
         "X-GNOME-Autostart-enabled=true",
       ].join("\n") + "\n";
 
-    fs.writeFileSync(path.join(autostartDir, "omniroute-desktop.desktop"), desktopFileContent, {
+    fs.writeFileSync(path.join(autostartDir, "szroute-desktop.desktop"), desktopFileContent, {
       mode: 0o644,
     });
     return true;
@@ -725,7 +733,7 @@ function disableLinuxDesktopAutostart() {
       os.homedir(),
       ".config",
       "autostart",
-      "omniroute-desktop.desktop"
+      "szroute-desktop.desktop"
     );
     if (fs.existsSync(desktopPath)) {
       fs.unlinkSync(desktopPath);
@@ -743,7 +751,7 @@ function isLinuxDesktopAutostartEnabled() {
     const fs = require("fs");
     const path = require("path");
     return fs.existsSync(
-      path.join(os.homedir(), ".config", "autostart", "omniroute-desktop.desktop")
+      path.join(os.homedir(), ".config", "autostart", "szroute-desktop.desktop")
     );
   } catch {
     return false;
@@ -823,6 +831,74 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle("get-app-version", () => app.getVersion());
+
+  ipcMain.handle("dialog:show-message-box", async (_event, options) => {
+    return dialog.showMessageBoxSync(mainWindow, options);
+  });
+
+  const secondaryWindows = new Map();
+  
+  ipcMain.handle("window:open", async (_event, route, options) => {
+    if (secondaryWindows.has(route)) {
+      const win = secondaryWindows.get(route);
+      if (win.isMinimized()) win.restore();
+      win.focus();
+      return;
+    }
+
+    const platformWindowOptions = process.platform === "darwin"
+      ? { 
+          titleBarStyle: "hiddenInset", 
+          trafficLightPosition: { x: 16, y: 16 },
+          vibrancy: "sidebar",
+          visualEffectState: "followWindow",
+          backgroundColor: "#00000000",
+          transparent: true
+        }
+      : { titleBarStyle: "default", backgroundColor: "#0a0a0a" };
+
+    const newWin = new BrowserWindow({
+      width: options.width || 800,
+      height: options.height || 600,
+      minWidth: options.minWidth || 400,
+      minHeight: options.minHeight || 300,
+      title: options.title || "SZRoute",
+      icon: path.join(RESOURCES_PATH, "assets", "icon.png"),
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        contextIsolation: true,
+        nodeIntegration: false,
+        webSecurity: true,
+      },
+      ...platformWindowOptions,
+      ...options,
+    });
+
+    const url = new URL(getServerUrl());
+    url.pathname = route;
+    url.searchParams.set("windowMode", "true");
+    
+    newWin.loadURL(url.toString());
+
+    newWin.on("closed", () => {
+      secondaryWindows.delete(route);
+    });
+
+    secondaryWindows.set(route, newWin);
+    return true;
+  });
+
+  ipcMain.handle("system:prompt-touch-id", async (_event, reason) => {
+    try {
+      if (process.platform === "darwin" && systemPreferences.canPromptTouchID()) {
+        return await systemPreferences.promptTouchID(reason || "Authenticate to continue");
+      }
+      return false;
+    } catch (error) {
+      console.error("[Electron] TouchID failed:", error);
+      return false;
+    }
+  });
 
   // ── Web-Cookie Login IPC Handlers ──────────────────────────
   // Forward login status events to the renderer. Registered ONCE here — never
@@ -916,7 +992,7 @@ app.whenReady().then(async () => {
   const isHeadless =
     process.argv.includes("--headless") ||
     process.argv.includes("--cli") ||
-    process.env.OMNIROUTE_HEADLESS === "true";
+    process.env.SZROUTE_HEADLESS === "true";
 
   // Fix #1: Start server and WAIT for readiness before showing window
   startNextServer();
@@ -932,6 +1008,16 @@ app.whenReady().then(async () => {
     createWindow();
     createTray();
   }
+
+  // Register Global Shortcuts
+  globalShortcut.register("CommandOrControl+Shift+Space", () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+      mainWindow.webContents.send("open-command-palette");
+    }
+  });
 
   setupIpcHandlers();
   setupAutoUpdater();
@@ -969,10 +1055,14 @@ app.on("window-all-closed", () => {
   const isHeadless =
     process.argv.includes("--headless") ||
     process.argv.includes("--cli") ||
-    process.env.OMNIROUTE_HEADLESS === "true";
+    process.env.SZROUTE_HEADLESS === "true";
   if (process.platform !== "darwin" && !isHeadless) {
     app.quit();
   }
+});
+
+app.on("will-quit", () => {
+  globalShortcut.unregisterAll();
 });
 
 // Clean up before quit

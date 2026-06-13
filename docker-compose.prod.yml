@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────
-#  OmniRoute — Docker Compose (Production Snapshot)
+#  SZRoute — Docker Compose (Production Snapshot)
 # ──────────────────────────────────────────────────────────────────────
 #
 #  Isolated production instance running on port 20130.
@@ -11,26 +11,26 @@
 #    docker compose -f docker-compose.prod.yml logs -f
 #
 #  Image flavors (two Dockerfile stages):
-#    runner-base (default / omniroute:prod)
+#    runner-base (default / szroute:prod)
 #      Lean image — no Playwright/Chromium. Suitable for all providers
 #      except web-cookie ones (gemini-web, claude-web, claude-turnstile).
 #
-#    runner-web (omniroute:prod-web) — opt-in, ~300 MB extra
+#    runner-web (szroute:prod-web) — opt-in, ~300 MB extra
 #      Includes Playwright + Chromium system libs. Required for web-cookie
 #      providers. To use this flavor, override the build target:
 #
-#        omniroute-prod:
+#        szroute-prod:
 #          build:
 #            context: .
 #            target: runner-web
-#          image: omniroute:prod-web
+#          image: szroute:prod-web
 # ──────────────────────────────────────────────────────────────────────
 
 services:
   # ── Redis (Rate Limiter Backend) ──────────────────────────────────
   redis:
     image: redis:8.6.2-alpine
-    container_name: omniroute-redis-prod
+    container_name: szroute-redis-prod
     restart: unless-stopped
     volumes:
       - redis-prod-data:/data
@@ -41,31 +41,31 @@ services:
       timeout: 5s
       retries: 3
 
-  omniroute-prod:
-    container_name: omniroute-prod
+  szroute-prod:
+    container_name: szroute-prod
     depends_on:
       redis:
         condition: service_healthy
     build:
       context: .
       target: runner-cli
-    image: omniroute:prod
+    image: szroute:prod
     restart: unless-stopped
     stop_grace_period: 40s
     env_file: .env
     environment:
       - NODE_ENV=production
-      - PORT=${PORT:-20128}
-      - DASHBOARD_PORT=${DASHBOARD_PORT:-${PORT:-20128}}
+      - PORT=${PORT:-21128}
+      - DASHBOARD_PORT=${DASHBOARD_PORT:-${PORT:-21128}}
       - API_PORT=${API_PORT:-20129}
       - API_HOST=${API_HOST:-0.0.0.0}
       - HOSTNAME=0.0.0.0
       - DATA_DIR=/app/data
     ports:
-      - "${PROD_DASHBOARD_PORT:-20130}:${DASHBOARD_PORT:-${PORT:-20128}}"
+      - "${PROD_DASHBOARD_PORT:-20130}:${DASHBOARD_PORT:-${PORT:-21128}}"
       - "${PROD_API_PORT:-20131}:${API_PORT:-20129}"
     volumes:
-      - omniroute-prod-data:/app/data
+      - szroute-prod-data:/app/data
     healthcheck:
       test: ["CMD", "node", "healthcheck.mjs"]
       interval: 30s
@@ -74,7 +74,7 @@ services:
       start_period: 15s
 
 volumes:
-  omniroute-prod-data:
-    name: omniroute-prod-data
+  szroute-prod-data:
+    name: szroute-prod-data
   redis-prod-data:
     name: redis-prod-data

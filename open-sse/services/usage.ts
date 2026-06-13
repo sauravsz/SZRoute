@@ -43,12 +43,12 @@ import {
 import { sanitizeErrorMessage } from "../utils/error.ts";
 
 // Quota / usage upstream URLs (overridable for testing or relays).
-const CROF_USAGE_URL = process.env.OMNIROUTE_CROF_USAGE_URL ?? "https://crof.ai/usage_api/";
+const CROF_USAGE_URL = process.env.SZROUTE_CROF_USAGE_URL ?? "https://crof.ai/usage_api/";
 const GEMINI_CLI_USAGE_URL =
-  process.env.OMNIROUTE_GEMINI_CLI_USAGE_URL ??
+  process.env.SZROUTE_GEMINI_CLI_USAGE_URL ??
   "https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist";
 const CODEWHISPERER_BASE_URL =
-  process.env.OMNIROUTE_CODEWHISPERER_BASE_URL ?? "https://codewhisperer.us-east-1.amazonaws.com";
+  process.env.SZROUTE_CODEWHISPERER_BASE_URL ?? "https://codewhisperer.us-east-1.amazonaws.com";
 
 // Antigravity API config (credentials from PROVIDERS via credential loader)
 const ANTIGRAVITY_CONFIG = {
@@ -91,7 +91,7 @@ const NANOGPT_CONFIG = {
 };
 
 const OPENCODE_GO_QUOTA_URL =
-  process.env.OMNIROUTE_OPENCODE_GO_QUOTA_URL ?? "https://api.z.ai/api/monitor/usage/quota/limit";
+  process.env.SZROUTE_OPENCODE_GO_QUOTA_URL ?? "https://api.z.ai/api/monitor/usage/quota/limit";
 const OPENCODE_GO_QUOTA_TOTALS = {
   session: 12,
   weekly: 30,
@@ -1127,10 +1127,10 @@ const XIAOMI_MIMO_MONTHLY_TOKEN_LIMIT = 4_100_000_000;
  *
  * Xiaomi exposes plan usage only behind the console session cookie (the API key
  * cannot reach the `tokenPlan/usage` endpoint), so there is no upstream usage
- * API to call. Instead we count the tokens OmniRoute itself routed to this
+ * API to call. Instead we count the tokens SZRoute itself routed to this
  * connection in the current UTC month (from `usage_history`) and compare them
  * to the known Token Plan monthly limit. This reflects only traffic that went
- * through OmniRoute, not the provider's own dashboard figure.
+ * through SZRoute, not the provider's own dashboard figure.
  */
 async function getXiaomiMimoUsage(connectionId: string) {
   if (!connectionId) {
@@ -1145,7 +1145,7 @@ async function getXiaomiMimoUsage(connectionId: string) {
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)
     ).toISOString();
     return {
-      plan: "Xiaomi MiMo Token Plan (OmniRoute-tracked)",
+      plan: "Xiaomi MiMo Token Plan (SZRoute-tracked)",
       quotas: {
         monthly: createQuotaFromUsage(used, total, resetAt),
       },
@@ -2695,7 +2695,7 @@ async function getClaudeUsage(accessToken?: string) {
       const quotas: Record<string, UsageQuota> = {};
 
       // utilization = percentage USED (e.g., 90 means 90% used, 10% remaining)
-      // Confirmed via user report #299: Claude.ai shows 87% used = OmniRoute must show 13% remaining.
+      // Confirmed via user report #299: Claude.ai shows 87% used = SZRoute must show 13% remaining.
       const hasUtilization = (window: JsonRecord) =>
         window && typeof window === "object" && safePercentage(window.utilization) !== undefined;
 
@@ -3080,7 +3080,7 @@ function getKimiPlanName(level: unknown): string {
 async function getKimiUsage(accessToken?: string) {
   // Generate device info for headers (same as OAuth flow)
   const deviceId = "kimi-usage-" + Date.now();
-  const platform = "omniroute";
+  const platform = "szroute";
   const version = "2.1.2";
   const deviceModel =
     typeof process !== "undefined" ? `${process.platform} ${process.arch}` : "unknown";

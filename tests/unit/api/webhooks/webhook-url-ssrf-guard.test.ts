@@ -18,7 +18,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-webhook-ssrf-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-webhook-ssrf-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.NODE_ENV = "test";
 process.env.DISABLE_SQLITE_AUTO_BACKUP = "true";
@@ -49,7 +49,7 @@ function jsonRequest(url: string, method: string, body: unknown): Request {
 describe("POST /api/webhooks — SSRF guard on create", () => {
   it("rejects custom webhook pointing to 127.0.0.1", async () => {
     const req = jsonRequest("http://localhost/api/webhooks", "POST", {
-      url: "http://127.0.0.1:20128/api/v1/management/proxies",
+      url: "http://127.0.0.1:21128/api/v1/management/proxies",
       kind: "custom",
     });
     const res = await webhooksRoute.POST(req);

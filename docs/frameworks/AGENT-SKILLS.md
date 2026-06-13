@@ -1,15 +1,15 @@
 ---
-title: "OmniRoute Agent Skills Catalog"
+title: "SZRoute Agent Skills Catalog"
 version: 3.8.6
 lastUpdated: 2026-05-28
 ---
 
-# OmniRoute Agent Skills Catalog
+# SZRoute Agent Skills Catalog
 
 > **Source of truth:** `src/lib/agentSkills/` (catalog, generator, parsers) + `skills/` directory (SKILL.md files)
 > **Last updated:** 2026-05-28 — v3.8.6
 
-Agent Skills are structured SKILL.md files that teach external agents, MCP clients, and A2A orchestrators how to use OmniRoute's REST API and CLI. Unlike [Omni Skills](./SKILLS.md) (which are LLM tool definitions executed inside OmniRoute), Agent Skills are a *documentation catalog* — static markdown that can be fed directly into agent context.
+Agent Skills are structured SKILL.md files that teach external agents, MCP clients, and A2A orchestrators how to use SZRoute's REST API and CLI. Unlike [Omni Skills](./SKILLS.md) (which are LLM tool definitions executed inside SZRoute), Agent Skills are a *documentation catalog* — static markdown that can be fed directly into agent context.
 
 ---
 
@@ -20,7 +20,7 @@ The catalog contains **42 canonical Agent Skills** (22 REST API + 20 CLI). Each 
 - A **canonical ID** (`omni-auth`, `cli-serve`, etc.)
 - A **SKILL.md** file in `skills/{id}/SKILL.md` with YAML frontmatter (`name`, `description`) + rich markdown body
 - **REST endpoints** (API skills) or **CLI subcommands** (CLI skills) derived from the OpenAPI spec and CLI registry
-- A **GitHub raw URL** for live fetch: `https://raw.githubusercontent.com/diegosouzapw/OmniRoute/refs/heads/main/skills/{id}/SKILL.md`
+- A **GitHub raw URL** for live fetch: `https://raw.githubusercontent.com/sauravsz/SZRoute/refs/heads/main/skills/{id}/SKILL.md`
 
 ---
 
@@ -94,13 +94,13 @@ The generator preserves content between `<!-- skill:custom-start -->` and `<!-- 
 Example — list all API skills:
 
 ```bash
-curl "http://localhost:20128/api/agent-skills?category=api"
+curl "http://localhost:21128/api/agent-skills?category=api"
 ```
 
 Example — fetch a single SKILL.md:
 
 ```bash
-curl -H "Accept: text/markdown" "http://localhost:20128/api/agent-skills/omni-providers/raw"
+curl -H "Accept: text/markdown" "http://localhost:21128/api/agent-skills/omni-providers/raw"
 ```
 
 ---
@@ -111,9 +111,9 @@ Three MCP tools are registered under scope `read:catalog`:
 
 | Tool | Description |
 | :--- | :--- |
-| `omniroute_agent_skills_list` | List skills (optional `category` / `area` filters) |
-| `omniroute_agent_skills_get` | Get metadata + SKILL.md for one skill by `id` |
-| `omniroute_agent_skills_coverage` | Coverage stats (API/CLI have/total) |
+| `szroute_agent_skills_list` | List skills (optional `category` / `area` filters) |
+| `szroute_agent_skills_get` | Get metadata + SKILL.md for one skill by `id` |
+| `szroute_agent_skills_coverage` | Coverage stats (API/CLI have/total) |
 
 See [MCP-SERVER.md](./MCP-SERVER.md) for scope wiring and authentication.
 
@@ -171,26 +171,26 @@ See [A2A-SERVER.md](./A2A-SERVER.md) for protocol details.
 
 | ID | Area | CLI Command Root |
 | :--- | :--- | :--- |
-| `cli-serve` | cli-serve | `omniroute serve` |
-| `cli-health` | cli-health | `omniroute health` |
-| `cli-providers` | cli-providers | `omniroute providers` |
-| `cli-keys` | cli-keys | `omniroute keys` |
-| `cli-models` | cli-models | `omniroute models` |
-| `cli-chat` | cli-chat | `omniroute chat` |
-| `cli-routing` | cli-routing | `omniroute routing` |
-| `cli-resilience` | cli-resilience | `omniroute resilience` |
-| `cli-compression` | cli-compression | `omniroute compression` |
-| `cli-contexts` | cli-contexts | `omniroute contexts` |
-| `cli-cost-usage` | cli-cost-usage | `omniroute cost` |
-| `cli-mcp` | cli-mcp | `omniroute mcp` |
-| `cli-a2a` | cli-a2a | `omniroute a2a` |
-| `cli-tunnel` | cli-tunnel | `omniroute tunnel` |
-| `cli-backup-sync` | cli-backup-sync | `omniroute backup` |
-| `cli-policy-audit` | cli-policy-audit | `omniroute policy` |
-| `cli-batches` | cli-batches | `omniroute batch` |
-| `cli-eval` | cli-eval | `omniroute eval` |
-| `cli-plugins-skills` | cli-plugins-skills | `omniroute plugins` |
-| `cli-setup` | cli-setup | `omniroute setup` |
+| `cli-serve` | cli-serve | `szroute serve` |
+| `cli-health` | cli-health | `szroute health` |
+| `cli-providers` | cli-providers | `szroute providers` |
+| `cli-keys` | cli-keys | `szroute keys` |
+| `cli-models` | cli-models | `szroute models` |
+| `cli-chat` | cli-chat | `szroute chat` |
+| `cli-routing` | cli-routing | `szroute routing` |
+| `cli-resilience` | cli-resilience | `szroute resilience` |
+| `cli-compression` | cli-compression | `szroute compression` |
+| `cli-contexts` | cli-contexts | `szroute contexts` |
+| `cli-cost-usage` | cli-cost-usage | `szroute cost` |
+| `cli-mcp` | cli-mcp | `szroute mcp` |
+| `cli-a2a` | cli-a2a | `szroute a2a` |
+| `cli-tunnel` | cli-tunnel | `szroute tunnel` |
+| `cli-backup-sync` | cli-backup-sync | `szroute backup` |
+| `cli-policy-audit` | cli-policy-audit | `szroute policy` |
+| `cli-batches` | cli-batches | `szroute batch` |
+| `cli-eval` | cli-eval | `szroute eval` |
+| `cli-plugins-skills` | cli-plugins-skills | `szroute plugins` |
+| `cli-setup` | cli-setup | `szroute setup` |
 
 ---
 
@@ -200,17 +200,17 @@ See [A2A-SERVER.md](./A2A-SERVER.md) for protocol details.
 
 ```bash
 # Get the full catalog
-curl "http://your-omniroute/api/agent-skills" | jq '.skills[] | {id, name, category}'
+curl "http://your-szroute/api/agent-skills" | jq '.skills[] | {id, name, category}'
 
 # Get SKILL.md for context injection
-curl "http://your-omniroute/api/agent-skills/omni-providers/raw" > omni-providers.md
+curl "http://your-szroute/api/agent-skills/omni-providers/raw" > omni-providers.md
 ```
 
 ### 2. Discovery via MCP
 
 ```typescript
 // In a Claude Desktop / Cursor MCP client:
-const result = await client.callTool("omniroute_agent_skills_list", { category: "api" });
+const result = await client.callTool("szroute_agent_skills_list", { category: "api" });
 // result.skills → array of AgentSkill with rawUrl for each
 ```
 
@@ -219,7 +219,7 @@ const result = await client.callTool("omniroute_agent_skills_list", { category: 
 ```python
 import requests
 
-resp = requests.post("http://your-omniroute/a2a", json={
+resp = requests.post("http://your-szroute/a2a", json={
     "jsonrpc": "2.0", "id": "1",
     "method": "message/send",
     "params": {"skill": "list-capabilities", "messages": [{"role": "user", "content": "list"}]}
@@ -231,7 +231,7 @@ table = resp.json()["result"]["artifacts"][0]["content"]
 ### 4. Direct GitHub raw fetch (no server required)
 
 ```bash
-BASE="https://raw.githubusercontent.com/diegosouzapw/OmniRoute/refs/heads/main/skills"
+BASE="https://raw.githubusercontent.com/sauravsz/SZRoute/refs/heads/main/skills"
 curl "${BASE}/omni-providers/SKILL.md"
 ```
 
@@ -243,19 +243,19 @@ The generator reads the curated catalog + OpenAPI spec + CLI registry and writes
 
 ```bash
 # Preview (dry run, no writes)
-curl -X POST http://localhost:20128/api/agent-skills/generate \
+curl -X POST http://localhost:21128/api/agent-skills/generate \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{"dryRun":true}'
 
 # Full regeneration
-curl -X POST http://localhost:20128/api/agent-skills/generate \
+curl -X POST http://localhost:21128/api/agent-skills/generate \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{"dryRun":false,"prune":false}'
 
 # Regenerate specific IDs
-curl -X POST http://localhost:20128/api/agent-skills/generate \
+curl -X POST http://localhost:21128/api/agent-skills/generate \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{"dryRun":false,"onlyIds":["omni-providers","cli-serve"]}'
@@ -278,7 +278,7 @@ The generator response is a `GeneratorReport`:
 ## Coverage API
 
 ```bash
-curl "http://localhost:20128/api/agent-skills/coverage"
+curl "http://localhost:21128/api/agent-skills/coverage"
 ```
 
 ```json
@@ -295,7 +295,7 @@ curl "http://localhost:20128/api/agent-skills/coverage"
 ## Related
 
 - [SKILLS.md](./SKILLS.md) — Omni Skills framework (LLM tool injection + marketplace)
-- [MCP-SERVER.md](./MCP-SERVER.md) — MCP tool catalog (`omniroute_agent_skills_*` tools)
+- [MCP-SERVER.md](./MCP-SERVER.md) — MCP tool catalog (`szroute_agent_skills_*` tools)
 - [A2A-SERVER.md](./A2A-SERVER.md) — A2A protocol (`list-capabilities` skill)
 - `src/lib/agentSkills/` — catalog, generator, parsers
 - `skills/` — generated SKILL.md files (42 entries)

@@ -2,12 +2,12 @@
  * T-05 combo-discovery contract tests.
  *
  * Covers:
- *   - `defaultOmniRouteCombosFetcher(baseURL, apiKey, timeoutMs?)`
+ *   - `defaultSZRouteCombosFetcher(baseURL, apiKey, timeoutMs?)`
  *     — envelope tolerance (`{combos: [...]}` and bare array), non-2xx errors.
  *   - `mapComboToModelV2(combo, members, providerId, baseURL)`
  *     — LCD policy across capabilities, limits, modalities; defensive
  *       posture on empty members; nice-name preference.
- *   - `createOmniRouteProviderHook(opts, deps)` extension
+ *   - `createSZRouteProviderHook(opts, deps)` extension
  *     — combos merged into the models map; collision resolution (combo
  *       wins, warn-once); soft-fail when the combos fetcher throws;
  *       combos cached + reused under the same TTL key as models.
@@ -19,20 +19,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  createOmniRouteProviderHook,
-  defaultOmniRouteCombosFetcher,
+  createSZRouteProviderHook,
+  defaultSZRouteCombosFetcher,
   mapComboToModelV2,
-  type OmniRouteCombosFetcher,
-  type OmniRouteModelsFetcher,
-  type OmniRouteRawCombo,
-  type OmniRouteRawModelEntry,
+  type SZRouteCombosFetcher,
+  type SZRouteModelsFetcher,
+  type SZRouteRawCombo,
+  type SZRouteRawModelEntry,
 } from "../src/index.js";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Fixtures
 // ────────────────────────────────────────────────────────────────────────────
 
-const MODEL_PRIMARY: OmniRouteRawModelEntry = {
+const MODEL_PRIMARY: SZRouteRawModelEntry = {
   id: "claude-primary",
   capabilities: {
     tool_calling: true,
@@ -48,7 +48,7 @@ const MODEL_PRIMARY: OmniRouteRawModelEntry = {
   output_modalities: ["text"],
 };
 
-const MODEL_SECONDARY: OmniRouteRawModelEntry = {
+const MODEL_SECONDARY: SZRouteRawModelEntry = {
   id: "claude-secondary",
   capabilities: {
     tool_calling: true,
@@ -64,7 +64,7 @@ const MODEL_SECONDARY: OmniRouteRawModelEntry = {
   output_modalities: ["text"],
 };
 
-const MODEL_NO_TOOLS: OmniRouteRawModelEntry = {
+const MODEL_NO_TOOLS: SZRouteRawModelEntry = {
   id: "gemini-3-flash",
   capabilities: { tool_calling: false, reasoning: false, vision: false, thinking: false },
   context_length: 1_000_000,
@@ -73,7 +73,7 @@ const MODEL_NO_TOOLS: OmniRouteRawModelEntry = {
   output_modalities: ["text"],
 };
 
-const COMBO_CLAUDE_TIER: OmniRouteRawCombo = {
+const COMBO_CLAUDE_TIER: SZRouteRawCombo = {
   id: "combo-claude-tier",
   name: "Claude Tier",
   strategy: "priority",
@@ -88,10 +88,10 @@ const COMBO_CLAUDE_TIER: OmniRouteRawCombo = {
 // ────────────────────────────────────────────────────────────────────────────
 
 function stubModelsFetcher(
-  payload: OmniRouteRawModelEntry[]
-): OmniRouteModelsFetcher & { callCount: () => number } {
+  payload: SZRouteRawModelEntry[]
+): SZRouteModelsFetcher & { callCount: () => number } {
   let n = 0;
-  const f: OmniRouteModelsFetcher = async () => {
+  const f: SZRouteModelsFetcher = async () => {
     n++;
     return payload;
   };
@@ -99,11 +99,11 @@ function stubModelsFetcher(
 }
 
 function stubCombosFetcher(
-  payload: OmniRouteRawCombo[]
-): OmniRouteCombosFetcher & { callCount: () => number; callsBy: () => Array<[string, string]> } {
+  payload: SZRouteRawCombo[]
+): SZRouteCombosFetcher & { callCount: () => number; callsBy: () => Array<[string, string]> } {
   let n = 0;
   const calls: Array<[string, string]> = [];
-  const f: OmniRouteCombosFetcher = async (baseURL, apiKey) => {
+  const f: SZRouteCombosFetcher = async (baseURL, apiKey) => {
     n++;
     calls.push([baseURL, apiKey]);
     return payload;
@@ -116,9 +116,9 @@ function stubCombosFetcher(
 
 function failingCombosFetcher(
   err = new Error("boom")
-): OmniRouteCombosFetcher & { callCount: () => number } {
+): SZRouteCombosFetcher & { callCount: () => number } {
   let n = 0;
-  const f: OmniRouteCombosFetcher = async () => {
+  const f: SZRouteCombosFetcher = async () => {
     n++;
     throw err;
   };
@@ -147,10 +147,10 @@ async function withWarnCapture<T>(
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// defaultOmniRouteCombosFetcher — envelope tolerance + error surfacing
+// defaultSZRouteCombosFetcher — envelope tolerance + error surfacing
 // ────────────────────────────────────────────────────────────────────────────
 
-test("defaultOmniRouteCombosFetcher: parses {combos:[…]} envelope", async () => {
+test("defaultSZRouteCombosFetcher: parses {combos:[…]} envelope", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input: unknown) => {
     const url = typeof input === "string" ? input : (input as { url: string }).url;
@@ -166,7 +166,7 @@ test("defaultOmniRouteCombosFetcher: parses {combos:[…]} envelope", async () =
     );
   }) as typeof fetch;
   try {
-    const combos = await defaultOmniRouteCombosFetcher("https://or.example.com", "sk-test");
+    const combos = await defaultSZRouteCombosFetcher("https://or.example.com", "sk-test");
     assert.equal(combos.length, 2);
     assert.equal(combos[0].id, "c1");
     assert.equal(combos[1].id, "c2");
@@ -175,7 +175,7 @@ test("defaultOmniRouteCombosFetcher: parses {combos:[…]} envelope", async () =
   }
 });
 
-test("defaultOmniRouteCombosFetcher: parses bare array envelope", async () => {
+test("defaultSZRouteCombosFetcher: parses bare array envelope", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async () => {
     return new Response(JSON.stringify([{ id: "c1" }, { id: "c2" }, { not_an_id: 42 }]), {
@@ -183,7 +183,7 @@ test("defaultOmniRouteCombosFetcher: parses bare array envelope", async () => {
     });
   }) as typeof fetch;
   try {
-    const combos = await defaultOmniRouteCombosFetcher("https://or.example.com/v1", "sk-test");
+    const combos = await defaultSZRouteCombosFetcher("https://or.example.com/v1", "sk-test");
     // Strip /v1 before /api/combos, AND filter out entries with no string id.
     assert.equal(combos.length, 2);
     assert.equal(combos[0].id, "c1");
@@ -193,7 +193,7 @@ test("defaultOmniRouteCombosFetcher: parses bare array envelope", async () => {
   }
 });
 
-test("defaultOmniRouteCombosFetcher: strips trailing /v1 before /api/combos", async () => {
+test("defaultSZRouteCombosFetcher: strips trailing /v1 before /api/combos", async () => {
   const originalFetch = globalThis.fetch;
   let observedUrl = "";
   globalThis.fetch = (async (input: unknown) => {
@@ -201,14 +201,14 @@ test("defaultOmniRouteCombosFetcher: strips trailing /v1 before /api/combos", as
     return new Response(JSON.stringify({ combos: [] }), { status: 200 });
   }) as typeof fetch;
   try {
-    await defaultOmniRouteCombosFetcher("https://or.example.com/v1/", "sk-test");
+    await defaultSZRouteCombosFetcher("https://or.example.com/v1/", "sk-test");
     assert.equal(observedUrl, "https://or.example.com/api/combos");
   } finally {
     globalThis.fetch = originalFetch;
   }
 });
 
-test("defaultOmniRouteCombosFetcher: throws on non-2xx with status code in message", async () => {
+test("defaultSZRouteCombosFetcher: throws on non-2xx with status code in message", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async () => {
     return new Response(JSON.stringify({ error: "Invalid token" }), {
@@ -219,7 +219,7 @@ test("defaultOmniRouteCombosFetcher: throws on non-2xx with status code in messa
   try {
     await assert.rejects(
       async () => {
-        await defaultOmniRouteCombosFetcher("https://or.example.com", "sk-bad");
+        await defaultSZRouteCombosFetcher("https://or.example.com", "sk-bad");
       },
       (err: unknown) => {
         const msg = err instanceof Error ? err.message : String(err);
@@ -233,16 +233,16 @@ test("defaultOmniRouteCombosFetcher: throws on non-2xx with status code in messa
   }
 });
 
-test("defaultOmniRouteCombosFetcher: throws when apiKey missing", async () => {
+test("defaultSZRouteCombosFetcher: throws when apiKey missing", async () => {
   await assert.rejects(
-    async () => defaultOmniRouteCombosFetcher("https://or.example.com", ""),
+    async () => defaultSZRouteCombosFetcher("https://or.example.com", ""),
     /apiKey required/
   );
 });
 
-test("defaultOmniRouteCombosFetcher: throws when baseURL missing", async () => {
+test("defaultSZRouteCombosFetcher: throws when baseURL missing", async () => {
   await assert.rejects(
-    async () => defaultOmniRouteCombosFetcher("", "sk-test"),
+    async () => defaultSZRouteCombosFetcher("", "sk-test"),
     /baseURL required/
   );
 });
@@ -255,7 +255,7 @@ test("mapComboToModelV2: empty members → capabilities all false (defensive)", 
   const m = mapComboToModelV2(
     { id: "combo-empty", name: "Empty Combo" },
     [],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m.id, "combo-empty");
@@ -283,7 +283,7 @@ test("mapComboToModelV2: all members reasoning=true → combo reasoning=true", (
         capabilities: { ...MODEL_PRIMARY.capabilities, thinking: false, reasoning: true },
       },
     ],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m.capabilities.reasoning, true);
@@ -293,7 +293,7 @@ test("mapComboToModelV2: any member reasoning=false → combo reasoning=false", 
   const m = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_NO_TOOLS], // gemini-3-flash has reasoning:false, thinking:false
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m.capabilities.reasoning, false);
@@ -303,7 +303,7 @@ test("mapComboToModelV2: limit.context is min of members'", () => {
   const m = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_SECONDARY, MODEL_NO_TOOLS],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   // min(200_000, 100_000, 1_000_000) = 100_000
@@ -316,7 +316,7 @@ test("mapComboToModelV2: limit.input only emitted when EVERY member declares one
   const m1 = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_SECONDARY],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   // Both declare max_input_tokens → limit.input = min(180000, 96000)
@@ -325,7 +325,7 @@ test("mapComboToModelV2: limit.input only emitted when EVERY member declares one
   const m2 = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_NO_TOOLS], // gemini-3-flash doesn't declare max_input_tokens
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m2.limit.input, undefined);
@@ -335,7 +335,7 @@ test("mapComboToModelV2: nice name preferred from combo.name", () => {
   const m1 = mapComboToModelV2(
     { id: "combo-x", name: "Pretty Name" },
     [MODEL_PRIMARY],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m1.name, "Pretty Name");
@@ -344,7 +344,7 @@ test("mapComboToModelV2: nice name preferred from combo.name", () => {
   const m2 = mapComboToModelV2(
     { id: "combo-y" },
     [MODEL_PRIMARY],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m2.name, "combo-y");
@@ -352,7 +352,7 @@ test("mapComboToModelV2: nice name preferred from combo.name", () => {
   const m3 = mapComboToModelV2(
     { id: "combo-z", name: "   " },
     [MODEL_PRIMARY],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m3.name, "combo-z");
@@ -363,7 +363,7 @@ test("mapComboToModelV2: attachment AND vision flag both honored across members"
   const yes = mapComboToModelV2(
     { id: "c1", models: [] },
     [MODEL_PRIMARY, MODEL_SECONDARY],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(yes.capabilities.attachment, true);
@@ -372,7 +372,7 @@ test("mapComboToModelV2: attachment AND vision flag both honored across members"
   const no = mapComboToModelV2(
     { id: "c2", models: [] },
     [MODEL_PRIMARY, MODEL_NO_TOOLS],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(no.capabilities.attachment, false);
@@ -382,7 +382,7 @@ test("mapComboToModelV2: modalities AND'd across members", () => {
   const m = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_SECONDARY], // both have text+image
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m.capabilities.input.text, true);
@@ -393,7 +393,7 @@ test("mapComboToModelV2: modalities AND'd across members", () => {
   const m2 = mapComboToModelV2(
     { id: "c", models: [] },
     [MODEL_PRIMARY, MODEL_NO_TOOLS],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m2.capabilities.input.text, true);
@@ -404,10 +404,10 @@ test("mapComboToModelV2: api block matches providerId + baseURL", () => {
   const m = mapComboToModelV2(
     { id: "c" },
     [MODEL_PRIMARY],
-    "omniroute-preprod",
+    "szroute-preprod",
     "https://or-preprod.example.com/v1"
   );
-  assert.equal(m.providerID, "omniroute-preprod");
+  assert.equal(m.providerID, "szroute-preprod");
   assert.equal(m.api.id, "openai-compatible");
   assert.equal(m.api.url, "https://or-preprod.example.com/v1");
   assert.equal(m.api.npm, "@ai-sdk/openai-compatible");
@@ -415,7 +415,7 @@ test("mapComboToModelV2: api block matches providerId + baseURL", () => {
 });
 
 test("mapComboToModelV2: explicit member temperature=false drops combo temperature=false", () => {
-  const tempFalse: OmniRouteRawModelEntry = {
+  const tempFalse: SZRouteRawModelEntry = {
     id: "no-temp",
     capabilities: { tool_calling: true, temperature: false },
     context_length: 100_000,
@@ -426,20 +426,20 @@ test("mapComboToModelV2: explicit member temperature=false drops combo temperatu
   const m = mapComboToModelV2(
     { id: "c" },
     [MODEL_PRIMARY, tempFalse],
-    "omniroute",
+    "szroute",
     "https://or.example.com/v1"
   );
   assert.equal(m.capabilities.temperature, false);
 });
 
 // ────────────────────────────────────────────────────────────────────────────
-// createOmniRouteProviderHook — combos merge + collision + soft-fail + cache
+// createSZRouteProviderHook — combos merge + collision + soft-fail + cache
 // ────────────────────────────────────────────────────────────────────────────
 
 test("models() returns combo entries merged into the map", async () => {
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY, MODEL_SECONDARY, MODEL_NO_TOOLS]);
   const combosFetcher = stubCombosFetcher([COMBO_CLAUDE_TIER]);
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );
@@ -454,7 +454,7 @@ test("models() returns combo entries merged into the map", async () => {
 
   const combo = out["combo/claude-tier"];
   assert.equal(combo.name, "Combo: Claude Tier");
-  assert.equal(combo.providerID, "omniroute");
+  assert.equal(combo.providerID, "szroute");
   // LCD over claude-primary (200k, reasoning) + claude-secondary (100k, no reasoning)
   assert.equal(combo.limit.context, 100_000);
   assert.equal(combo.capabilities.reasoning, false);
@@ -473,7 +473,7 @@ test("models(): combo with unknown member ids degrades to all-false LCD posture"
       ],
     },
   ]);
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );
@@ -500,7 +500,7 @@ test("models(): hidden combos are excluded from the map", async () => {
       models: [{ id: "s1", kind: "model", model: "claude-primary", weight: 100 }],
     },
   ]);
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );
@@ -511,16 +511,16 @@ test("models(): hidden combos are excluded from the map", async () => {
 
 test("models(): combo name exactly matches raw model id → raw deleted, combo lives at combo/ key, no warn", async () => {
   // Combo.name === raw model id triggers the dedup deletion. This mirrors
-  // the real OmniRoute payload where /v1/models pre-mirrors combos as
+  // the real SZRoute payload where /v1/models pre-mirrors combos as
   // no-slash raw entries whose ids match /api/combos friendly names.
-  const colliderCombo: OmniRouteRawCombo = {
+  const colliderCombo: SZRouteRawCombo = {
     id: "uuid-collider",
     name: "claude-primary", // EXACT match to MODEL_PRIMARY.id
     models: [{ id: "s1", kind: "model", model: "claude-secondary", weight: 100 }],
   };
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY, MODEL_SECONDARY]);
   const combosFetcher = stubCombosFetcher([colliderCombo]);
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );
@@ -544,7 +544,7 @@ test("models(): combo name exactly matches raw model id → raw deleted, combo l
 
 test("models(): two combos with same slug → second gets disambiguator suffix", async () => {
   // Both combos slug to `claude` — second must get `combo/claude-<id-prefix>`.
-  const combos: OmniRouteRawCombo[] = [
+  const combos: SZRouteRawCombo[] = [
     {
       id: "uuid-a",
       name: "Claude",
@@ -556,7 +556,7 @@ test("models(): two combos with same slug → second gets disambiguator suffix",
       models: [{ id: "s", kind: "model", model: "claude-secondary", weight: 1 }],
     },
   ];
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     {
       fetcher: stubModelsFetcher([MODEL_PRIMARY, MODEL_SECONDARY]),
@@ -573,7 +573,7 @@ test("models(): two combos with same slug → second gets disambiguator suffix",
 test("models(): combos fetch fails → falls back to models-only, warn emitted, no throw", async () => {
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY, MODEL_SECONDARY]);
   const combosFetcher = failingCombosFetcher(new Error("ECONNRESET"));
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );
@@ -600,7 +600,7 @@ test("models(): combos cached + reused within TTL (one combo fetch per TTL windo
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY, MODEL_SECONDARY]);
   const combosFetcher = stubCombosFetcher([COMBO_CLAUDE_TIER]);
   let nowMs = 1_000_000;
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1", modelCacheTtl: 60_000 },
     { fetcher: modelsFetcher, combosFetcher, now: () => nowMs }
   );
@@ -617,7 +617,7 @@ test("models(): combos refetched after TTL expiry (same key as models)", async (
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY]);
   const combosFetcher = stubCombosFetcher([COMBO_CLAUDE_TIER]);
   let nowMs = 1_000_000;
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1", modelCacheTtl: 60_000 },
     { fetcher: modelsFetcher, combosFetcher, now: () => nowMs }
   );
@@ -632,7 +632,7 @@ test("models(): combos refetched after TTL expiry (same key as models)", async (
 test("models(): combos fetcher receives the resolved baseURL + apiKey", async () => {
   const modelsFetcher = stubModelsFetcher([MODEL_PRIMARY]);
   const combosFetcher = stubCombosFetcher([COMBO_CLAUDE_TIER]);
-  const hook = createOmniRouteProviderHook(
+  const hook = createSZRouteProviderHook(
     { baseURL: "https://or.example.com/v1" },
     { fetcher: modelsFetcher, combosFetcher }
   );

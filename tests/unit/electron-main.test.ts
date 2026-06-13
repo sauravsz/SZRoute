@@ -126,7 +126,7 @@ describe("Electron URL Validation", () => {
   });
 
   it("should allow https URLs", () => {
-    assert.equal(validateExternalUrl("https://github.com/diegosouzapw/OmniRoute").allowed, true);
+    assert.equal(validateExternalUrl("https://github.com/sauravsz/SZRoute").allowed, true);
   });
 
   it("should block file:// protocol (RCE risk)", () => {
@@ -158,7 +158,7 @@ describe("Electron URL Validation", () => {
   });
 
   it("should allow localhost URLs", () => {
-    assert.equal(validateExternalUrl("http://localhost:20128/dashboard").allowed, true);
+    assert.equal(validateExternalUrl("http://localhost:21128/dashboard").allowed, true);
   });
 
   it("should allow URLs with paths and query params", () => {
@@ -245,7 +245,7 @@ describe("IPC Channel Validation", () => {
 
 describe("Server Port Management", () => {
   it("should have valid default port", () => {
-    const DEFAULT_PORT = 20128;
+    const DEFAULT_PORT = 21128;
     assert.ok(DEFAULT_PORT > 0 && DEFAULT_PORT <= 65535);
   });
 
@@ -253,7 +253,7 @@ describe("Server Port Management", () => {
     function isValidPort(port) {
       return Number.isFinite(port) && port > 0 && port <= 65535;
     }
-    assert.equal(isValidPort(20128), true);
+    assert.equal(isValidPort(21128), true);
     assert.equal(isValidPort(3000), true);
     assert.equal(isValidPort(8080), true);
     assert.equal(isValidPort(0), false);
@@ -263,8 +263,8 @@ describe("Server Port Management", () => {
   });
 
   it("should generate correct server URL", () => {
-    const port = 20128;
-    assert.equal(`http://localhost:${port}`, "http://localhost:20128");
+    const port = 21128;
+    assert.equal(`http://localhost:${port}`, "http://localhost:21128");
   });
 });
 
@@ -480,7 +480,7 @@ describe("Electron SQLite credential inspection", () => {
   } = require("../../electron/sqlite-inspection.js");
 
   function withTempDb(fn) {
-    const dir = mkdtempSync(join(tmpdir(), "omniroute-electron-db-"));
+    const dir = mkdtempSync(join(tmpdir(), "szroute-electron-db-"));
     const dbPath = join(dir, "storage.sqlite");
     const db = new DatabaseSync(dbPath);
 
@@ -517,6 +517,6 @@ describe("Electron SQLite credential inspection", () => {
   });
 
   it("should return false when the database file does not exist", () => {
-    assert.equal(hasEncryptedCredentials(join(tmpdir(), "missing-omniroute.sqlite")), false);
+    assert.equal(hasEncryptedCredentials(join(tmpdir(), "missing-szroute.sqlite")), false);
   });
 });

@@ -1,13 +1,13 @@
 ---
 name: config-codex-cli
-description: Step-by-step agent workflow to configure the OpenAI Codex CLI on any machine (Linux, macOS, Windows) to use OmniRoute as backend. Detects OS and shell, writes config.toml and 7 named profiles, sets environment variables, and verifies the setup.
+description: Step-by-step agent workflow to configure the OpenAI Codex CLI on any machine (Linux, macOS, Windows) to use SZRoute as backend. Detects OS and shell, writes config.toml and 7 named profiles, sets environment variables, and verifies the setup.
 ---
 
 # /config-codex-cli — Codex CLI Configuration Workflow
 
-Configure the Codex CLI on this machine to use an OmniRoute instance as backend.
+Configure the Codex CLI on this machine to use an SZRoute instance as backend.
 
-After this skill completes, `codex` will use OmniRoute by default with `cx/gpt-5.5` (xhigh reasoning), 7 named profiles for quick switching, and proper token limits configured for each model.
+After this skill completes, `codex` will use SZRoute by default with `cx/gpt-5.5` (xhigh reasoning), 7 named profiles for quick switching, and proper token limits configured for each model.
 
 ---
 
@@ -15,11 +15,11 @@ After this skill completes, `codex` will use OmniRoute by default with `cx/gpt-5
 
 Before doing anything, ask the user for the two required values. Do not proceed until both are provided:
 
-1. **OmniRoute host** — the IP or hostname of the OmniRoute server (e.g. `192.168.0.1`, `100.x.x.x` for Tailscale, or `localhost`)
-2. **OmniRoute API key** — the API key for OmniRoute (starts with `sk-`)
+1. **SZRoute host** — the IP or hostname of the SZRoute server (e.g. `192.168.0.1`, `100.x.x.x` for Tailscale, or `localhost`)
+2. **SZRoute API key** — the API key for SZRoute (starts with `sk-`)
 
 Store these as local variables for the rest of the skill:
-- `OMNI_HOST` = the host the user provided (no trailing slash, no port — port 20128 is appended by this skill)
+- `OMNI_HOST` = the host the user provided (no trailing slash, no port — port 21128 is appended by this skill)
 - `OMNI_KEY` = the API key
 
 ---
@@ -101,7 +101,7 @@ Replace `<OMNI_HOST>` with the value collected in Step 0.
 ```toml
 # ── Model / Inference ─────────────────────────────────────────────────────────
 model                    = "cx/gpt-5.5"
-model_provider           = "omniroute"
+model_provider           = "szroute"
 model_reasoning_effort   = "xhigh"
 model_reasoning_summary  = "detailed"
 model_verbosity          = "high"
@@ -165,10 +165,10 @@ fast_default_opt_out       = true
 # ── Model providers ───────────────────────────────────────────────────────────
 # env_key = NAME of the environment variable (not the value).
 # The actual key is stored in the shell profile (Step 5), never here.
-[model_providers.omniroute]
-name                 = "OmniRoute"
-base_url             = "http://<OMNI_HOST>:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+[model_providers.szroute]
+name                 = "SZRoute"
+base_url             = "http://<OMNI_HOST>:21128/v1"
+env_key              = "SZROUTE_API_KEY"
 requires_openai_auth = false
 wire_api             = "responses"
 ```
@@ -187,7 +187,7 @@ Create each file below in the Codex config directory (`~/.codex/`). If a file al
 
 ```toml
 model          = "cx/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "szroute"
 ```
 
 ### `low.config.toml`
@@ -195,7 +195,7 @@ model_provider = "omniroute"
 ```toml
 model                  = "cx/gpt-5.5"
 model_reasoning_effort = "low"
-model_provider         = "omniroute"
+model_provider         = "szroute"
 ```
 
 ### `medium.config.toml`
@@ -203,7 +203,7 @@ model_provider         = "omniroute"
 ```toml
 model                  = "cx/gpt-5.5"
 model_reasoning_effort = "medium"
-model_provider         = "omniroute"
+model_provider         = "szroute"
 ```
 
 ### `high.config.toml`
@@ -211,7 +211,7 @@ model_provider         = "omniroute"
 ```toml
 model                  = "cx/gpt-5.5"
 model_reasoning_effort = "high"
-model_provider         = "omniroute"
+model_provider         = "szroute"
 ```
 
 ### `xhigh.config.toml`
@@ -219,14 +219,14 @@ model_provider         = "omniroute"
 ```toml
 model                  = "cx/gpt-5.5"
 model_reasoning_effort = "xhigh"
-model_provider         = "omniroute"
+model_provider         = "szroute"
 ```
 
 ### `deepseek.config.toml` — DeepSeek V4 Pro, 1M context
 
 ```toml
 model          = "ds/deepseek-v4-pro"
-model_provider = "omniroute"
+model_provider = "szroute"
 
 model_context_window           = 1000000
 model_auto_compact_token_limit = 900000
@@ -238,7 +238,7 @@ tool_output_token_limit        = 65536
 
 ```toml
 model          = "mistral/mistral-large-latest"
-model_provider = "omniroute"
+model_provider = "szroute"
 
 model_context_window           = 262144
 model_auto_compact_token_limit = 220000
@@ -254,7 +254,7 @@ Determine the correct shell profile file from Step 1, then append the following 
 
 Before writing, check:
 ```bash
-grep -l "OMNIROUTE_API_KEY" ~/.bashrc ~/.zshrc ~/.bash_profile 2>/dev/null
+grep -l "SZROUTE_API_KEY" ~/.bashrc ~/.zshrc ~/.bash_profile 2>/dev/null
 ```
 
 If the variable already exists in any profile file, update the value in-place instead of appending a duplicate.
@@ -262,8 +262,8 @@ If the variable already exists in any profile file, update the value in-place in
 **Block to append (replace `<OMNI_KEY>` with the key collected in Step 0):**
 
 ```bash
-# OmniRoute API key — used by Codex CLI (env_key = "OMNIROUTE_API_KEY" in config)
-export OMNIROUTE_API_KEY="<OMNI_KEY>"
+# SZRoute API key — used by Codex CLI (env_key = "SZROUTE_API_KEY" in config)
+export SZROUTE_API_KEY="<OMNI_KEY>"
 
 # Codex CLI / Claude Code output cap (64k — covers any file or diff a coding assistant generates)
 export CLAUDE_CODE_MAX_OUTPUT_TOKENS=65536
@@ -284,14 +284,14 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=65536
 **fish syntax:**
 
 ```fish
-set -Ux OMNIROUTE_API_KEY "<OMNI_KEY>"
+set -Ux SZROUTE_API_KEY "<OMNI_KEY>"
 set -Ux CLAUDE_CODE_MAX_OUTPUT_TOKENS 65536
 ```
 
 **PowerShell syntax:**
 
 ```powershell
-[System.Environment]::SetEnvironmentVariable("OMNIROUTE_API_KEY", "<OMNI_KEY>", "User")
+[System.Environment]::SetEnvironmentVariable("SZROUTE_API_KEY", "<OMNI_KEY>", "User")
 [System.Environment]::SetEnvironmentVariable("CLAUDE_CODE_MAX_OUTPUT_TOKENS", "65536", "User")
 ```
 
@@ -304,11 +304,11 @@ set -Ux CLAUDE_CODE_MAX_OUTPUT_TOKENS 65536
 source ~/.bashrc   # or ~/.zshrc depending on Step 1
 
 # Verify variables are set
-echo $OMNIROUTE_API_KEY              # must print the key
+echo $SZROUTE_API_KEY              # must print the key
 echo $CLAUDE_CODE_MAX_OUTPUT_TOKENS  # must print 65536
 
 # Verify Codex picks up the provider
-codex config get model_provider      # must print: omniroute
+codex config get model_provider      # must print: szroute
 
 # Smoke test — must return a response without auth errors
 codex -p chat "reply with only the word OK"
@@ -316,8 +316,8 @@ codex -p chat "reply with only the word OK"
 
 If the smoke test returns an authentication error:
 - Re-check that `source ~/.bashrc` was run (or open a new terminal)
-- Run `curl http://<OMNI_HOST>:20128/v1/models` to confirm OmniRoute is reachable
-- Confirm the key is correct with `echo $OMNIROUTE_API_KEY`
+- Run `curl http://<OMNI_HOST>:21128/v1/models` to confirm SZRoute is reachable
+- Confirm the key is correct with `echo $SZROUTE_API_KEY`
 
 ---
 
@@ -344,13 +344,13 @@ codex -m ds/deepseek-v4-pro "analyze the entire repo"
 
 ## Reference — why `wire_api = "responses"` works for all models
 
-Codex CLI deprecated `wire_api = "chat"` in February 2026. OmniRoute bridges the gap transparently:
+Codex CLI deprecated `wire_api = "chat"` in February 2026. SZRoute bridges the gap transparently:
 
 ```
-Codex CLI  →  POST /v1/responses  →  OmniRoute  →  POST /chat/completions  →  DeepSeek / Mistral / any provider
+Codex CLI  →  POST /v1/responses  →  SZRoute  →  POST /chat/completions  →  DeepSeek / Mistral / any provider
 ```
 
-All profiles use the same `wire_api = "responses"`. OmniRoute handles translation for every upstream provider.
+All profiles use the same `wire_api = "responses"`. SZRoute handles translation for every upstream provider.
 
 ---
 
@@ -366,4 +366,4 @@ All profiles use the same `wire_api = "responses"`. OmniRoute handles translatio
 
 ---
 
-*Full reference: `docs/guides/CODEX-CLI-CONFIGURATION.md` in the OmniRoute repository.*
+*Full reference: `docs/guides/CODEX-CLI-CONFIGURATION.md` in the SZRoute repository.*

@@ -17,7 +17,7 @@ import path from "node:path";
 
 import { updateSettings } from "../../src/lib/db/settings";
 
-const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cli-logs-route-"));
+const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "szroute-cli-logs-route-"));
 process.env.DATA_DIR = TEST_DATA_DIR;
 
 // Write a small pino-format log file before route is imported
@@ -87,7 +87,7 @@ test("GET /api/cli-tools/logs respects filter param", async () => {
 
 test("GET /api/cli-tools/logs returns empty array when log file does not exist", async () => {
   const origPath = process.env.APP_LOG_FILE_PATH;
-  process.env.APP_LOG_FILE_PATH = "/tmp/omniroute-nonexistent-cli-logs-test.log";
+  process.env.APP_LOG_FILE_PATH = "/tmp/szroute-nonexistent-cli-logs-test.log";
 
   const res = await GET(makeReq());
   assert.equal(res.status, 200);
@@ -152,7 +152,7 @@ test("log-streamer.ts calls /api/cli-tools/logs (correct URL, not the missing ro
   }) as typeof fetch;
 
   try {
-    const { stream, stop } = createLogStream({ baseUrl: "http://localhost:20128" });
+    const { stream, stop } = createLogStream({ baseUrl: "http://localhost:21128" });
     const reader = stream.getReader();
     // Consume until done (mock stream closes immediately)
     await reader.read().catch(() => {});

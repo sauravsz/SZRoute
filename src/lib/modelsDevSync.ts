@@ -142,11 +142,11 @@ const parsedInterval = parseInt(process.env.MODELS_DEV_SYNC_INTERVAL || "86400",
 const SYNC_INTERVAL_MS =
   Number.isFinite(parsedInterval) && parsedInterval > 0 ? parsedInterval * 1000 : 86400 * 1000;
 
-// ─── Provider mapping: models.dev provider ID → OmniRoute provider IDs/aliases ──
+// ─── Provider mapping: models.dev provider ID → SZRoute provider IDs/aliases ──
 //
 // models.dev uses canonical provider IDs (e.g. "openai", "anthropic", "google").
-// OmniRoute uses both full IDs and short aliases (e.g. "cc" for claude, "cx" for codex).
-// We map each models.dev provider to ALL OmniRoute identifiers that should receive
+// SZRoute uses both full IDs and short aliases (e.g. "cc" for claude, "cx" for codex).
+// We map each models.dev provider to ALL SZRoute identifiers that should receive
 // its pricing/capability data.
 
 const MODELS_DEV_PROVIDER_MAP: Record<string, string[]> = {
@@ -182,7 +182,7 @@ const MODELS_DEV_PROVIDER_MAP: Record<string, string[]> = {
   kilocode: ["kilocode", "kc", "kilo-gateway"],
   "kimi-for-coding": ["kimi-coding", "kmc", "kimi-coding-apikey", "kmca"],
   // The `opencode` models.dev entry used to map only to "opencode-zen" because
-  // that is the historical alias pair. But OmniRoute's catalog & combo targets
+  // that is the historical alias pair. But SZRoute's catalog & combo targets
   // reference models under BOTH provider IDs:
   //   - `opencode-zen/big-pickle` (alias form)
   //   - `opencode/big-pickle`    (canonical id form, used by live API catalog
@@ -193,7 +193,7 @@ const MODELS_DEV_PROVIDER_MAP: Record<string, string[]> = {
   // Symmetric mapping keeps both lookup paths populated.
   opencode: ["opencode", "opencode-zen"],
   "opencode-go": ["opencode-go", "opencode-zen"],
-  // Additional providers that may overlap with OmniRoute
+  // Additional providers that may overlap with SZRoute
   alibaba: ["ali", "alibaba"],
   "alibaba-cn": ["ali-cn", "alibaba-cn", "alibaba-china"],
   "alibaba-coding-plan": ["bcp", "bailian-coding-plan"],
@@ -218,7 +218,7 @@ const MODELS_DEV_PROVIDER_MAP: Record<string, string[]> = {
 };
 
 /**
- * Map a models.dev provider ID to OmniRoute provider IDs.
+ * Map a models.dev provider ID to SZRoute provider IDs.
  * Returns array of provider identifiers (may include aliases).
  */
 export function mapProviderId(modelsDevProviderId: string): string[] {
@@ -315,9 +315,9 @@ export async function fetchModelsDev(signal?: AbortSignal): Promise<ModelsDevDat
 // ─── Transform: Pricing ──────────────────────────────────
 
 /**
- * Transform models.dev raw data → OmniRoute PricingByProvider format.
+ * Transform models.dev raw data → SZRoute PricingByProvider format.
  *
- * models.dev costs are already in $/1M tokens (same as OmniRoute format).
+ * models.dev costs are already in $/1M tokens (same as SZRoute format).
  * Maps: cache_read → cached, cache_write → cache_creation.
  */
 export function transformModelsDevToPricing(raw: ModelsDevData): PricingByProvider {
@@ -347,7 +347,7 @@ export function transformModelsDevToPricing(raw: ModelsDevData): PricingByProvid
         entry.reasoning = model.cost.reasoning;
       }
 
-      // Write to ALL mapped OmniRoute providers
+      // Write to ALL mapped SZRoute providers
       for (const omniProvider of omniRouteProviders) {
         if (!result[omniProvider]) result[omniProvider] = {};
         result[omniProvider][modelId] = entry;

@@ -2359,7 +2359,7 @@ export default function ProviderDetailPageClient() {
               {showZedManual && (
                 <div className="flex flex-col gap-3 mt-1">
                   <p className="text-sm text-text-muted">
-                    Use this when OmniRoute runs in Docker or the keychain is unavailable. Paste the
+                    Use this when SZRoute runs in Docker or the keychain is unavailable. Paste the
                     API key that Zed stored under{" "}
                     <code className="font-mono text-xs">~/.config/zed/settings.json</code> or copy
                     it from the Zed AI settings panel.
@@ -4033,7 +4033,7 @@ export default function ProviderDetailPageClient() {
                   <p className="text-text-muted mt-0.5">
                     Clique em <strong>Add Connection</strong>, cole o valor do{" "}
                     <code className="bg-surface-2 px-1 rounded font-mono text-xs">__client</code> no
-                    campo de API Key e salve. O OmniRoute renovará a sessão automaticamente.
+                    campo de API Key e salve. O SZRoute renovará a sessão automaticamente.
                   </p>
                 </div>
               </li>

@@ -7,7 +7,7 @@ import { maybeHandleWebdav } from "./webdav-handler.mjs";
 const originalCreateServer = http.createServer.bind(http);
 const proxiesByPort = new Map();
 
-process.env.OMNIROUTE_WS_BRIDGE_SECRET ||= randomUUID();
+process.env.SZROUTE_WS_BRIDGE_SECRET ||= randomUUID();
 // Per-process secret proving the trusted peer-IP stamp came from this server.
 ensurePeerStampToken();
 
@@ -28,7 +28,7 @@ function getProxy(server) {
 
   const proxy = createResponsesWsProxy({
     baseUrl: `http://127.0.0.1:${port}`,
-    bridgeSecret: process.env.OMNIROUTE_WS_BRIDGE_SECRET,
+    bridgeSecret: process.env.SZROUTE_WS_BRIDGE_SECRET,
   });
   proxiesByPort.set(port, proxy);
   return proxy;

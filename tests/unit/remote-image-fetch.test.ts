@@ -22,7 +22,7 @@ test("fetchRemoteImage blocks private image hosts before fetch", async () => {
 
   await assert.rejects(
     () =>
-      fetchRemoteImage("http://127.0.0.1:20128/private.png", {
+      fetchRemoteImage("http://127.0.0.1:21128/private.png", {
         fetchImpl: async () => {
           called = true;
           return new Response("unexpected");

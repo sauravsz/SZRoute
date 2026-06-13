@@ -7,7 +7,7 @@
 // Catraca: exceções pré-existentes ficam em KNOWN_REGISTRY_ONLY; só NOVOS órfãos falham.
 import { pathToFileURL } from "node:url";
 import { AI_PROVIDERS, getProviderById } from "@/shared/constants/providers.ts";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry.ts";
+import { REGISTRY } from "@szroute/open-sse/config/providerRegistry.ts";
 
 // Entradas registry-only conhecidas (meia-registro pré-existente). Cada uma com
 // justificativa. Remover daqui ao registrar o provider em providers.ts.

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
 import { getActiveSidebarHref } from "@/shared/utils/sidebarRouteMatch";
 import { APP_CONFIG } from "@/shared/constants/appConfig";
-import OmniRouteLogo from "./OmniRouteLogo";
+import SZRouteLogo from "./SZRouteLogo";
 import Button from "./Button";
 import { ConfirmModal } from "./Modal";
 import CloudSyncStatus from "./CloudSyncStatus";
@@ -27,7 +27,7 @@ import {
   type SidebarItemOrder,
 } from "@/shared/constants/sidebarVisibility";
 
-const isE2EMode = process.env.NEXT_PUBLIC_OMNIROUTE_E2E_MODE === "1";
+const isE2EMode = process.env.NEXT_PUBLIC_SZROUTE_E2E_MODE === "1";
 const DEFAULT_EXPANDED: SidebarSectionId = "omni-proxy";
 const EXPANDED_SECTIONS_KEY = "sidebar-expanded-sections";
 const PINNED_SECTIONS_KEY = "sidebar-pinned-sections";
@@ -392,6 +392,30 @@ export default function Sidebar({
       );
     }
 
+    if (item.href === "/dashboard/settings" && isMacElectron && typeof window !== "undefined" && window.electronAPI?.openWindow) {
+      return (
+        <button
+          key={item.href}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            onClose?.();
+            window.electronAPI.openWindow(item.href, { 
+              width: 900, 
+              height: 700, 
+              minWidth: 600, 
+              minHeight: 400,
+              title: "Preferences" 
+            });
+          }}
+          className={cn(className, "w-full text-left")}
+          {...sharedProps}
+        >
+          {content}
+        </button>
+      );
+    }
+
     return (
       <Link
         key={item.href}
@@ -410,14 +434,15 @@ export default function Sidebar({
       <aside
         ref={sidebarRef}
         className={cn(
-          "flex h-full min-h-0 flex-col border-r border-black/5 bg-sidebar transition-all duration-300 ease-in-out dark:border-white/5",
-          collapsed ? "w-16" : "w-[220px]"
+          "flex h-full min-h-0 flex-col border-r border-black/5 transition-all duration-300 ease-in-out dark:border-white/5 drag-region",
+          collapsed ? "w-16" : "w-[220px]",
+          isMacElectron ? "bg-transparent" : "bg-sidebar"
         )}
         style={{ paddingTop: isMacElectron ? "var(--desktop-safe-top)" : undefined }}
       >
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-primary focus:text-white focus:rounded-md focus:m-2"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-primary focus:text-white focus:rounded-md focus:m-2 no-drag"
         >
           Skip to content
         </a>
@@ -425,7 +450,7 @@ export default function Sidebar({
         {(onToggleCollapse || !isMacElectron) && (
           <div
             className={cn(
-              "flex items-center gap-2 pb-2",
+              "flex items-center gap-2 pb-2 no-drag",
               isMacElectron ? "pt-3" : "pt-5",
               collapsed ? "px-3 justify-center" : "px-4"
             )}
@@ -472,7 +497,7 @@ export default function Sidebar({
                   className="size-5 object-contain"
                 />
               ) : (
-                <OmniRouteLogo size={18} className="text-white" />
+                <SZRouteLogo size={18} className="text-white" />
               )}
             </div>
             {!collapsed && (
@@ -489,7 +514,7 @@ export default function Sidebar({
         <nav
           aria-label="Main navigation"
           className={cn(
-            "min-h-0 flex-1 overflow-y-auto py-1 custom-scrollbar",
+            "min-h-0 flex-1 overflow-y-auto py-1 custom-scrollbar no-drag",
             collapsed ? "px-2 space-y-0.5" : "px-3"
           )}
         >

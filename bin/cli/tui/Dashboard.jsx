@@ -35,7 +35,7 @@ function DashboardApp({ port, baseUrl, apiKey, onExit }) {
     <Box flexDirection="column">
       <Box borderStyle="round" borderColor="cyan" paddingX={1} gap={1}>
         <Text bold color="cyan">
-          OmniRoute
+          SZRoute
         </Text>
         <Text dimColor>|</Text>
         {TABS.map((tab, i) => (
@@ -59,7 +59,7 @@ function DashboardApp({ port, baseUrl, apiKey, onExit }) {
   );
 }
 
-export async function startInteractiveTui({ port = 20128, baseUrl, apiKey } = {}) {
+export async function startInteractiveTui({ port = 21128, baseUrl, apiKey } = {}) {
   const resolvedUrl = baseUrl ?? `http://localhost:${port}`;
   return new Promise((resolve) => {
     const { unmount, waitUntilExit } = render(

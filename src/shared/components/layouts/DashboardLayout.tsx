@@ -11,11 +11,12 @@ import NavigationProgress from "../NavigationProgress";
 import { useIsElectron } from "@/shared/hooks/useElectron";
 
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
-const isE2EMode = process.env.NEXT_PUBLIC_OMNIROUTE_E2E_MODE === "1";
+const isE2EMode = process.env.NEXT_PUBLIC_SZROUTE_E2E_MODE === "1";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [isWindowMode, setIsWindowMode] = useState(false);
   const isElectron = useIsElectron();
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof globalThis.window === "undefined") return false;
@@ -49,7 +50,28 @@ export default function DashboardLayout({ children }) {
       }
     };
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+
+    let unsubscribeIpc: (() => void) | undefined;
+    if (typeof window !== "undefined" && window.electronAPI?.on) {
+      unsubscribeIpc = window.electronAPI.on("open-command-palette", () => {
+        setCommandPaletteOpen(true);
+      });
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      if (unsubscribeIpc) unsubscribeIpc();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("windowMode") === "true") {
+        setIsWindowMode(true);
+        document.body.classList.add("window-mode");
+      }
+    }
   }, []);
 
   const handleToggleCollapse = () => {
@@ -59,60 +81,78 @@ export default function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="flex h-dvh min-h-0 w-full overflow-hidden bg-bg">
+    <div className="flex h-dvh min-h-0 w-full overflow-hidden">
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/20 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+
+      {!isWindowMode && (
+        <>
+          {/* Mobile sidebar overlay */}
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black/20 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          {/* Sidebar - Desktop */}
+          <div className="hidden min-h-0 lg:flex">
+            <Sidebar
+              collapsed={collapsed}
+              onToggleCollapse={handleToggleCollapse}
+              isMacElectron={isMacElectron}
+            />
+          </div>
+
+          {/* Sidebar - Mobile: full viewport height with proper scroll containment */}
+          <div
+            className={`fixed inset-y-0 start-0 z-50 transform lg:hidden transition-transform duration-300 ease-in-out h-dvh overflow-y-auto ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            <Sidebar onClose={() => setSidebarOpen(false)} isMacElectron={isMacElectron} />
+          </div>
+        </>
       )}
-
-      {/* Sidebar - Desktop */}
-      <div className="hidden min-h-0 lg:flex">
-        <Sidebar
-          collapsed={collapsed}
-          onToggleCollapse={handleToggleCollapse}
-          isMacElectron={isMacElectron}
-        />
-      </div>
-
-      {/* Sidebar - Mobile: full viewport height with proper scroll containment */}
-      <div
-        className={`fixed inset-y-0 start-0 z-50 transform lg:hidden transition-transform duration-300 ease-in-out h-dvh overflow-y-auto ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <Sidebar onClose={() => setSidebarOpen(false)} isMacElectron={isMacElectron} />
-      </div>
 
       {/* Main content */}
       <main
         id="main-content"
-        className="relative flex min-h-0 flex-1 min-w-0 flex-col transition-colors duration-300"
+        className="relative flex min-h-0 flex-1 min-w-0 flex-col transition-colors duration-300 bg-bg select-text"
       >
-        <Header
-          onMenuClick={() => setSidebarOpen(true)}
-          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        />
-        {!isE2EMode && <MaintenanceBanner />}
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar p-4 sm:p-6 lg:p-10">
-          <div className="max-w-7xl mx-auto w-full h-full min-h-0 flex flex-col">
-            <Breadcrumbs />
-            <div className="flex-1 min-h-0">
-              {children}
+        {isWindowMode && isMacElectron && (
+          <div className="h-10 w-full shrink-0 flex-none szroute-electron-drag-region" />
+        )}
+        
+        {!isWindowMode && (
+          <Header
+            onMenuClick={() => setSidebarOpen(true)}
+            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          />
+        )}
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar focus:outline-none">
+          {!isWindowMode && (
+            <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8 shrink-0">
+              {!isE2EMode && <MaintenanceBanner />}
+              <div className="mb-2 hidden sm:block">
+                <Breadcrumbs />
+              </div>
             </div>
+          )}
+          
+          <div className="mx-auto flex-1 w-full max-w-7xl px-4 pb-8 sm:px-6 lg:px-8 mt-2 relative">
+            {children}
           </div>
         </div>
       </main>
 
-      {/* Global notification toast system */}
       <NotificationToast />
 
-      <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+      {!isWindowMode && (
+        <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
+      )}
     </div>
   );
 }

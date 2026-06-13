@@ -8,16 +8,16 @@ import {
   getProviderNodes,
   getModelIsHidden,
 } from "@/lib/localDb";
-import { getAllEmbeddingModels } from "@omniroute/open-sse/config/embeddingRegistry";
-import { getAllImageModels } from "@omniroute/open-sse/config/imageRegistry";
-import { getAllRerankModels } from "@omniroute/open-sse/config/rerankRegistry";
-import { getAllAudioModels } from "@omniroute/open-sse/config/audioRegistry";
-import { getAllModerationModels } from "@omniroute/open-sse/config/moderationRegistry";
-import { getAllVideoModels } from "@omniroute/open-sse/config/videoRegistry";
-import { getAllMusicModels } from "@omniroute/open-sse/config/musicRegistry";
-import { REGISTRY } from "@omniroute/open-sse/config/providerRegistry";
-import { CODEX_NATIVE_UNPREFIXED_MODELS } from "@omniroute/open-sse/services/model";
-import { resolveNestedComboTargets } from "@omniroute/open-sse/services/combo";
+import { getAllEmbeddingModels } from "@szroute/open-sse/config/embeddingRegistry";
+import { getAllImageModels } from "@szroute/open-sse/config/imageRegistry";
+import { getAllRerankModels } from "@szroute/open-sse/config/rerankRegistry";
+import { getAllAudioModels } from "@szroute/open-sse/config/audioRegistry";
+import { getAllModerationModels } from "@szroute/open-sse/config/moderationRegistry";
+import { getAllVideoModels } from "@szroute/open-sse/config/videoRegistry";
+import { getAllMusicModels } from "@szroute/open-sse/config/musicRegistry";
+import { REGISTRY } from "@szroute/open-sse/config/providerRegistry";
+import { CODEX_NATIVE_UNPREFIXED_MODELS } from "@szroute/open-sse/services/model";
+import { resolveNestedComboTargets } from "@szroute/open-sse/services/combo";
 import { getAllSyncedAvailableModels, type SyncedAvailableModel } from "@/lib/db/models";
 import { getCompatibleFallbackModels } from "@/lib/providers/managedAvailableModels";
 import { getOpenRouterCatalog } from "@/lib/catalog/openrouterCatalog";
@@ -32,8 +32,8 @@ import { getSyncedCapability } from "@/lib/modelsDevSync";
 import { getModelSpec } from "@/shared/constants/modelSpecs";
 import { isAuthRequired, isDashboardSessionAuthenticated } from "@/shared/utils/apiAuth";
 import { isModelCatalogNamesEnabled } from "@/shared/utils/featureFlags";
-import { parseModel } from "@omniroute/open-sse/services/model";
-import { getTokenLimit } from "@omniroute/open-sse/services/contextManager";
+import { parseModel } from "@szroute/open-sse/services/model";
+import { getTokenLimit } from "@szroute/open-sse/services/contextManager";
 import { extractApiKey } from "@/sse/services/auth";
 import type { ComboModelStep } from "@/lib/combos/steps";
 
@@ -454,7 +454,7 @@ export async function getUnifiedModelsResponse(
     };
 
     const prefixRoutesToProvider = (prefix: string, providerId: string) => {
-      const parsed = parseModel(`${prefix}/__omniroute_probe__`);
+      const parsed = parseModel(`${prefix}/__szroute_probe__`);
       return parsed.provider === providerId;
     };
 

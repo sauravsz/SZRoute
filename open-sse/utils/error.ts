@@ -391,7 +391,7 @@ export function providerCircuitOpenResponse(
       headers: {
         "Content-Type": "application/json",
         "Retry-After": String(retryAfterSec),
-        "X-OmniRoute-Provider-Breaker": "open",
+        "X-SZRoute-Provider-Breaker": "open",
       },
     }
   );

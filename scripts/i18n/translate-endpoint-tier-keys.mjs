@@ -71,10 +71,10 @@ function requireEnv(name) {
 }
 
 function backendConfig() {
-  const apiUrl = requireEnv("OMNIROUTE_TRANSLATION_API_URL").replace(/\/$/, "");
-  const apiKey = requireEnv("OMNIROUTE_TRANSLATION_API_KEY");
-  const model = requireEnv("OMNIROUTE_TRANSLATION_MODEL");
-  const timeoutMs = Number(process.env.OMNIROUTE_TRANSLATION_TIMEOUT_MS || 60000);
+  const apiUrl = requireEnv("SZROUTE_TRANSLATION_API_URL").replace(/\/$/, "");
+  const apiKey = requireEnv("SZROUTE_TRANSLATION_API_KEY");
+  const model = requireEnv("SZROUTE_TRANSLATION_MODEL");
+  const timeoutMs = Number(process.env.SZROUTE_TRANSLATION_TIMEOUT_MS || 60000);
   return { apiUrl, apiKey, model, timeoutMs };
 }
 

@@ -8,11 +8,11 @@ Step-by-step for contributors who already have a fork and a working fix.
 
 ```bash
 # Clone your fork
-git clone https://github.com/<your-username>/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/<your-username>/SZRoute.git
+cd SZRoute
 
 # Add the upstream repo so you can sync
-git remote add upstream https://github.com/diegosouzapw/OmniRoute.git
+git remote add upstream https://github.com/sauravsz/SZRoute.git
 
 # Install dependencies (.env is auto-created from .env.example)
 npm install
@@ -87,7 +87,7 @@ Common scopes: `api`, `dashboard`, `db`, `sse`, `oauth`, `providers`, `combo`, `
 git push -u origin fix/your-description
 ```
 
-Then open a PR on GitHub targeting **`diegosouzapw/OmniRoute`** → **`release/v3.8.3`**.
+Then open a PR on GitHub targeting **`sauravsz/SZRoute`** → **`release/v3.8.3`**.
 
 PR description checklist:
 
@@ -121,7 +121,7 @@ npm run lint && npm run typecheck:core && npm run test:coverage
 node --import tsx/esm --test tests/unit/your-file.test.ts
 
 # Start dev server
-npm run dev   # http://localhost:20128
+npm run dev   # http://localhost:21128
 ```
 
 For the full contributor guide see [CONTRIBUTING.md](../CONTRIBUTING.md).

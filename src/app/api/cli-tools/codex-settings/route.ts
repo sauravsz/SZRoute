@@ -29,7 +29,7 @@ const parseToml = (content: string) => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) return;
 
-    // Section header like [model_providers.omniroute]
+    // Section header like [model_providers.szroute]
     const sectionMatch = trimmed.match(/^\[(.+)\]$/);
     if (sectionMatch) {
       currentSection = sectionMatch[1];
@@ -124,13 +124,13 @@ const readConfig = async () => {
   }
 };
 
-// Check if config has OmniRoute settings
-const hasOmniRouteConfig = (config: string | null) => {
+// Check if config has SZRoute settings
+const hasSZRouteConfig = (config: string | null) => {
   if (!config) return false;
   return (
     config.includes("openai_base_url") ||
-    config.includes('model_provider = "omniroute"') ||
-    config.includes("[model_providers.omniroute]")
+    config.includes('model_provider = "szroute"') ||
+    config.includes("[model_providers.szroute]")
   );
 };
 
@@ -168,7 +168,7 @@ export async function GET(request: Request) {
       runtimeMode: runtime.runtimeMode,
       reason: runtime.reason,
       config,
-      hasOmniRoute: hasOmniRouteConfig(config),
+      hasSZRoute: hasSZRouteConfig(config),
       configPath: getCodexConfigPath(),
     });
   } catch (error) {
@@ -177,7 +177,7 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Update OmniRoute settings (merge with existing config)
+// POST - Update SZRoute settings (merge with existing config)
 export async function POST(request: Request) {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -252,7 +252,7 @@ export async function POST(request: Request) {
       /* No existing config */
     }
 
-    // Update only OmniRoute related fields (api_key goes to auth.json, not config.toml)
+    // Update only SZRoute related fields (api_key goes to auth.json, not config.toml)
     parsed._root.model = model;
 
     if (reasoningEffort && reasoningEffort !== "none") {
@@ -264,10 +264,10 @@ export async function POST(request: Request) {
 
     const normalizedBaseUrl = normalizeCodexBaseUrl(baseUrl, wireApi || "chat");
 
-    // Always create a custom provider to reliably pass wire_api and use OMNIROUTE_API_KEY
-    parsed._root.model_provider = "omniroute";
-    parsed._sections["model_providers.omniroute"] = {
-      name: "OmniRoute",
+    // Always create a custom provider to reliably pass wire_api and use SZROUTE_API_KEY
+    parsed._root.model_provider = "szroute";
+    parsed._sections["model_providers.szroute"] = {
+      name: "SZRoute",
       base_url: normalizedBaseUrl,
       wire_api: wireApi || "chat",
       env_key: "OPENAI_API_KEY",
@@ -320,7 +320,7 @@ export async function POST(request: Request) {
   }
 }
 
-// DELETE - Remove OmniRoute settings only (keep other settings)
+// DELETE - Remove SZRoute settings only (keep other settings)
 export async function DELETE(request: Request) {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -351,16 +351,16 @@ export async function DELETE(request: Request) {
       throw error;
     }
 
-    // Remove OmniRoute related root fields
+    // Remove SZRoute related root fields
     delete parsed._root.openai_base_url;
 
-    if (parsed._root.model_provider === "omniroute") {
+    if (parsed._root.model_provider === "szroute") {
       delete parsed._root.model;
       delete parsed._root.model_provider;
     }
 
-    // Remove omniroute provider section
-    delete parsed._sections["model_providers.omniroute"];
+    // Remove szroute provider section
+    delete parsed._sections["model_providers.szroute"];
 
     // Write updated config
     const configContent = toToml(parsed);
@@ -392,7 +392,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "OmniRoute settings removed successfully",
+      message: "SZRoute settings removed successfully",
     });
   } catch (error) {
     console.log("Error resetting codex settings:", error);

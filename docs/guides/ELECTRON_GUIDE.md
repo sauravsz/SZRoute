@@ -9,7 +9,7 @@ lastUpdated: 2026-05-13
 > **Source of truth:** `electron/` workspace
 > **Last updated:** 2026-05-13 — v3.8.0
 
-OmniRoute ships a cross-platform desktop app (Windows / macOS / Linux) built on
+SZRoute ships a cross-platform desktop app (Windows / macOS / Linux) built on
 **Electron 41** + **electron-builder 26.10**. The desktop app spawns the Next.js
 standalone server as a child process, points a `BrowserWindow` at it, and adds a
 system tray, auto-updater, IPC bridge, and zero-config secret bootstrap.
@@ -46,14 +46,14 @@ Confirmed from `electron/package.json`:
 | `electron-updater` | `^6.8.5`                   |
 | `better-sqlite3`   | `^12.9.0`                  |
 | App version        | `3.8.0`                    |
-| App id             | `online.omniroute.desktop` |
-| Product name       | `OmniRoute`                |
+| App id             | `online.szroute.desktop` |
+| Product name       | `SZRoute`                |
 
 ## Scripts (root `package.json`)
 
 | Script                            | Purpose                                                                    |
 | --------------------------------- | -------------------------------------------------------------------------- |
-| `npm run electron:dev`            | Starts `npm run dev` + waits for `localhost:20128` + launches Electron     |
+| `npm run electron:dev`            | Starts `npm run dev` + waits for `localhost:21128` + launches Electron     |
 | `npm run electron:build`          | Builds Next.js then runs `electron-builder` for the current OS             |
 | `npm run electron:build:win`      | Builds Windows NSIS installer + portable (x64)                             |
 | `npm run electron:build:mac`      | Builds macOS DMG (Intel + Apple Silicon)                                   |
@@ -145,7 +145,7 @@ Highlights:
 - `waitForServer()` polls the URL up to 30 s before showing the window (no blank screen on cold start).
 - `stdio: "pipe"` captures stdout/stderr; ready phrases (`Ready` / `listening`) emit `server-status: running` over IPC.
 - `before-quit` waits up to 5 s for graceful SIGTERM (WAL checkpoint) then sends SIGKILL.
-- Port switcher in the tray (`20128`, `3000`, `8080`) stops and restarts the server, then reloads the BrowserWindow.
+- Port switcher in the tray (`21128`, `3000`, `8080`) stops and restarts the server, then reloads the BrowserWindow.
 
 ## Zero-config Secret Bootstrap
 
@@ -159,28 +159,28 @@ On first launch, the main process auto-generates and persists missing secrets:
 
 Persisted to `<DATA_DIR>/server.env`. `DATA_DIR` resolves to:
 
-- Windows: `%APPDATA%\omniroute`
-- Linux: `$XDG_CONFIG_HOME/omniroute` or `~/.omniroute`
-- macOS: `~/.omniroute`
+- Windows: `%APPDATA%\szroute`
+- Linux: `$XDG_CONFIG_HOME/szroute` or `~/.szroute`
+- macOS: `~/.szroute`
 
 ## Window & Tray
 
 - `BrowserWindow`: 1400×900 (min 1024×700), `backgroundColor: "#0a0a0a"`.
 - macOS: `titleBarStyle: "hiddenInset"`, traffic-light at `{ x: 16, y: 16 }`.
 - Windows/Linux: native title bar.
-- Close button minimizes to tray; the tray menu has **Open OmniRoute**, **Open Dashboard** (external browser), **Server Port** submenu, **Check for Updates**, **Quit**.
+- Close button minimizes to tray; the tray menu has **Open SZRoute**, **Open Dashboard** (external browser), **Server Port** submenu, **Check for Updates**, **Quit**.
 
 ## Content Security Policy
 
 Set via `session.defaultSession.webRequest.onHeadersReceived`. Notable directives:
 
 - `frame-ancestors 'none'`, `object-src 'none'`, `child-src 'none'`
-- `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.omniroute.online https://*.omniroute.dev`
+- `connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.szroute.online https://*.szroute.dev`
 - Dev mode adds `'unsafe-eval'` to `script-src` only
 
 ## Auto-update
 
-Uses `electron-updater` with the GitHub provider (`diegosouzapw/OmniRoute`).
+Uses `electron-updater` with the GitHub provider (`sauravsz/SZRoute`).
 
 - `autoDownload = false`, `autoInstallOnAppQuit = true`
 - Events forwarded to renderer via `update-status` IPC:
@@ -214,7 +214,7 @@ npm run electron:smoke:packaged
 
 - Auto-discovers the packaged binary in `electron/dist-electron/` for the current platform.
 - Launches with isolated `HOME`/`APPDATA`/`XDG_*` directories so it doesn't touch developer data.
-- Polls `http://127.0.0.1:20128/login` for HTTP 200 within 45 s.
+- Polls `http://127.0.0.1:21128/login` for HTTP 200 within 45 s.
 - Watches stderr/stdout for fatal patterns (`Cannot find module`, `MODULE_NOT_FOUND`, `ERR_DLOPEN_FAILED`, `Failed to start server`, etc.).
 - Waits 2 s of stable runtime after readiness, then issues SIGTERM and waits for the port to free.
 - In CI, automatically passes `--no-sandbox --disable-gpu` (and `--disable-dev-shm-usage` on Linux).
@@ -252,11 +252,11 @@ AppImage signing is optional — set `LINUX_GPG_KEY` if signing.
 
 Artifacts land in `electron/dist-electron/`:
 
-- `OmniRoute Setup X.Y.Z.exe`, `OmniRoute-X.Y.Z-portable.exe` (Windows)
-- `OmniRoute-X.Y.Z-mac.dmg`, `OmniRoute-X.Y.Z-arm64-mac.dmg` (macOS)
-- `OmniRoute-X.Y.Z.AppImage`, `omniroute-desktop_X.Y.Z_amd64.deb` (Linux)
+- `SZRoute Setup X.Y.Z.exe`, `SZRoute-X.Y.Z-portable.exe` (Windows)
+- `SZRoute-X.Y.Z-mac.dmg`, `SZRoute-X.Y.Z-arm64-mac.dmg` (macOS)
+- `SZRoute-X.Y.Z.AppImage`, `szroute-desktop_X.Y.Z_amd64.deb` (Linux)
 
-Releases are published to GitHub Releases (`diegosouzapw/OmniRoute`), which is also where `electron-updater` checks for new versions.
+Releases are published to GitHub Releases (`sauravsz/SZRoute`), which is also where `electron-updater` checks for new versions.
 
 ## Troubleshooting
 
@@ -267,7 +267,7 @@ Releases are published to GitHub Releases (`diegosouzapw/OmniRoute`), which is a
 | Window appears blank on Linux                                   | Confirm Next.js server actually bound to PORT (check `[Server]` logs)       |
 | macOS notarization stalls                                       | Ensure `APPLE_*` vars are exported, not just in `.env`                      |
 | Windows SmartScreen warning                                     | Sign with EV cert, or users right-click → "Run anyway"                      |
-| Smoke test fails with port-in-use                               | Stop any local dev server on 20128 before running `electron:smoke:packaged` |
+| Smoke test fails with port-in-use                               | Stop any local dev server on 21128 before running `electron:smoke:packaged` |
 
 ## See Also
 

@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 
-const SALT = "omniroute-cli-auth-v1";
-export const CLI_TOKEN_HEADER = "x-omniroute-cli-token";
+const SALT = "szroute-cli-auth-v1";
+export const CLI_TOKEN_HEADER = "x-szroute-cli-token";
 
 let _cached = null;
 

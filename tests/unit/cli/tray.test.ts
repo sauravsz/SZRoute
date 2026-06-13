@@ -3,15 +3,15 @@ import assert from "node:assert/strict";
 import { buildMenuItems, isTraySupported } from "../../../bin/cli/tray/tray.ts";
 
 test("buildMenuItems contains expected entries", () => {
-  const items = buildMenuItems({ port: 20128, autostartEnabled: false });
+  const items = buildMenuItems({ port: 21128, autostartEnabled: false });
   const titles = items.map((i) => i.title);
-  assert.ok(titles.includes("Open OmniRoute Dashboard"), "has Open entry");
+  assert.ok(titles.includes("Open SZRoute Dashboard"), "has Open entry");
   assert.ok(
-    titles.some((t) => t.startsWith("Port: 20128")),
+    titles.some((t) => t.startsWith("Port: 21128")),
     "shows port"
   );
   assert.ok(titles.includes("Enable Autostart"), "shows toggle when disabled");
-  assert.ok(titles.includes("Quit OmniRoute"), "has quit");
+  assert.ok(titles.includes("Quit SZRoute"), "has quit");
 });
 
 test("buildMenuItems shows Disable Autostart when enabled", () => {

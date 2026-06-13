@@ -45,12 +45,12 @@ test("isPrivateLanHost: rejects public IPs, loopback and junk", () => {
 
 test("isLoopbackHost: IPv4, hostname:port, bracketed + bare IPv6, ::ffff: mapped", () => {
   assert.equal(isLoopbackHost("127.0.0.1"), true);
-  assert.equal(isLoopbackHost("localhost:20128"), true);
+  assert.equal(isLoopbackHost("localhost:21128"), true);
   // Bare IPv6 loopback forms that socket.remoteAddress produces on dual-stack
   // (regression: split(":")[0] previously mangled these to "" → false → DoS).
   assert.equal(isLoopbackHost("::1"), true);
   assert.equal(isLoopbackHost("::ffff:127.0.0.1"), true);
-  assert.equal(isLoopbackHost("[::1]:20128"), true);
+  assert.equal(isLoopbackHost("[::1]:21128"), true);
   assert.equal(isLoopbackHost("192.168.0.15"), false);
   assert.equal(isLoopbackHost("8.8.8.8"), false);
 });

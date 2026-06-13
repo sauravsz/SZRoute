@@ -128,13 +128,13 @@ test("proxy fetch uses TLS fingerprint transport when enabled and available", as
     async () => {
       setTlsAvailable(true);
       tlsClient.fetch = async (url, options = {}) => {
-        assert.equal(url, "https://omniroute.example.test/hello");
+        assert.equal(url, "https://szroute.example.test/hello");
         assert.equal(options.method, "POST");
         return Response.json({ via: "tls-client" });
       };
 
       const tracked = await runWithTlsTracking(() =>
-        proxyFetch("https://omniroute.example.test/hello", {
+        proxyFetch("https://szroute.example.test/hello", {
           method: "POST",
           headers: { "x-test": "1" },
         })

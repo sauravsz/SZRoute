@@ -58,7 +58,7 @@ export async function GET(request: Request) {
     }
 
     const settings = await readSettings();
-    const hasOmniRoute = !!settings?.env?.ANTHROPIC_BASE_URL;
+    const hasSZRoute = !!settings?.env?.ANTHROPIC_BASE_URL;
 
     return NextResponse.json({
       installed: runtime.installed,
@@ -68,7 +68,7 @@ export async function GET(request: Request) {
       runtimeMode: runtime.runtimeMode,
       reason: runtime.reason,
       settings: settings,
-      hasOmniRoute: hasOmniRoute,
+      hasSZRoute: hasSZRoute,
       settingsPath: getClaudeSettingsPath(),
     });
   } catch (error) {

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Card, Button, ConfirmModal } from "@/shared/components";
+import { Card, Button } from "@/shared/components";
 import { useServiceStatus } from "../hooks/useServiceStatus";
+import { useSystemDialog } from "@/shared/hooks/useElectron";
 
 interface ApiKeyFieldProps {
   name: string;
@@ -15,11 +16,9 @@ export function ApiKeyField({ name, serviceLabel, showReveal = false }: ApiKeyFi
   const [pending, setPending] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  // Reveal state
-  const [revealModalOpen, setRevealModalOpen] = useState(false);
-  const [revealPending, setRevealPending] = useState(false);
   const [plainKey, setPlainKey] = useState<string | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { promptTouchId, showMessageBox } = useSystemDialog();
 
   const label = serviceLabel ?? name;
 
@@ -70,7 +69,24 @@ export function ApiKeyField({ name, serviceLabel, showReveal = false }: ApiKeyFi
       setMsg({ ok: false, text: "Failed to reveal key" });
     } finally {
       setRevealPending(false);
-      setRevealModalOpen(false);
+    }
+  }
+
+  async function handleRevealClick() {
+    const authenticated = await promptTouchId(`Authenticate to reveal ${label} API Key`);
+    if (!authenticated) return;
+    
+    const confirmed = await showMessageBox({
+      type: "question",
+      message: "Reveal API Key",
+      detail: "Revealing the API key will be logged in the audit trail. Continue?",
+      buttons: ["Reveal", "Cancel"],
+      defaultId: 1,
+      cancelId: 1,
+    });
+    
+    if (confirmed === 0) {
+      confirmReveal();
     }
   }
 
@@ -84,7 +100,7 @@ export function ApiKeyField({ name, serviceLabel, showReveal = false }: ApiKeyFi
           <div>
             <h3 className="font-medium text-sm">API Key</h3>
             <p className="text-xs text-text-muted">
-              Key used by OmniRoute to authenticate with {label}
+              Key used by SZRoute to authenticate with {label}
             </p>
           </div>
         </div>
@@ -112,7 +128,7 @@ export function ApiKeyField({ name, serviceLabel, showReveal = false }: ApiKeyFi
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => setRevealModalOpen(true)}
+              onClick={handleRevealClick}
               disabled={revealPending || !data?.installedVersion}
               className="shrink-0"
             >
@@ -146,20 +162,6 @@ export function ApiKeyField({ name, serviceLabel, showReveal = false }: ApiKeyFi
           </p>
         )}
       </Card>
-
-      {showReveal && (
-        <ConfirmModal
-          isOpen={revealModalOpen}
-          onClose={() => setRevealModalOpen(false)}
-          onConfirm={confirmReveal}
-          title="Reveal API Key"
-          message="Revealing the API key will be logged in the audit trail. Continue?"
-          confirmText={revealPending ? "Revealing…" : "Reveal"}
-          cancelText="Cancel"
-          variant="secondary"
-          loading={revealPending}
-        />
-      )}
     </>
   );
 }

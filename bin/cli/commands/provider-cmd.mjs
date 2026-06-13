@@ -6,13 +6,13 @@ export function registerProvider(program) {
     .allowExcessArguments()
     .action(() => {
       console.log(`
-  Use \`omniroute providers\` for the full provider management interface:
+  Use \`szroute providers\` for the full provider management interface:
 
-    omniroute providers available   — show provider catalog
-    omniroute providers list        — list configured connections
-    omniroute providers test <name> — test a provider connection
-    omniroute providers test-all    — test all active connections
-    omniroute providers validate    — validate local configuration
+    szroute providers available   — show provider catalog
+    szroute providers list        — list configured connections
+    szroute providers test <name> — test a provider connection
+    szroute providers test-all    — test all active connections
+    szroute providers validate    — validate local configuration
 `);
     });
 }

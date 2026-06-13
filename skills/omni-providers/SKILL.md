@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 List provider connections
 
 ```bash
-curl https://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/providers \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/providers
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/providers \
 Create provider connection
 
 ```bash
-curl -X POST https://localhost:20128/api/providers \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/providers \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -39,8 +39,8 @@ curl -X POST https://localhost:20128/api/providers \
 Get provider connection
 
 ```bash
-curl https://localhost:20128/api/providers/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/providers/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PATCH /api/providers/{id}
@@ -48,8 +48,8 @@ curl https://localhost:20128/api/providers/{id} \
 Update provider connection
 
 ```bash
-curl -X PATCH https://localhost:20128/api/providers/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PATCH https://localhost:21128/api/providers/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -59,8 +59,8 @@ curl -X PATCH https://localhost:20128/api/providers/{id} \
 Delete provider connection
 
 ```bash
-curl -X DELETE https://localhost:20128/api/providers/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/providers/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/providers/{id}/test
@@ -68,8 +68,8 @@ curl -X DELETE https://localhost:20128/api/providers/{id} \
 Test provider connection
 
 ```bash
-curl -X POST https://localhost:20128/api/providers/{id}/test \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/providers/{id}/test \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -79,8 +79,8 @@ curl -X POST https://localhost:20128/api/providers/{id}/test \
 List models for a provider
 
 ```bash
-curl https://localhost:20128/api/providers/{id}/models \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/providers/{id}/models \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/providers/test-batch
@@ -88,8 +88,8 @@ curl https://localhost:20128/api/providers/{id}/models \
 Test multiple providers at once
 
 ```bash
-curl -X POST https://localhost:20128/api/providers/test-batch \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/providers/test-batch \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -99,8 +99,8 @@ curl -X POST https://localhost:20128/api/providers/test-batch \
 Validate provider credentials
 
 ```bash
-curl -X POST https://localhost:20128/api/providers/validate \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/providers/validate \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -110,8 +110,8 @@ curl -X POST https://localhost:20128/api/providers/validate \
 Get client-side provider info
 
 ```bash
-curl https://localhost:20128/api/providers/client \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/providers/client \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/provider-nodes
@@ -119,8 +119,8 @@ curl https://localhost:20128/api/providers/client \
 List provider nodes
 
 ```bash
-curl https://localhost:20128/api/provider-nodes \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/provider-nodes \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/provider-nodes
@@ -128,8 +128,8 @@ curl https://localhost:20128/api/provider-nodes \
 Create provider node
 
 ```bash
-curl -X POST https://localhost:20128/api/provider-nodes \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/provider-nodes \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -139,8 +139,8 @@ curl -X POST https://localhost:20128/api/provider-nodes \
 Update provider node
 
 ```bash
-curl -X PATCH https://localhost:20128/api/provider-nodes/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PATCH https://localhost:21128/api/provider-nodes/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -150,8 +150,8 @@ curl -X PATCH https://localhost:20128/api/provider-nodes/{id} \
 Delete provider node
 
 ```bash
-curl -X DELETE https://localhost:20128/api/provider-nodes/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X DELETE https://localhost:21128/api/provider-nodes/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/provider-nodes/validate
@@ -159,8 +159,8 @@ curl -X DELETE https://localhost:20128/api/provider-nodes/{id} \
 Validate a provider node
 
 ```bash
-curl -X POST https://localhost:20128/api/provider-nodes/validate \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/provider-nodes/validate \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -170,8 +170,8 @@ curl -X POST https://localhost:20128/api/provider-nodes/validate \
 List provider models
 
 ```bash
-curl https://localhost:20128/api/provider-models \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/provider-models \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads
@@ -186,8 +186,8 @@ See the full OpenAPI specification at `GET /api/openapi/spec` or `docs/reference
 Rotate / refresh OAuth tokens or re-validate credentials for a provider connection. Useful after token expiration or when credentials need to be renewed without deleting the connection.
 
 ```bash
-curl -X POST https://localhost:20128/api/providers/{id}/refresh \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN" \
+curl -X POST https://localhost:21128/api/providers/{id}/refresh \
+  -H "Authorization: Bearer $SZROUTE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -197,8 +197,8 @@ curl -X POST https://localhost:20128/api/providers/{id}/refresh \
 Retrieve aggregated usage and performance metrics for all provider connections (request counts, error rates, latency percentiles, token usage). Used by dashboards and Auto-Combo scoring.
 
 ```bash
-curl https://localhost:20128/api/provider-metrics \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/provider-metrics \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 **Response example:**
@@ -223,7 +223,7 @@ curl https://localhost:20128/api/provider-metrics \
 Returns a health-matrix view of all providers with per-connection status, circuit-breaker state, and cooldown expiry. Useful for debugging routing decisions.
 
 ```bash
-curl https://localhost:20128/api/providers/health-matrix \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/providers/health-matrix \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 <!-- skill:custom-end -->

@@ -13,22 +13,22 @@ import {
   lockModel,
   recordModelLockoutFailure,
   isDailyQuotaExhausted,
-} from "@omniroute/open-sse/services/accountFallback.ts";
+} from "@szroute/open-sse/services/accountFallback.ts";
 import { getModelInfo, getComboForModel } from "../services/model";
-import { errorResponse } from "@omniroute/open-sse/utils/error.ts";
-import { handleComboChat } from "@omniroute/open-sse/services/combo.ts";
-import { resolveComboConfig } from "@omniroute/open-sse/services/comboConfig.ts";
-import { injectHandoffIntoBody } from "@omniroute/open-sse/services/contextHandoff.ts";
+import { errorResponse } from "@szroute/open-sse/utils/error.ts";
+import { handleComboChat } from "@szroute/open-sse/services/combo.ts";
+import { resolveComboConfig } from "@szroute/open-sse/services/comboConfig.ts";
+import { injectHandoffIntoBody } from "@szroute/open-sse/services/contextHandoff.ts";
 import {
   HTTP_STATUS,
   ANTIGRAVITY_PRE_RESPONSE_TIMEOUT_CODE,
-} from "@omniroute/open-sse/config/constants.ts";
-import { getTargetFormat } from "@omniroute/open-sse/services/provider.ts";
+} from "@szroute/open-sse/config/constants.ts";
+import { getTargetFormat } from "@szroute/open-sse/services/provider.ts";
 import {
   getModelTargetFormat,
   PROVIDER_ID_TO_ALIAS,
-} from "@omniroute/open-sse/config/providerModels.ts";
-import type { AutoVariant } from "@omniroute/open-sse/services/autoCombo/autoPrefix.ts";
+} from "@szroute/open-sse/config/providerModels.ts";
+import type { AutoVariant } from "@szroute/open-sse/services/autoCombo/autoPrefix.ts";
 import * as log from "../utils/logger";
 import { checkAndRefreshToken } from "../services/tokenRefresh";
 import { createHookContext, runHooks, initPreRequestRegistry } from "@/lib/middleware/registry";
@@ -54,7 +54,7 @@ import {
   safeLogEvents,
   withSessionHeader,
 } from "./chatHelpers";
-import { connectionHasExtraKeys } from "@omniroute/open-sse/services/apiKeyRotator.ts";
+import { connectionHasExtraKeys } from "@szroute/open-sse/services/apiKeyRotator.ts";
 
 // Pipeline integration — wired modules
 import { classify429FromError, type FailureKind } from "@/shared/utils/classify429";
@@ -69,7 +69,7 @@ import { cloneLogPayload } from "@/lib/logPayloads";
 import {
   applyTaskAwareRouting,
   getTaskRoutingConfig,
-} from "@omniroute/open-sse/services/taskAwareRouter.ts";
+} from "@szroute/open-sse/services/taskAwareRouter.ts";
 import {
   generateSessionId as generateStableSessionId,
   touchSession,
@@ -77,21 +77,21 @@ import {
   checkSessionLimit,
   registerKeySession,
   isSessionRegisteredForKey,
-} from "@omniroute/open-sse/services/sessionManager.ts";
-import { startQuotaMonitor } from "@omniroute/open-sse/services/quotaMonitor.ts";
+} from "@szroute/open-sse/services/sessionManager.ts";
+import { startQuotaMonitor } from "@szroute/open-sse/services/quotaMonitor.ts";
 import {
   isFallbackDecision,
   shouldUseFallback,
-} from "@omniroute/open-sse/services/emergencyFallback.ts";
+} from "@szroute/open-sse/services/emergencyFallback.ts";
 import {
   registerCodexConnection,
   registerCodexQuotaFetcher,
-} from "@omniroute/open-sse/services/codexQuotaFetcher.ts";
-import { registerBailianCodingPlanQuotaFetcher } from "@omniroute/open-sse/services/bailianQuotaFetcher.ts";
-import { registerCrofUsageFetcher } from "@omniroute/open-sse/services/crofUsageFetcher.ts";
-import { registerDeepseekQuotaFetcher } from "@omniroute/open-sse/services/deepseekQuotaFetcher.ts";
-import { registerOpencodeQuotaFetcher } from "@omniroute/open-sse/services/opencodeQuotaFetcher.ts";
-import { registerGenericQuotaFetchers } from "@omniroute/open-sse/services/genericQuotaFetcher.ts";
+} from "@szroute/open-sse/services/codexQuotaFetcher.ts";
+import { registerBailianCodingPlanQuotaFetcher } from "@szroute/open-sse/services/bailianQuotaFetcher.ts";
+import { registerCrofUsageFetcher } from "@szroute/open-sse/services/crofUsageFetcher.ts";
+import { registerDeepseekQuotaFetcher } from "@szroute/open-sse/services/deepseekQuotaFetcher.ts";
+import { registerOpencodeQuotaFetcher } from "@szroute/open-sse/services/opencodeQuotaFetcher.ts";
+import { registerGenericQuotaFetchers } from "@szroute/open-sse/services/genericQuotaFetcher.ts";
 import {
   getCooldownAwareRetryDecision,
   resolveCooldownAwareRetrySettings,
@@ -253,7 +253,7 @@ export async function handleChat(request: any, clientRawRequest: any = null) {
   const externalSessionId = extractExternalSessionId(request.headers);
   const sessionId = externalSessionId || generateStableSessionId(body);
   const sessionAffinityKey = extractSessionAffinityKey(body, request.headers) || sessionId;
-  const requestedConnectionId = request.headers.get("x-omniroute-connection")?.trim() || null;
+  const requestedConnectionId = request.headers.get("x-szroute-connection")?.trim() || null;
   if (sessionId) {
     touchSession(sessionId);
   }
@@ -389,7 +389,7 @@ export async function handleChat(request: any, clientRawRequest: any = null) {
 
     try {
       const { parseAutoPrefix } =
-        await import("@omniroute/open-sse/services/autoCombo/autoPrefix.ts");
+        await import("@szroute/open-sse/services/autoCombo/autoPrefix.ts");
       const parsed = parseAutoPrefix(resolvedModelStr);
       if (parsed.valid) {
         autoVariant = parsed.variant;
@@ -431,7 +431,7 @@ export async function handleChat(request: any, clientRawRequest: any = null) {
   if (isAutoRouting && combo === null) {
     try {
       const { createVirtualAutoCombo } =
-        await import("@omniroute/open-sse/services/autoCombo/virtualFactory.ts");
+        await import("@szroute/open-sse/services/autoCombo/virtualFactory.ts");
       const virtualCombo = await createVirtualAutoCombo(autoVariant);
       virtualCombo.name = resolvedModelStr;
       virtualCombo.id = resolvedModelStr;
@@ -972,7 +972,7 @@ async function handleSingleModelChat(
         comboStrategy === "context-relay" &&
         comboName &&
         runtimeOptions.sessionId &&
-        body?._omnirouteSkipContextRelay !== true
+        body?._szrouteSkipContextRelay !== true
       ) {
         const handoff = getHandoff(runtimeOptions.sessionId, comboName);
         if (handoff && handoff.fromAccount !== credentials.connectionId) {
@@ -1010,7 +1010,7 @@ async function handleSingleModelChat(
           ...(workspaceId ? { workspaceId } : {}),
         });
       }
-      if (runtimeOptions.sessionId && body?._omnirouteInternalRequest !== "context-handoff") {
+      if (runtimeOptions.sessionId && body?._szrouteInternalRequest !== "context-handoff") {
         touchSession(runtimeOptions.sessionId, credentials.connectionId);
         startQuotaMonitor(
           runtimeOptions.sessionId,

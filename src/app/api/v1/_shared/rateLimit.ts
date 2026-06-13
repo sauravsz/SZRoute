@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from "@omniroute/open-sse/config/constants.ts";
-import { unavailableResponse } from "@omniroute/open-sse/utils/error.ts";
+import { HTTP_STATUS } from "@szroute/open-sse/config/constants.ts";
+import { unavailableResponse } from "@szroute/open-sse/utils/error.ts";
 
 export type RateLimitedCredentials = {
   allRateLimited: true;

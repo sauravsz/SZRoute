@@ -1,4 +1,4 @@
-# Relatório — Quality Gates, Catraca & Anti-Alucinação no OmniRoute
+# Relatório — Quality Gates, Catraca & Anti-Alucinação no SZRoute
 
 > **Data:** 2026-06-09
 > **Origem:** Auditoria do projeto (5 subagentes Opus em paralelo mapeando todas as pastas exceto `node_modules`/`_references`/`dist`) + análise da transcrição do vídeo *"Qualidade de código"* (Stupid Button Club, 2026-05-04) + pesquisa web 2026 (4 frentes, últimos ~3 meses).
@@ -8,7 +8,7 @@
 
 ## 0. TL;DR
 
-1. **O OmniRoute já é muito mais maduro** que o projeto "Strawberry" do vídeo: tem CI com 20 jobs, gate de cobertura, ESLint 9 flat, SonarQube, 14 scripts `check-*.mjs` e **uma catraca real já funcionando** (`check-t11-any-budget.mjs` — orçamento de `any` por arquivo que só pode encolher). O vídeo descreve onde queremos chegar; nós já estamos a meio caminho.
+1. **O SZRoute já é muito mais maduro** que o projeto "Strawberry" do vídeo: tem CI com 20 jobs, gate de cobertura, ESLint 9 flat, SonarQube, 14 scripts `check-*.mjs` e **uma catraca real já funcionando** (`check-t11-any-budget.mjs` — orçamento de `any` por arquivo que só pode encolher). O vídeo descreve onde queremos chegar; nós já estamos a meio caminho.
 2. **Mas faltam exatamente as catracas que o vídeo prega.** Não há baseline congelado de métricas, nem gate de **duplicação**, nem de **tamanho de arquivo**, e o gate de cobertura é um **piso fixo** — não uma catraca "nunca piorar".
 3. **Há derivas (drifts) reais que pegamos na auditoria:** o gate de cobertura **no CI é `40/40/40/40`** (ci.yml:377), não os `60/60/60/60` que o CLAUDE.md anuncia (esse é só o script local). O Husky está **100% comentado** (zero gate local). O SonarQube tem `coverage` e `cpd` **excluídos** (`sonar-project.properties:9-10`) — as duas métricas mais úteis contra "slop" estão desligadas. E 3 scripts `check-*` existem mas **não rodam em lugar nenhum**.
 4. **Os maiores ímãs de alucinação são estruturais:** o split de provider em 3 arquivos gigantes em 2 workspaces (`providers.ts` ↔ `providerRegistry.ts` ↔ `validation.ts`, com contagens que já divergem: 229 ids vs 155 blocos vs N validadores), os 300 paths `fetch("/api/...")` hardcoded sem ligação de compilação com as rotas, e o arquivo de **12.760 linhas** (`providers/[id]/page.tsx`) que nenhum agente consegue segurar em contexto.
@@ -39,7 +39,7 @@ O vídeo é uma fala sem roteiro sobre *qualidade de código no mundo em que a I
 
 ---
 
-## 2. Onde o OmniRoute está hoje (panorama auditado)
+## 2. Onde o SZRoute está hoje (panorama auditado)
 
 ### 2.1 O que já temos (e o vídeo nem sonha)
 
@@ -47,7 +47,7 @@ O vídeo é uma fala sem roteiro sobre *qualidade de código no mundo em que a I
 - **Catraca real já existente:** `scripts/check/check-t11-any-budget.mjs` — array `{file, maxAny}` (a maioria `0`), strip de comentários, anotações de falso-positivo, `exit 1` em regressão. **É o template exato da catraca do vídeo.**
 - **14 scripts `check-*.mjs`** (cycles, route-validation, any-budget, docs-sync, docs-counts, env-doc-sync, deprecated-versions, doc-links, cli-i18n, openapi-coverage, openapi-security-tiers, pr-test-policy, node-runtime, test-report-summary) — vários já são *gates de consistência fonte-vs-derivado*, o mesmo padrão que precisamos para anti-alucinação.
 - **PR test policy:** `check-pr-test-policy.mjs` já força "mudou código de produção ⇒ mudou teste" (diff base...HEAD).
-- **Cobertura sumarizada + comentada no PR:** `test-report-summary.mjs` + `coverage/coverage-summary.json` + job `coverage-pr-comment` (comentário com marcador `<!-- omniroute-coverage-report -->`). **Isto é exatamente o "artefato legível pelo agente" do vídeo** — já construído.
+- **Cobertura sumarizada + comentada no PR:** `test-report-summary.mjs` + `coverage/coverage-summary.json` + job `coverage-pr-comment` (comentário com marcador `<!-- szroute-coverage-report -->`). **Isto é exatamente o "artefato legível pelo agente" do vídeo** — já construído.
 - **Disciplina TDD institucionalizada** (Hard Rule #18: todo fix precisa de teste falha→passa ou validação ao vivo no VPS).
 - **SonarQube** configurado (job no CI + `sonar-project.properties`).
 - **Skills agênticas de review** já existem: `/review-prs`, `/review-reviews` (bateria de 8 reviewers + ralph-loop), `/code-review`, `/generate-release` (a única com babysit real de CI, mas de workflows de *release*, não do `ci.yml` do PR).
@@ -95,9 +95,9 @@ O vídeo é uma fala sem roteiro sobre *qualidade de código no mundo em que a I
 
 ---
 
-## 3. Gap analysis — modelo do vídeo vs OmniRoute
+## 3. Gap analysis — modelo do vídeo vs SZRoute
 
-| Métrica/peça do vídeo | OmniRoute hoje | Gap |
+| Métrica/peça do vídeo | SZRoute hoje | Gap |
 |-----------------------|----------------|-----|
 | `npm ci` determinístico | ✅ em todos os 14 jobs | — |
 | `npm audit` critical=bloqueia / high=avisa | ⚠️ `--audit-level=moderate` (nível único) | **Escalonar** em dois invokes |

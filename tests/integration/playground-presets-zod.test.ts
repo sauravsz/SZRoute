@@ -20,7 +20,7 @@ import path from "node:path";
 
 // Isolated DB per test file
 const TEST_DATA_DIR = fs.mkdtempSync(
-  path.join(os.tmpdir(), "omniroute-presets-zod-")
+  path.join(os.tmpdir(), "szroute-presets-zod-")
 );
 process.env.DATA_DIR = TEST_DATA_DIR;
 process.env.REQUIRE_API_KEY = "false";
@@ -34,7 +34,7 @@ const { GET: idGet, PUT: idPut, DELETE: idDelete } = await import(
   "../../src/app/api/playground/presets/[id]/route.ts"
 );
 
-const BASE_URL = "http://localhost:20128";
+const BASE_URL = "http://localhost:21128";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

@@ -189,7 +189,7 @@ async function main(): Promise<void> {
   const failures: string[] = [];
 
   // ── (1) Executor conformance ──────────────────────────────────────────────
-  const executorsMod = await import("@omniroute/open-sse/executors/index.ts");
+  const executorsMod = await import("@szroute/open-sse/executors/index.ts");
   const getExecutor = executorsMod.getExecutor as (alias: string) => ExecutorLike;
   const BaseExecutor = executorsMod.BaseExecutor as new (...args: never[]) => unknown;
   const indexSource = readFileSync(
@@ -236,11 +236,11 @@ async function main(): Promise<void> {
   }
 
   // ── (3) Translator pairs ──────────────────────────────────────────────────
-  await import("@omniroute/open-sse/translator/bootstrap.ts").then((m) =>
+  await import("@szroute/open-sse/translator/bootstrap.ts").then((m) =>
     (m.bootstrapTranslatorRegistry as () => void)()
   );
-  const formatsMod = await import("@omniroute/open-sse/translator/formats.ts");
-  const registryMod = await import("@omniroute/open-sse/translator/registry.ts");
+  const formatsMod = await import("@szroute/open-sse/translator/formats.ts");
+  const registryMod = await import("@szroute/open-sse/translator/registry.ts");
   const FORMATS = formatsMod.FORMATS as Record<string, string>;
   const getRequestTranslator = registryMod.getRequestTranslator as (
     from: string,

@@ -4,7 +4,7 @@ import { resolveFeatureFlag } from "@/shared/utils/featureFlags";
 const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
 
 export const PROVIDER_URL_BLOCKED_MESSAGE = "Blocked private or local provider URL";
-export const PRIVATE_PROVIDER_URLS_ENV = "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS";
+export const PRIVATE_PROVIDER_URLS_ENV = "SZROUTE_ALLOW_PRIVATE_PROVIDER_URLS";
 
 export type OutboundUrlGuardMode = "none" | "public-only";
 export type OutboundUrlGuardErrorCode = "OUTBOUND_URL_GUARD_BLOCKED" | "OUTBOUND_URL_INVALID";
@@ -150,7 +150,7 @@ export function parseAndValidatePublicUrl(input: string | URL) {
  * Webhook variant of {@link parseAndValidatePublicUrl}. Webhooks legitimately point at
  * internal services (n8n, Home Assistant, a LAN box) in Docker/self-hosted deployments,
  * so the private-host block is gated behind the same explicit opt-in used for private
- * provider URLs (`OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`, default OFF). Protocol and
+ * provider URLs (`SZROUTE_ALLOW_PRIVATE_PROVIDER_URLS`, default OFF). Protocol and
  * embedded-credential checks in {@link parseOutboundUrl} remain unconditional. (#3269)
  */
 export function parseAndValidateWebhookUrl(input: string | URL) {

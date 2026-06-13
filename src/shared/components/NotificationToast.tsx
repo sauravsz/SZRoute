@@ -54,8 +54,8 @@ function Toast({ notification, onDismiss }) {
 
   const color = COLORS[notification.type] || COLORS.info;
   const textColors = {
-    title: "var(--text-primary, #fff)",
-    message: "var(--text-secondary, #ccc)",
+    title: "var(--color-text-main)",
+    message: "var(--color-text-muted)",
   };
 
   return (
@@ -63,20 +63,19 @@ function Toast({ notification, onDismiss }) {
       role="alert"
       aria-live="polite"
       onClick={notification.onClick}
+      className="bg-vibrancy"
       style={{
         display: "flex",
         alignItems: "flex-start",
         gap: "12px",
         padding: "14px 16px",
-        borderRadius: "10px",
-        backgroundColor: color.bg,
-        border: `1px solid ${color.border}`,
-        backdropFilter: "blur(12px)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+        borderRadius: "14px",
+        border: "1px solid rgba(128,128,128,0.2)",
+        boxShadow: "0 10px 40px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05)",
         minWidth: "320px",
         maxWidth: "420px",
         cursor: notification.onClick ? "pointer" : "default",
-        animation: isExiting ? "toastOut 0.2s ease-in forwards" : "toastIn 0.3s ease-out forwards",
+        animation: isExiting ? "toastOut 0.2s ease-in forwards" : "toastIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
         transition: "all 0.2s ease",
       }}
     >

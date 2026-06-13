@@ -11,8 +11,8 @@ Manage provider connections from the CLI: list available/configured providers, a
 ## Quick install
 
 ```bash
-npm install -g omniroute   # or: npx omniroute
-omniroute --version
+npm install -g szroute   # or: npx szroute
+szroute --version
 ```
 
 ## Subcommands
@@ -24,7 +24,7 @@ Manage provider connections (use
 **Example:**
 
 ```bash
-omniroute provider-cmd provider [subcommand]
+szroute provider-cmd provider [subcommand]
 ```
 
 ### `providers`
@@ -32,12 +32,12 @@ omniroute provider-cmd provider [subcommand]
 **Example:**
 
 ```bash
-omniroute providers
+szroute providers
 ```
 
 ### `providers available`
 
-Show available providers in the OmniRoute catalog
+Show available providers in the SZRoute catalog
 
 **Flags:**
 
@@ -49,7 +49,7 @@ Show available providers in the OmniRoute catalog
 **Example:**
 
 ```bash
-omniroute providers available
+szroute providers available
 ```
 
 ### `providers list`
@@ -63,7 +63,7 @@ List configured provider connections
 **Example:**
 
 ```bash
-omniroute providers list
+szroute providers list
 ```
 
 ### `providers test <idOrName>`
@@ -77,7 +77,7 @@ Test a configured provider connection
 **Example:**
 
 ```bash
-omniroute providers test <idOrName>
+szroute providers test <idOrName>
 ```
 
 ### `providers test-all`
@@ -91,7 +91,7 @@ Test all active provider connections
 **Example:**
 
 ```bash
-omniroute providers test-all
+szroute providers test-all
 ```
 
 ### `providers validate`
@@ -105,7 +105,7 @@ Validate local provider configuration without calling upstream
 **Example:**
 
 ```bash
-omniroute providers validate
+szroute providers validate
 ```
 
 ### `providers rotate <idOrName>`
@@ -122,7 +122,7 @@ omniroute providers validate
 **Example:**
 
 ```bash
-omniroute providers rotate <idOrName>
+szroute providers rotate <idOrName>
 ```
 
 ### `providers status`
@@ -135,7 +135,7 @@ omniroute providers rotate <idOrName>
 **Example:**
 
 ```bash
-omniroute providers status
+szroute providers status
 ```
 
 ### `providers metrics`
@@ -154,7 +154,7 @@ omniroute providers status
 **Example:**
 
 ```bash
-omniroute providers metrics
+szroute providers metrics
 ```
 
 ### `providers metric <connectionId> <metric>`
@@ -166,7 +166,7 @@ omniroute providers metrics
 **Example:**
 
 ```bash
-omniroute providers metric <connectionId> <metric>
+szroute providers metric <connectionId> <metric>
 ```
 
 ### `test-provider test [provider] [model]`
@@ -183,23 +183,23 @@ omniroute providers metric <connectionId> <metric>
 **Example:**
 
 ```bash
-omniroute test-provider test [provider] [model]
+szroute test-provider test [provider] [model]
 ```
 
 <!-- skill:custom-start -->
-<!-- Migrated from skills/omniroute-cli-providers/SKILL.md (preserved curated content) -->
+<!-- Migrated from skills/szroute-cli-providers/SKILL.md (preserved curated content) -->
 
-# OmniRoute — CLI Providers & Keys
+# SZRoute — CLI Providers & Keys
 
-Requires the `omniroute` CLI. See [CLI entry-point skill](https://raw.githubusercontent.com/diegosouzapw/OmniRoute/main/skills/omniroute-cli/SKILL.md) for install + global flags.
+Requires the `szroute` CLI. See [CLI entry-point skill](https://raw.githubusercontent.com/sauravsz/SZRoute/main/skills/szroute-cli/SKILL.md) for install + global flags.
 
 ## Provider catalog (available providers)
 
 ```bash
-omniroute providers available                        # Full OmniRoute provider catalog
-omniroute providers available --search openai        # Filter by id, name, alias
-omniroute providers available --category api-key     # Filter by category
-omniroute providers available --json                 # Machine-readable JSON
+szroute providers available                        # Full SZRoute provider catalog
+szroute providers available --search openai        # Filter by id, name, alias
+szroute providers available --category api-key     # Filter by category
+szroute providers available --json                 # Machine-readable JSON
 ```
 
 Categories: `api-key`, `oauth`, `free`, `local`, `combo`.
@@ -207,46 +207,46 @@ Categories: `api-key`, `oauth`, `free`, `local`, `combo`.
 ## Configured provider connections
 
 ```bash
-omniroute providers list                             # Connections in your DB
-omniroute providers list --json
+szroute providers list                             # Connections in your DB
+szroute providers list --json
 ```
 
 ## Testing connections
 
 ```bash
-omniroute providers test <id|name>                   # Test one configured connection
-omniroute providers test-all                         # Test every active connection (TUI progress)
-omniroute providers validate                         # Local-only structural validation (no HTTP)
+szroute providers test <id|name>                   # Test one configured connection
+szroute providers test-all                         # Test every active connection (TUI progress)
+szroute providers validate                         # Local-only structural validation (no HTTP)
 ```
 
 `test-all` opens an interactive TUI that shows live pass/fail per connection. Use `--json` to get a machine-readable result:
 
 ```bash
-omniroute providers test-all --json
+szroute providers test-all --json
 ```
 
-## API key management (OmniRoute keys)
+## API key management (SZRoute keys)
 
-These manage the OmniRoute API keys issued under **API Manager** — not provider credentials.
+These manage the SZRoute API keys issued under **API Manager** — not provider credentials.
 
 ```bash
-omniroute keys list                                  # List all OmniRoute API keys
-omniroute keys add <provider> [apiKey]               # Add an API key for a provider
-omniroute keys remove <provider>                     # Remove an API key
-omniroute keys regenerate <id>                       # Regenerate (rotate) a key
-omniroute keys revoke <id>                           # Revoke a key (disables it)
-omniroute keys reveal <id>                           # Show the full key value
-omniroute keys usage <id>                            # Show usage stats for a key
+szroute keys list                                  # List all SZRoute API keys
+szroute keys add <provider> [apiKey]               # Add an API key for a provider
+szroute keys remove <provider>                     # Remove an API key
+szroute keys regenerate <id>                       # Regenerate (rotate) a key
+szroute keys revoke <id>                           # Revoke a key (disables it)
+szroute keys reveal <id>                           # Show the full key value
+szroute keys usage <id>                            # Show usage stats for a key
 
-omniroute keys rotate <id>                           # Rotate + revoke old key atomically
-omniroute keys expiration list                       # List key expiration times
+szroute keys rotate <id>                           # Rotate + revoke old key atomically
+szroute keys expiration list                       # List key expiration times
 ```
 
 ### Key policies
 
 ```bash
-omniroute keys policy show <id>                      # Show rate-limit / permission policy
-omniroute keys policy set <id> \
+szroute keys policy show <id>                      # Show rate-limit / permission policy
+szroute keys policy set <id> \
   --rate-limit 100 \
   --rate-window minute \
   --permissions chat,models                          # Set policy on a key
@@ -255,33 +255,33 @@ omniroute keys policy set <id> \
 ## Models
 
 ```bash
-omniroute models                                     # List all models (all providers)
-omniroute models openai                              # Filter by provider
-omniroute models --search gpt                        # Search by name
-omniroute models --json                              # JSON output
+szroute models                                     # List all models (all providers)
+szroute models openai                              # Filter by provider
+szroute models --search gpt                        # Search by name
+szroute models --json                              # JSON output
 ```
 
 ## OAuth providers
 
 ```bash
-omniroute oauth list                                 # List OAuth-configured providers
-omniroute oauth login <provider>                     # Start browser-based OAuth flow
-omniroute oauth logout <provider>                    # Revoke OAuth token
-omniroute oauth status <provider>                    # Show token state + expiry
-omniroute oauth refresh <provider>                   # Force token refresh
+szroute oauth list                                 # List OAuth-configured providers
+szroute oauth login <provider>                     # Start browser-based OAuth flow
+szroute oauth logout <provider>                    # Revoke OAuth token
+szroute oauth status <provider>                    # Show token state + expiry
+szroute oauth refresh <provider>                   # Force token refresh
 ```
 
-For OAuth providers (Gemini, Windsurf, Antigravity, etc.) the `login` command opens the OmniRoute dashboard OAuth flow in your browser.
+For OAuth providers (Gemini, Windsurf, Antigravity, etc.) the `login` command opens the SZRoute dashboard OAuth flow in your browser.
 
 ## Provider nodes (multi-account routing)
 
 Provider nodes let you attach multiple API keys / accounts to one logical provider for round-robin or failover.
 
 ```bash
-omniroute nodes list <provider>                      # List nodes for a provider
-omniroute nodes add <provider> --api-key <key>       # Add a node
-omniroute nodes remove <provider> <nodeId>           # Remove a node
-omniroute nodes test <provider> <nodeId>             # Test one node
+szroute nodes list <provider>                      # List nodes for a provider
+szroute nodes add <provider> --api-key <key>       # Add a node
+szroute nodes remove <provider> <nodeId>           # Remove a node
+szroute nodes test <provider> <nodeId>             # Test one node
 ```
 
 ## Routing combos (CLI)
@@ -289,39 +289,39 @@ omniroute nodes test <provider> <nodeId>             # Test one node
 Create and manage routing combos from the terminal:
 
 ```bash
-omniroute combo list                                 # List all combos
-omniroute combo create <name> \
+szroute combo list                                 # List all combos
+szroute combo create <name> \
   --strategy priority \
   --targets anthropic/claude-opus-4-7,openai/gpt-4o  # Create combo
-omniroute combo switch <name>                        # Activate a combo as default
-omniroute combo delete <name>                        # Delete a combo
-omniroute combo suggest --task "code review"         # Ask OmniRoute to recommend a combo
+szroute combo switch <name>                        # Activate a combo as default
+szroute combo delete <name>                        # Delete a combo
+szroute combo suggest --task "code review"         # Ask SZRoute to recommend a combo
 ```
 
-For the full REST API for combos see [omniroute-routing skill](https://raw.githubusercontent.com/diegosouzapw/OmniRoute/main/skills/omniroute-routing/SKILL.md).
+For the full REST API for combos see [szroute-routing skill](https://raw.githubusercontent.com/sauravsz/SZRoute/main/skills/szroute-routing/SKILL.md).
 
 ## Quota & usage
 
 ```bash
-omniroute quota                                      # Provider quota usage + reset times
-omniroute usage                                      # Request + token usage summary
-omniroute cost                                       # Cost breakdown (by provider/model)
+szroute quota                                      # Provider quota usage + reset times
+szroute usage                                      # Request + token usage summary
+szroute cost                                       # Cost breakdown (by provider/model)
 ```
 
 ## Compression (CLI)
 
 ```bash
-omniroute compression status                         # Current compression mode + savings stats
-omniroute compression set --mode rtk                 # Enable RTK compression
-omniroute compression set --mode stacked             # Enable stacked (RTK + Caveman)
-omniroute compression set --mode off                 # Disable compression
-omniroute compression preview --mode rtk --text "..."  # Preview savings for sample text
+szroute compression status                         # Current compression mode + savings stats
+szroute compression set --mode rtk                 # Enable RTK compression
+szroute compression set --mode stacked             # Enable stacked (RTK + Caveman)
+szroute compression set --mode off                 # Disable compression
+szroute compression preview --mode rtk --text "..."  # Preview savings for sample text
 ```
 
 ## Health
 
 ```bash
-omniroute health                                     # Detailed health: circuit breakers, cache, memory
+szroute health                                     # Detailed health: circuit breakers, cache, memory
 ```
 
 ## Errors

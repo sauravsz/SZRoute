@@ -1,5 +1,8 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, X, ExternalLink } from "lucide-react";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -23,8 +26,11 @@ interface CommandPaletteProps {
 }
 
 export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
-  if (!isOpen) return null;
-  return <CommandPaletteDialog onClose={onClose} />;
+  return (
+    <AnimatePresence>
+      {isOpen && <CommandPaletteDialog onClose={onClose} />}
+    </AnimatePresence>
+  );
 }
 
 interface PaletteItem {
@@ -177,6 +183,14 @@ function CommandPaletteDialog({ onClose }: { onClose: () => void }) {
       onClose();
       if (external) {
         window.open(href, "_blank", "noopener,noreferrer");
+      } else if (href === "/dashboard/settings" && typeof window !== "undefined" && window.electronAPI?.platform === "darwin" && window.electronAPI?.openWindow) {
+        window.electronAPI.openWindow(href, {
+          width: 900,
+          height: 700,
+          minWidth: 600,
+          minHeight: 400,
+          title: "Preferences"
+        });
       } else {
         router.push(href);
       }
@@ -218,22 +232,28 @@ function CommandPaletteDialog({ onClose }: { onClose: () => void }) {
   }, [selectedIndex]);
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[10vh] px-4">
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] px-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        className="absolute inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-3xl"
         onClick={onClose}
         aria-hidden="true"
       />
-      <div
-        className="relative w-full max-w-3xl bg-surface border border-black/10 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: -16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: -16 }}
+        transition={{ type: "spring", stiffness: 500, damping: 40 }}
+        className="relative w-full max-w-3xl bg-surface/80 dark:bg-surface/60 backdrop-blur-2xl border border-black/10 dark:border-white/10 rounded-2xl shadow-[0_16px_64px_rgba(0,0,0,0.3)] overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
       >
         <div className="flex items-center gap-3 px-6 py-4 border-b border-black/5 dark:border-white/5">
-          <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0">
-            search
-          </span>
+          <Search className="text-text-muted shrink-0" size={20} />
           <input
             ref={inputRef}
             type="text"
@@ -257,7 +277,7 @@ function CommandPaletteDialog({ onClose }: { onClose: () => void }) {
               tabIndex={-1}
               aria-label="Clear search"
             >
-              <span className="material-symbols-outlined text-[16px]">close</span>
+              <X size={18} />
             </button>
           )}
           <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono bg-black/5 dark:bg-white/5 text-text-muted border border-black/10 dark:border-white/10 shrink-0">
@@ -331,9 +351,7 @@ function CommandPaletteDialog({ onClose }: { onClose: () => void }) {
                                 )}
                               </div>
                               {item.external && (
-                                <span className="material-symbols-outlined text-[14px] text-text-muted shrink-0">
-                                  open_in_new
-                                </span>
+                                <ExternalLink className="text-text-muted shrink-0" size={14} />
                               )}
                             </button>
                           </li>

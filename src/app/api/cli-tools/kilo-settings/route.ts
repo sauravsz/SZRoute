@@ -27,14 +27,14 @@ const readAuth = async () => {
   }
 };
 
-// Check if OmniRoute OpenAI-compatible provider is configured
-const hasOmniRouteConfig = (auth) => {
+// Check if SZRoute OpenAI-compatible provider is configured
+const hasSZRouteConfig = (auth) => {
   if (!auth) return false;
-  const routerEntry = auth["openai-compatible"] || auth["omniroute"];
+  const routerEntry = auth["openai-compatible"] || auth["szroute"];
   if (!routerEntry) return false;
   const baseUrl = routerEntry.baseUrl || routerEntry.baseURL || "";
   return (
-    baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1") || baseUrl.includes("omniroute")
+    baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1") || baseUrl.includes("szroute")
   );
 };
 
@@ -102,7 +102,7 @@ export async function GET(request: Request) {
         auth: auth ? Object.keys(auth) : [],
         extensionSettings,
       },
-      hasOmniRoute: hasOmniRouteConfig(auth),
+      hasSZRoute: hasSZRouteConfig(auth),
       authPath: AUTH_PATH,
     });
   } catch (error) {
@@ -111,7 +111,7 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Configure Kilo Code to use OmniRoute as OpenAI-compatible provider
+// POST - Configure Kilo Code to use SZRoute as OpenAI-compatible provider
 export async function POST(request) {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -165,10 +165,10 @@ export async function POST(request) {
     // Normalize baseUrl
     const normalizedBaseUrl = baseUrl.endsWith("/v1") ? baseUrl : `${baseUrl}/v1`;
 
-    // Add/update OmniRoute as openai-compatible provider
+    // Add/update SZRoute as openai-compatible provider
     auth["openai-compatible"] = {
       type: "api-key",
-      apiKey: apiKey || "sk_omniroute",
+      apiKey: apiKey || "sk_szroute",
       baseUrl: normalizedBaseUrl,
       model: model,
     };
@@ -194,9 +194,9 @@ export async function POST(request) {
 
       // Set custom provider config for the extension
       vscodeSettings["kilocode.customProvider"] = {
-        name: "OmniRoute",
+        name: "SZRoute",
         baseURL: normalizedBaseUrl,
-        apiKey: apiKey || "sk_omniroute",
+        apiKey: apiKey || "sk_szroute",
       };
       vscodeSettings["kilocode.defaultModel"] = model;
 
@@ -223,7 +223,7 @@ export async function POST(request) {
   }
 }
 
-// DELETE - Remove OmniRoute config from Kilo
+// DELETE - Remove SZRoute config from Kilo
 export async function DELETE(request: Request) {
   const authError = await requireCliToolsAuth(request);
   if (authError) return authError;
@@ -249,9 +249,9 @@ export async function DELETE(request: Request) {
       throw error;
     }
 
-    // Remove OmniRoute provider
+    // Remove SZRoute provider
     delete auth["openai-compatible"];
-    delete auth["omniroute"];
+    delete auth["szroute"];
 
     await fs.writeFile(AUTH_PATH, JSON.stringify(auth, null, 2));
 
@@ -282,7 +282,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "OmniRoute settings removed from Kilo Code",
+      message: "SZRoute settings removed from Kilo Code",
     });
   } catch (error) {
     console.log("Error resetting kilo settings:", error);

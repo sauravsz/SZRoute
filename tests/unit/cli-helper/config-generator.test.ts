@@ -6,7 +6,7 @@ describe("config-generator", () => {
   describe("validateBaseUrl", () => {
     it("accepts http URLs", async () => {
       const mod = await import("../../../src/lib/cli-helper/config-generator/index.ts");
-      assert.strictEqual(mod.validateBaseUrl("http://localhost:20128"), true);
+      assert.strictEqual(mod.validateBaseUrl("http://localhost:21128"), true);
     });
 
     it("accepts https URLs", async () => {
@@ -21,24 +21,24 @@ describe("config-generator", () => {
   });
 
   describe("assertSafeCatalogUrl (SSRF guard, CodeQL #326)", () => {
-    it("allows the loopback OmniRoute target (the legitimate default) and returns a URL", async () => {
+    it("allows the loopback SZRoute target (the legitimate default) and returns a URL", async () => {
       const { assertSafeCatalogUrl } = await import(
         "../../../src/lib/cli-helper/config-generator/opencode.ts"
       );
-      // The catalog source IS the user's own OmniRoute — localhost must stay allowed.
-      assert.doesNotThrow(() => assertSafeCatalogUrl("http://localhost:20128/v1/models"));
-      assert.doesNotThrow(() => assertSafeCatalogUrl("http://127.0.0.1:20128/v1/models"));
+      // The catalog source IS the user's own SZRoute — localhost must stay allowed.
+      assert.doesNotThrow(() => assertSafeCatalogUrl("http://localhost:21128/v1/models"));
+      assert.doesNotThrow(() => assertSafeCatalogUrl("http://127.0.0.1:21128/v1/models"));
       // Returns the validated, re-parsed URL (taint-severed value the caller fetches).
-      const safe = assertSafeCatalogUrl("http://localhost:20128/v1/models");
+      const safe = assertSafeCatalogUrl("http://localhost:21128/v1/models");
       assert.ok(safe instanceof URL);
-      assert.equal(safe.href, "http://localhost:20128/v1/models");
+      assert.equal(safe.href, "http://localhost:21128/v1/models");
     });
 
-    it("allows a public OmniRoute Cloud target", async () => {
+    it("allows a public SZRoute Cloud target", async () => {
       const { assertSafeCatalogUrl } = await import(
         "../../../src/lib/cli-helper/config-generator/opencode.ts"
       );
-      assert.doesNotThrow(() => assertSafeCatalogUrl("https://api.omniroute.online/v1/models"));
+      assert.doesNotThrow(() => assertSafeCatalogUrl("https://api.szroute.online/v1/models"));
     });
 
     it("blocks the cloud-metadata SSRF→IAM pivot (169.254.169.254)", async () => {
@@ -72,7 +72,7 @@ describe("config-generator", () => {
 
     it("returns error for empty apiKey", async () => {
       const result = await generator.generateConfig("claude", {
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "",
       });
       assert.strictEqual(result.success, false);
@@ -82,7 +82,7 @@ describe("config-generator", () => {
     it("returns success for valid claude config", async () => {
       // This may fail if the claude generator has issues - just ensure error handling works
       const result = await generator.generateConfig("claude", {
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
       });
       // Either success or error (if generator missing), but check structure is correct
@@ -92,19 +92,19 @@ describe("config-generator", () => {
 
     it("returns success for valid hermes config", async () => {
       const result = await generator.generateConfig("hermes", {
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
         model: "gpt-5.4-mini",
       });
       assert.strictEqual(result.success, true);
       assert.ok(result.configPath.endsWith(".hermes/config.yaml"));
       assert.ok(String(result.content || "").includes("providers:"));
-      assert.ok(String(result.content || "").includes("omniroute"));
+      assert.ok(String(result.content || "").includes("szroute"));
     });
 
     it("returns error for unknown tool", async () => {
       const result = await generator.generateConfig("unknown-tool-xyz", {
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-xxx",
       });
       assert.strictEqual(result.success, false);
@@ -115,7 +115,7 @@ describe("config-generator", () => {
   describe("generateAllConfigs", () => {
     it("returns array of GenerateResult for all tools", async () => {
       const results = await generator.generateAllConfigs({
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-xxx",
       });
       assert.ok(Array.isArray(results));
@@ -146,8 +146,8 @@ describe("config-generator", () => {
       const hermesAgent =
         await import("../../../src/lib/cli-helper/config-generator/hermes-agent.ts");
       const result = await hermesAgent.generateHermesAgentConfig({
-        baseUrl: "http://localhost:20128",
-        apiKey: "sk-test-omniroute",
+        baseUrl: "http://localhost:21128",
+        apiKey: "sk-test-szroute",
         selections: [
           { role: "default", model: "gpt-4o" },
           { role: "delegation", model: "claude-3-5-sonnet" },
@@ -158,14 +158,14 @@ describe("config-generator", () => {
       assert.ok(!result.error);
       assert.ok(typeof result.yaml === "string");
       assert.ok(result.yaml.length > 50);
-      assert.ok(result.yaml.includes("provider: omniroute"));
+      assert.ok(result.yaml.includes("provider: szroute"));
     });
 
     it("generateHermesAgentConfig includes auxiliary section for non-default roles", async () => {
       const hermesAgent =
         await import("../../../src/lib/cli-helper/config-generator/hermes-agent.ts");
       const result = await hermesAgent.generateHermesAgentConfig({
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
         selections: [
           { role: "compression", model: "test-model" },
@@ -193,7 +193,7 @@ describe("config-generator", () => {
       const hermesAgent =
         await import("../../../src/lib/cli-helper/config-generator/hermes-agent.ts");
       const result = await hermesAgent.generateHermesAgentConfig({
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
         selections: [
           { role: "default", model: "model-default" },
@@ -215,7 +215,7 @@ describe("config-generator", () => {
       const hermesAgent =
         await import("../../../src/lib/cli-helper/config-generator/hermes-agent.ts");
       const result = await hermesAgent.generateHermesAgentConfig({
-        baseUrl: "http://localhost:20128",
+        baseUrl: "http://localhost:21128",
         apiKey: "sk-test",
         selections: [{ role: "default", model: "new-model" }],
       });
@@ -271,11 +271,11 @@ describe("config-generator", () => {
           "../../../src/lib/cli-helper/config-generator/opencode.ts"
         );
         const out = await generateOpencodeConfig({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
-        const models = cfg.provider.omniroute.models;
+        const models = cfg.provider.szroute.models;
         assert.strictEqual(models["ds/deepseek-v4-flash"].limit.context, 1_000_000);
         assert.strictEqual(models["MASTER"].limit.context, 131072);
         // Combo with min-of-targets 200K: must reflect the catalog's value,
@@ -293,7 +293,7 @@ describe("config-generator", () => {
           "../../../src/lib/cli-helper/config-generator/opencode.ts"
         );
         const out = await generateOpencodeConfig({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
@@ -301,7 +301,7 @@ describe("config-generator", () => {
         // must NOT default to 128K (or any other value). The entry is
         // emitted without limit.context so OpenCode's own heuristic
         // applies and the user can fix the upstream.
-        const noCtx = cfg.provider.omniroute.models["NO_CTX_COMBO"];
+        const noCtx = cfg.provider.szroute.models["NO_CTX_COMBO"];
         assert.strictEqual(
           noCtx.limit?.context,
           undefined,
@@ -319,11 +319,11 @@ describe("config-generator", () => {
           "../../../src/lib/cli-helper/config-generator/opencode.ts"
         );
         const out = await generateOpencodeConfig({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
-        assert.strictEqual(cfg.provider.omniroute.models.llama3.limit.context, 8192);
+        assert.strictEqual(cfg.provider.szroute.models.llama3.limit.context, 8192);
       } finally {
         stub.restore();
       }
@@ -346,7 +346,7 @@ describe("config-generator", () => {
         let threw = false;
         try {
           await generateOpencodeConfig({
-            baseUrl: "http://localhost:20128",
+            baseUrl: "http://localhost:21128",
             apiKey: "sk-test",
           });
         } catch (e) {
@@ -369,12 +369,12 @@ describe("config-generator", () => {
           "../../../src/lib/cli-helper/config-generator/opencode.ts"
         );
         const out = await generateOpencodeConfig({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test",
           model: "MASTER",
         });
         const cfg = JSON.parse(out);
-        assert.strictEqual(cfg.model, "omniroute/MASTER");
+        assert.strictEqual(cfg.model, "szroute/MASTER");
       } finally {
         stub.restore();
       }
@@ -390,12 +390,12 @@ describe("config-generator", () => {
           "../../../src/lib/cli-helper/config-generator/opencode.ts"
         );
         const out = await generateOpencodeConfig({
-          baseUrl: "http://localhost:20128",
+          baseUrl: "http://localhost:21128",
           apiKey: "sk-test",
         });
         const cfg = JSON.parse(out);
         assert.strictEqual(
-          cfg.provider.omniroute.models["Opencode FREE Omni"].limit.context,
+          cfg.provider.szroute.models["Opencode FREE Omni"].limit.context,
           200000,
           "Opencode FREE Omni must have context=200000 from the catalog, not 128000"
         );

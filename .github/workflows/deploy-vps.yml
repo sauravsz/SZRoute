@@ -14,7 +14,7 @@ jobs:
     if: >-
       (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
       && vars.DEPLOY_ENABLED == 'true'
-    name: Deploy OmniRoute to VPS
+    name: Deploy SZRoute to VPS
     runs-on: ubuntu-latest
     steps:
       - name: Check VPS SSH reachability from runner
@@ -55,21 +55,21 @@ jobs:
           script: |
             set -euo pipefail
 
-            echo "=== Updating OmniRoute ==="
-            npm install -g omniroute@latest
-            INSTALLED_VERSION=$(omniroute --version 2>/dev/null | tr -d '[:space:]' || echo "unknown")
+            echo "=== Updating SZRoute ==="
+            npm install -g szroute@latest
+            INSTALLED_VERSION=$(szroute --version 2>/dev/null | tr -d '[:space:]' || echo "unknown")
             echo "Installed CLI version: $INSTALLED_VERSION"
 
             # Recreate the PM2 process instead of `pm2 restart`. A bare restart
             # re-runs whatever script path was saved earlier; after the build-output
             # reorg (app/ -> dist/, .next -> .build/next) a process pinned to the old
             # app/server-ws.mjs path can no longer start, and the node process dies
-            # while PM2 still reports "online" — so the box never binds :20128.
-            # Always launch via the `omniroute` bin so .env is loaded and the dist/
+            # while PM2 still reports "online" — so the box never binds :21128.
+            # Always launch via the `szroute` bin so .env is loaded and the dist/
             # layout is resolved correctly.
             echo "=== (Re)creating PM2 process via bin ==="
-            pm2 delete omniroute 2>/dev/null || true
-            pm2 start omniroute --name omniroute -- --port 20128
+            pm2 delete szroute 2>/dev/null || true
+            pm2 start szroute --name szroute -- --port 21128
             pm2 save
 
             # Health gate: fail the deploy unless the box actually reports healthy.
@@ -80,7 +80,7 @@ jobs:
             echo "=== Health Check (gates the deploy) ==="
             ok=0
             for i in $(seq 1 36); do
-              BODY=$(curl -sf -m 5 http://localhost:20128/api/monitoring/health 2>/dev/null || true)
+              BODY=$(curl -sf -m 5 http://localhost:21128/api/monitoring/health 2>/dev/null || true)
               if printf '%s' "$BODY" | grep -q '"status":"healthy"'; then
                 ok=1
                 echo "✅ /api/monitoring/health -> healthy (attempt $i) — version $INSTALLED_VERSION"
@@ -92,7 +92,7 @@ jobs:
             if [ "$ok" != "1" ]; then
               echo "❌ Health check failed — /api/monitoring/health never reported healthy after ~3min"
               echo "--- recent PM2 logs ---"
-              pm2 logs omniroute --lines 40 --nostream || true
+              pm2 logs szroute --lines 40 --nostream || true
               exit 1
             fi
             echo "=== Deploy complete ==="

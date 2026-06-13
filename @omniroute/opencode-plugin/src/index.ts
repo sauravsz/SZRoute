@@ -1,26 +1,26 @@
 /**
- * OpenCode plugin for the OmniRoute AI Gateway.
+ * OpenCode plugin for the SZRoute AI Gateway.
  *
  * Implements the official `@opencode-ai/plugin` Plugin contract (auth +
- * provider + config hooks) to drive a running OmniRoute instance from
+ * provider + config hooks) to drive a running SZRoute instance from
  * OpenCode without hand-curated `provider.<id>.models` blocks in
  * opencode.json[c]:
  *
  *   - `auth`     — registers `/connect <providerId>` flow (API key prompt)
  *   - `provider` — dynamic `/v1/models` fetch with TTL cache, capabilities
- *                  pass-through (OmniRoute is the source of truth — no
+ *                  pass-through (SZRoute is the source of truth — no
  *                  client-side variant synthesis)
  *   - `config`   — backward-compat shim for OC versions that predate the
  *                  `provider.models` hook (≤ 1.14.48)
  *
  * Two ways to consume the plugin:
  *
- *  1. Single-instance (default `providerId: "omniroute"`):
+ *  1. Single-instance (default `providerId: "szroute"`):
  *
  *     ```json
  *     {
  *       "$schema": "https://opencode.ai/config.json",
- *       "plugin": ["@omniroute/opencode-plugin"]
+ *       "plugin": ["@szroute/opencode-plugin"]
  *     }
  *     ```
  *
@@ -30,19 +30,19 @@
  *     {
  *       "$schema": "https://opencode.ai/config.json",
  *       "plugin": [
- *         ["@omniroute/opencode-plugin", { "providerId": "omniroute" }],
- *         ["@omniroute/opencode-plugin", { "providerId": "omniroute-preprod" }]
+ *         ["@szroute/opencode-plugin", { "providerId": "szroute" }],
+ *         ["@szroute/opencode-plugin", { "providerId": "szroute-preprod" }]
  *       ]
  *     }
  *     ```
  *
  * Then `opencode connect <providerId>` to provision the API key per instance.
  *
- * Companion library: `@omniroute/opencode-provider` (build-time config generator)
+ * Companion library: `@szroute/opencode-provider` (build-time config generator)
  * remains supported for users who can't run plugins (CI, scripted scaffolding).
  *
  * @see https://opencode.ai/docs/plugins for the OpenCode plugin contract.
- * @see https://github.com/diegosouzapw/OmniRoute for the AI Gateway.
+ * @see https://github.com/sauravsz/SZRoute for the AI Gateway.
  */
 
 import { createHash } from "node:crypto";
@@ -84,15 +84,15 @@ import {
  *
  *  - `providerId`     OpenCode provider id this plugin instance binds to.
  *                     Multiple plugin instances coexist by giving each a
- *                     different `providerId` ("omniroute", "omniroute-preprod",
- *                     "omniroute-local"). Maps to `ProviderHook.id` and
+ *                     different `providerId` ("szroute", "szroute-preprod",
+ *                     "szroute-local"). Maps to `ProviderHook.id` and
  *                     `AuthHook.provider` in the @opencode-ai/plugin contract.
- *                     Default: "omniroute".
+ *                     Default: "szroute".
  *  - `displayName`    Label rendered in the OpenCode UI. Default derives
  *                     from providerId.
  *  - `modelCacheTtl`  `/v1/models` TTL cache duration in milliseconds.
  *                     Default: 300_000 (5 min).
- *  - `baseURL`        Override base URL for this OmniRoute instance. When
+ *  - `baseURL`        Override base URL for this SZRoute instance. When
  *                     absent, the loader falls back to a credential-attached
  *                     baseURL set by `/connect`.
  */
@@ -130,7 +130,7 @@ import {
  *                           every outbound request to baseURL. Default true.
  *  - `debugLog`             Capture every outbound request + response to a
  *                           JSONL file at
- *                           `~/.local/share/opencode/plugins/omniroute-debug-{providerId}.jsonl`.
+ *                           `~/.local/share/opencode/plugins/szroute-debug-{providerId}.jsonl`.
  *                           Each line: `{ reqId, ts, url, method, reqBody,
  *                           resStatus, resBody, durationMs }`.
  *                           Default false. Opt-in.
@@ -143,7 +143,7 @@ import {
  *
  *                           Default `anthropicPrefixes`:
  *                             ["cc", "claude", "anthropic", "kiro", "kr"]
- *                           (covers OmniRoute's canonical Anthropic aliases).
+ *                           (covers SZRoute's canonical Anthropic aliases).
  *
  *                           Set `anthropicPrefixes: []` to disable and force
  *                           everything through OpenAI-compat.
@@ -198,12 +198,12 @@ const optionsSchema = z
  * Plugin options shape — inferred directly from the Zod schema so the
  * validator and the static type can never drift. Replaces the standalone
  * interface previously declared here (T-02). Every consumer continues to
- * import `OmniRoutePluginOptions` as before; only the source of truth
+ * import `SZRoutePluginOptions` as before; only the source of truth
  * shifted from a hand-written interface to `z.infer<typeof optionsSchema>`.
  */
-export type OmniRoutePluginOptions = z.infer<typeof optionsSchema>;
+export type SZRoutePluginOptions = z.infer<typeof optionsSchema>;
 
-export const OMNIROUTE_PROVIDER_KEY = "omniroute" as const;
+export const SZROUTE_PROVIDER_KEY = "szroute" as const;
 
 /** Deployed plugin version (injected at build time by tsup define). */
 export const PLUGIN_VERSION: string =
@@ -242,18 +242,18 @@ function trimLeadingDashes(value: string): string {
  * applying defaults. Centralises the providerId fallback so every hook
  * sees a consistent identifier.
  */
-export function resolveOmniRoutePluginOptions(
-  opts?: OmniRoutePluginOptions,
+export function resolveSZRoutePluginOptions(
+  opts?: SZRoutePluginOptions,
 ): Required<
-  Pick<OmniRoutePluginOptions, "providerId" | "displayName" | "modelCacheTtl">
+  Pick<SZRoutePluginOptions, "providerId" | "displayName" | "modelCacheTtl">
 > &
-  Pick<OmniRoutePluginOptions, "baseURL" | "features"> {
-  const providerId = opts?.providerId ?? OMNIROUTE_PROVIDER_KEY;
+  Pick<SZRoutePluginOptions, "baseURL" | "features"> {
+  const providerId = opts?.providerId ?? SZROUTE_PROVIDER_KEY;
   const displayName =
     opts?.displayName ??
-    (providerId === OMNIROUTE_PROVIDER_KEY
-      ? "OmniRoute"
-      : `OmniRoute (${providerId})`);
+    (providerId === SZROUTE_PROVIDER_KEY
+      ? "SZRoute"
+      : `SZRoute (${providerId})`);
   const modelCacheTtl =
     typeof opts?.modelCacheTtl === "number" && opts.modelCacheTtl > 0
       ? opts.modelCacheTtl
@@ -269,14 +269,14 @@ export function resolveOmniRoutePluginOptions(
 
 /**
  * Strict parse of raw plugin options (as received from opencode.json or a
- * direct factory call) into the validated `OmniRoutePluginOptions` shape.
+ * direct factory call) into the validated `SZRoutePluginOptions` shape.
  *
  *   - `null` / `undefined` → `{}` (no opts is valid, defaults take over).
  *   - Unknown keys → throws (strict schema catches typos in opencode.json).
  *   - Empty / malformed values (e.g. empty providerId, non-URL baseURL,
  *     negative modelCacheTtl) → throws.
  *
- * Validation happens at plugin invocation time (inside `OmniRoutePlugin`),
+ * Validation happens at plugin invocation time (inside `SZRoutePlugin`),
  * NOT at module import — so a bad opencode.json fails the affected plugin
  * instance with an actionable message instead of crashing the whole TUI on
  * startup.
@@ -284,9 +284,9 @@ export function resolveOmniRoutePluginOptions(
  * Exported so callers and tests can validate options independent of the
  * full plugin factory invocation.
  */
-export function parseOmniRoutePluginOptions(
+export function parseSZRoutePluginOptions(
   opts: unknown,
-): OmniRoutePluginOptions {
+): SZRoutePluginOptions {
   if (opts === null || opts === undefined) return {};
   const result = optionsSchema.safeParse(opts);
   if (!result.success) {
@@ -296,20 +296,20 @@ export function parseOmniRoutePluginOptions(
         return `${path}: ${i.message}`;
       })
       .join("; ");
-    throw new Error(`Invalid @omniroute/opencode-plugin options: ${errs}`);
+    throw new Error(`Invalid @szroute/opencode-plugin options: ${errs}`);
   }
   return result.data;
 }
 
 /**
- * Internal coercion shim. Delegates to `parseOmniRoutePluginOptions` to keep
+ * Internal coercion shim. Delegates to `parseSZRoutePluginOptions` to keep
  * the public surface stable while routing all validation through the Zod
  * schema. Always returns an object (never undefined) so downstream hooks see
  * the same shape regardless of whether opencode.json passed `null`,
  * `undefined`, or an empty bag.
  */
-function coercePluginOptions(opts?: PluginOptions): OmniRoutePluginOptions {
-  return parseOmniRoutePluginOptions(opts);
+function coercePluginOptions(opts?: PluginOptions): SZRoutePluginOptions {
+  return parseSZRoutePluginOptions(opts);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -318,7 +318,7 @@ function coercePluginOptions(opts?: PluginOptions): OmniRoutePluginOptions {
 
 /**
  * Default provider-prefix list that triggers the Anthropic SDK format.
- * Covers OmniRoute's canonical Anthropic aliases: `cc/`, `claude/`,
+ * Covers SZRoute's canonical Anthropic aliases: `cc/`, `claude/`,
  * `anthropic/`, plus the user-configured `kiro/` and `kr/` upstream
  * connections that proxy Anthropic models.
  */
@@ -386,9 +386,9 @@ export function resolveApiBlock(
  *
  * Contract notes:
  *   - `provider` binds to `providerId` (NOT a hardcoded module constant — fixes
- *     the multi-instance bug in opencode-omniroute-auth@1.2.1 which pinned
- *     `OMNIROUTE_PROVIDER_ID = "omniroute"` at module scope).
- *   - `methods[0]` is the `api` flavor (no OAuth flow; OmniRoute issues bearer
+ *     the multi-instance bug in opencode-szroute-auth@1.2.1 which pinned
+ *     `SZROUTE_PROVIDER_ID = "szroute"` at module scope).
+ *   - `methods[0]` is the `api` flavor (no OAuth flow; SZRoute issues bearer
  *     keys directly). Label includes the resolved displayName so multi-instance
  *     setups stay distinguishable in the OC TUI.
  *   - `methods[0].prompts` uses the official `{type:"text", key, message}`
@@ -403,11 +403,11 @@ export function resolveApiBlock(
  *     keys by returning `{}` — OC then surfaces the `/connect` flow to the
  *     user instead of dispatching a request with bogus credentials.
  */
-export function createOmniRouteAuthHook(
-  opts?: OmniRoutePluginOptions,
+export function createSZRouteAuthHook(
+  opts?: SZRoutePluginOptions,
 ): AuthHook {
   const { providerId, displayName, baseURL, features } =
-    resolveOmniRoutePluginOptions(opts);
+    resolveSZRoutePluginOptions(opts);
   // Both fetch-layer features default ON (parity with the rest of the plugin's
   // `features.X !== false` convention). Honoring them here lets users disable
   // the interceptor/sanitizer from opencode.json — previously these flags were
@@ -426,7 +426,7 @@ export function createOmniRouteAuthHook(
           {
             type: "text",
             key: "apiKey",
-            message: `OmniRoute API key (${providerId})`,
+            message: `SZRoute API key (${providerId})`,
           },
         ],
       },
@@ -468,7 +468,7 @@ export function createOmniRouteAuthHook(
         // are disabled we fall back to the SDK's default fetch (apiKey only).
         let composedFetch: typeof fetch | undefined;
         if (wantFetchInterceptor) {
-          composedFetch = createOmniRouteFetchInterceptor({
+          composedFetch = createSZRouteFetchInterceptor({
             apiKey,
             baseURL: resolvedBaseURL,
           });
@@ -505,7 +505,7 @@ export function createOmniRouteAuthHook(
  * opencode.json), NOT as a closure binding. Multi-instance support follows
  * from each plugin tuple invoking the factory with its own opts.
  */
-export const OmniRoutePlugin: Plugin = async (_input, options) => {
+export const SZRoutePlugin: Plugin = async (_input, options) => {
   const resolved = coercePluginOptions(options);
   // T-07: a single per-plugin-instance cache shared between the provider
   // hook (T-03/T-05) and the config-shim hook (T-07). On OC ≥1.14.49 both
@@ -513,9 +513,9 @@ export const OmniRoutePlugin: Plugin = async (_input, options) => {
   // /v1/models + /api/combos at exactly one round-trip per TTL refresh
   // instead of two. On OC ≤1.14.48 only the config hook runs; the cache
   // still works (single producer + single consumer through the same map).
-  // Each `OmniRoutePlugin(...)` invocation gets its OWN cache via closure,
+  // Each `SZRoutePlugin(...)` invocation gets its OWN cache via closure,
   // so prod + preprod side-by-side instances do NOT collide.
-  const sharedCache: OmniRouteFetchCache = new Map();
+  const sharedCache: SZRouteFetchCache = new Map();
   // Debug breadcrumb: confirm server() invocation + resolved options.
   // Useful when diagnosing "is the plugin even running" from OC logs.
   const _ver: string =
@@ -544,9 +544,9 @@ export const OmniRoutePlugin: Plugin = async (_input, options) => {
       : (resolved.features?.logLevel ?? "warn"),
   );
   return {
-    auth: createOmniRouteAuthHook(resolved),
-    provider: createOmniRouteProviderHook(resolved, { cache: sharedCache }),
-    config: createOmniRouteConfigHook(resolved, { cache: sharedCache }),
+    auth: createSZRouteAuthHook(resolved),
+    provider: createSZRouteProviderHook(resolved, { cache: sharedCache }),
+    config: createSZRouteConfigHook(resolved, { cache: sharedCache }),
   };
 };
 
@@ -555,31 +555,31 @@ export const OmniRoutePlugin: Plugin = async (_input, options) => {
  * OC checks the default export for an object with `{id, server}` shape FIRST.
  * If that fails it falls back to legacy `getLegacyPlugins` which walks every
  * named export and rejects any non-function value — our package has
- * constants (OMNIROUTE_PROVIDER_KEY, DEFAULT_MODEL_CACHE_TTL_MS) + types +
+ * constants (SZROUTE_PROVIDER_KEY, DEFAULT_MODEL_CACHE_TTL_MS) + types +
  * schemas as named exports, so the legacy path always fails for us.
  *
  * Using v1 shape skips the legacy walk entirely. The `id` field is the
  * plugin MODULE identifier (one per published package); per-instance
  * `providerId` still flows through `options.providerId` as before.
  */
-const OmniRouteV1Plugin = {
-  id: "@omniroute/opencode-plugin",
-  server: OmniRoutePlugin,
+const SZRouteV1Plugin = {
+  id: "@szroute/opencode-plugin",
+  server: SZRoutePlugin,
 };
 
-export default OmniRouteV1Plugin;
+export default SZRouteV1Plugin;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Provider hook (T-03) — /v1/models pass-through with TTL cache
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Raw shape of a `/v1/models` entry from OmniRoute. Captured verbatim from
+ * Raw shape of a `/v1/models` entry from SZRoute. Captured verbatim from
  * the prod gateway response (sample at /tmp/prod-v1-models.json: 455 entries).
  * STRICT source-of-truth (OQ-3): every field that lands in ModelV2 traces
  * back to this shape — no client-side variant synthesis.
  */
-export interface OmniRouteRawModelEntry {
+export interface SZRouteRawModelEntry {
   id: string;
   object?: string;
   owned_by?: string;
@@ -606,10 +606,10 @@ export interface OmniRouteRawModelEntry {
 
 /**
  * Fetcher contract: returns the raw `/v1/models` entry list from a running
- * OmniRoute instance. Surfaced as a dependency so unit tests can inject a
+ * SZRoute instance. Surfaced as a dependency so unit tests can inject a
  * stub without monkey-patching global `fetch`.
  *
- * Why we inline this instead of using `@omniroute/opencode-provider`'s
+ * Why we inline this instead of using `@szroute/opencode-provider`'s
  * `fetchLiveModels`: the sibling helper returns a stripped `{id, name,
  * contextLength?}` shape (see opencode-provider/src/index.ts:480-569) that
  * drops the `capabilities` / `*_modalities` / `max_*_tokens` blocks T-03
@@ -618,31 +618,31 @@ export interface OmniRouteRawModelEntry {
  * in OQ-3. A 30-line raw fetcher is cheaper than mutating the sibling's
  * stable v0.1.0 contract.
  */
-export type OmniRouteModelsFetcher = (
+export type SZRouteModelsFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteRawModelEntry[]>;
+) => Promise<SZRouteRawModelEntry[]>;
 
 /**
  * Default fetcher: `GET <baseURL>/v1/models` with bearer auth + AbortController
- * timeout. Accepts both the `{object:"list", data:[…]}` envelope OmniRoute
+ * timeout. Accepts both the `{object:"list", data:[…]}` envelope SZRoute
  * emits today and a bare-array envelope (defensive — keeps the plugin
- * working if a future OmniRoute build trims the wrapper). Anything that
+ * working if a future SZRoute build trims the wrapper). Anything that
  * isn't an object with a string `id` is filtered out silently.
  */
-export const defaultOmniRouteModelsFetcher: OmniRouteModelsFetcher = async (
+export const defaultSZRouteModelsFetcher: SZRouteModelsFetcher = async (
   baseURL,
   apiKey,
   timeoutMs = 10_000,
 ) => {
   if (!apiKey)
     throw new Error(
-      "@omniroute/opencode-plugin: apiKey required to fetch /v1/models",
+      "@szroute/opencode-plugin: apiKey required to fetch /v1/models",
     );
   if (!baseURL)
     throw new Error(
-      "@omniroute/opencode-plugin: baseURL required to fetch /v1/models",
+      "@szroute/opencode-plugin: baseURL required to fetch /v1/models",
     );
 
   const trimmed = trimTrailingSlashes(baseURL);
@@ -665,7 +665,7 @@ export const defaultOmniRouteModelsFetcher: OmniRouteModelsFetcher = async (
     });
     if (!res.ok) {
       throw new Error(
-        `@omniroute/opencode-plugin: GET ${url} failed: ${res.status} ${res.statusText}`,
+        `@szroute/opencode-plugin: GET ${url} failed: ${res.status} ${res.statusText}`,
       );
     }
     const body = (await res.json()) as unknown;
@@ -676,14 +676,14 @@ export const defaultOmniRouteModelsFetcher: OmniRouteModelsFetcher = async (
           Array.isArray((body as { data?: unknown }).data)
         ? ((body as { data: unknown[] }).data as unknown[])
         : [];
-    const out: OmniRouteRawModelEntry[] = [];
+    const out: SZRouteRawModelEntry[] = [];
     for (const r of rawList) {
       if (
         r &&
         typeof r === "object" &&
         typeof (r as { id?: unknown }).id === "string"
       ) {
-        out.push(r as OmniRouteRawModelEntry);
+        out.push(r as SZRouteRawModelEntry);
       }
     }
     return out;
@@ -713,30 +713,30 @@ export const defaultOmniRouteModelsFetcher: OmniRouteModelsFetcher = async (
  *   1. Spec's flat `tool_call` / `reasoning` / `attachment` / `modalities`
  *      top-level fields don't exist in ModelV2 — folded into
  *      `capabilities.{toolcall, reasoning, attachment, input.*, output.*}`.
- *   2. `cost: undefined` is illegal (cost is required). OmniRoute doesn't
+ *   2. `cost: undefined` is illegal (cost is required). SZRoute doesn't
  *      surface pricing on /v1/models, so we emit a zeroed cost block.
  *      Downstream OC reads this for display only — the live pricing is
- *      OmniRoute's responsibility at routing time.
+ *      SZRoute's responsibility at routing time.
  *   3. `tool_call` (spec) → `toolcall` (ModelV2 field name; one word).
- *   4. `attachment` (spec) maps from `capabilities.vision` per OmniRoute
+ *   4. `attachment` (spec) maps from `capabilities.vision` per SZRoute
  *      convention: vision = ability to receive image attachments. If the
  *      raw entry happens to expose an explicit `capabilities.attachment`
  *      (some combo entries do), that wins.
- *   5. `thinking` from OmniRoute has no 1:1 ModelV2 slot. We OR it into
+ *   5. `thinking` from SZRoute has no 1:1 ModelV2 slot. We OR it into
  *      `reasoning` so thinking-only models still surface a non-false
  *      reasoning flag.
- *   6. `last_updated` from OmniRoute has no ModelV2 slot — dropped (the
+ *   6. `last_updated` from SZRoute has no ModelV2 slot — dropped (the
  *      spec also flagged this as "may not exist", and the prod sample
  *      confirms it's optional). `release_date` lands in ModelV2.release_date
  *      with `""` fallback (the field is required as `string`).
- *   7. `temperature: true` per OmniRoute convention (OpenAI-compat mode
+ *   7. `temperature: true` per SZRoute convention (OpenAI-compat mode
  *      always supports the temperature knob). If a raw entry sets
  *      `capabilities.temperature` explicitly, that wins.
  *   8. Input/output modality arrays: each known modality flips its boolean.
- *      Unknown strings (future OmniRoute additions) are ignored — when the
+ *      Unknown strings (future SZRoute additions) are ignored — when the
  *      server adds new modalities we can map them here without breaking
  *      existing entries.
- *   9. `status: "active"` — OmniRoute doesn't tier models alpha/beta on
+ *   9. `status: "active"` — SZRoute doesn't tier models alpha/beta on
  *      /v1/models, and OC needs a non-deprecated status to expose the
  *      model in the picker. If a future entry surfaces an explicit
  *      lifecycle hint we can map it then.
@@ -744,12 +744,12 @@ export const defaultOmniRouteModelsFetcher: OmniRouteModelsFetcher = async (
  *      for OC users to attach per-model overrides; the provider plugin
  *      must not preempt them.
  *  11. `limit.input` is OPTIONAL on ModelV2 (the `?` modifier). We only
- *      emit it when OmniRoute supplies `max_input_tokens` — keeps the
+ *      emit it when SZRoute supplies `max_input_tokens` — keeps the
  *      shape clean for combo entries that only carry context_length.
  */
 
 export function mapRawModelToModelV2(
-  raw: OmniRouteRawModelEntry,
+  raw: SZRouteRawModelEntry,
   ctx: { providerId: string; baseURL: string; apiFormat?: { anthropicPrefixes?: string[] } }
 ): ModelV2 {
   const caps = raw.capabilities ?? {};
@@ -760,7 +760,7 @@ export function mapRawModelToModelV2(
     id: raw.id,
     /**
      * Display name. Falls back to raw.id when no enrichment is available;
-     * the caller (`createOmniRouteProviderHook`) overlays
+     * the caller (`createSZRouteProviderHook`) overlays
      * `/api/pricing/models` data via `applyEnrichment` when
      * `features.enrichment` is true.
      */
@@ -813,10 +813,10 @@ export function mapRawModelToModelV2(
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Raw shape of a single combo entry as returned by OmniRoute's `/api/combos`.
+ * Raw shape of a single combo entry as returned by SZRoute's `/api/combos`.
  *
  * Schema established via a live probe against
- * an OmniRoute `/api/combos` endpoint with a management-scoped key
+ * an SZRoute `/api/combos` endpoint with a management-scoped key
  * (response saved at /tmp/t05-combos.json) cross-referenced against the
  * source-of-truth in this repo:
  *
@@ -830,15 +830,15 @@ export function mapRawModelToModelV2(
  *
  * Note: the preprod gateway returned `{combos: []}` at probe time (no combos
  * provisioned). The defensive parser accepts both `{combos:[...]}` and a
- * bare array envelope so the plugin keeps working if a future OmniRoute
+ * bare array envelope so the plugin keeps working if a future SZRoute
  * build trims the wrapper (mirrors the same pattern in the sibling
- * `@omniroute/opencode-provider#listCombos`).
+ * `@szroute/opencode-provider#listCombos`).
  *
  * STRICT source-of-truth (OQ-3, per T-03): every ModelV2 field a combo
  * surfaces traces back to either (a) this raw combo entry or (b) the LCD
  * roll-up across its raw member models. No client-side variant synthesis.
  */
-export interface OmniRouteRawComboMemberRef {
+export interface SZRouteRawComboMemberRef {
   /** Step kind: "model" references a raw model id; "combo-ref" nests another combo. */
   kind?: "model" | "combo-ref";
   /** Full model id referenced by this step (when kind === "model"). */
@@ -851,37 +851,37 @@ export interface OmniRouteRawComboMemberRef {
   label?: string;
 }
 
-export interface OmniRouteRawCombo {
+export interface SZRouteRawCombo {
   id: string;
   name?: string;
   /** Routing strategy. Surfaced for forward-compat but not consumed by LCD. */
   strategy?: string;
   /** Member step list. Only `kind: "model"` steps participate in LCD. */
-  models?: OmniRouteRawComboMemberRef[];
+  models?: SZRouteRawComboMemberRef[];
   /** Hidden combos are excluded from the OC model picker. */
   isHidden?: boolean;
-  /** When OmniRoute attaches a lifecycle hint we forward it; today it doesn't. */
+  /** When SZRoute attaches a lifecycle hint we forward it; today it doesn't. */
   release_date?: string;
 }
 
 /**
  * Fetcher contract for `/api/combos`. Same DI shape as
- * `OmniRouteModelsFetcher` so unit tests can inject a stub instead of
+ * `SZRouteModelsFetcher` so unit tests can inject a stub instead of
  * monkey-patching global `fetch`.
  */
-export type OmniRouteCombosFetcher = (
+export type SZRouteCombosFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteRawCombo[]>;
+) => Promise<SZRouteRawCombo[]>;
 
 /**
  * Default fetcher: `GET <baseURL>/api/combos` with bearer auth +
  * AbortController timeout. Accepts both the `{combos: [...]}` envelope the
  * gateway emits today and a bare-array envelope (defensive — keeps the
- * plugin working if a future OmniRoute build trims the wrapper).
+ * plugin working if a future SZRoute build trims the wrapper).
  *
- * Differences from `defaultOmniRouteModelsFetcher`:
+ * Differences from `defaultSZRouteModelsFetcher`:
  *   - URL is `/api/combos`, NOT `/v1/combos`. The `/v1/...` namespace is the
  *     OpenAI-compatible surface (chat completions, models); combo discovery
  *     lives on the management plane under `/api/...`. We tolerate both
@@ -893,18 +893,18 @@ export type OmniRouteCombosFetcher = (
  *
  * Anything that isn't an object with a string `id` is filtered out silently.
  */
-export const defaultOmniRouteCombosFetcher: OmniRouteCombosFetcher = async (
+export const defaultSZRouteCombosFetcher: SZRouteCombosFetcher = async (
   baseURL,
   apiKey,
   timeoutMs = 10_000,
 ) => {
   if (!apiKey)
     throw new Error(
-      "@omniroute/opencode-plugin: apiKey required to fetch /api/combos",
+      "@szroute/opencode-plugin: apiKey required to fetch /api/combos",
     );
   if (!baseURL)
     throw new Error(
-      "@omniroute/opencode-plugin: baseURL required to fetch /api/combos",
+      "@szroute/opencode-plugin: baseURL required to fetch /api/combos",
     );
 
   // Strip trailing slashes, then strip a trailing `/v1` so we land on the
@@ -927,7 +927,7 @@ export const defaultOmniRouteCombosFetcher: OmniRouteCombosFetcher = async (
     });
     if (!res.ok) {
       throw new Error(
-        `@omniroute/opencode-plugin: GET ${url} failed: ${res.status} ${res.statusText}`,
+        `@szroute/opencode-plugin: GET ${url} failed: ${res.status} ${res.statusText}`,
       );
     }
     const body = (await res.json()) as unknown;
@@ -938,14 +938,14 @@ export const defaultOmniRouteCombosFetcher: OmniRouteCombosFetcher = async (
           Array.isArray((body as { combos?: unknown }).combos)
         ? ((body as { combos: unknown[] }).combos as unknown[])
         : [];
-    const out: OmniRouteRawCombo[] = [];
+    const out: SZRouteRawCombo[] = [];
     for (const r of rawList) {
       if (
         r &&
         typeof r === "object" &&
         typeof (r as { id?: unknown }).id === "string"
       ) {
-        out.push(r as OmniRouteRawCombo);
+        out.push(r as SZRouteRawCombo);
       }
     }
     return out;
@@ -993,8 +993,8 @@ export const defaultOmniRouteCombosFetcher: OmniRouteCombosFetcher = async (
  * @param baseURL Resolved gateway base URL for ModelV2.api.url.
  */
 export function mapComboToModelV2(
-  combo: OmniRouteRawCombo,
-  members: OmniRouteRawModelEntry[],
+  combo: SZRouteRawCombo,
+  members: SZRouteRawModelEntry[],
   providerId: string,
   baseURL: string,
   apiFormat?: { anthropicPrefixes?: string[] },
@@ -1106,11 +1106,11 @@ export function mapComboToModelV2(
 // ─────────────────────────────────────────────────────────────────────────
 
 /**
- * Raw shape of an auto combo entry as returned by OmniRoute's
+ * Raw shape of an auto combo entry as returned by SZRoute's
  * `/api/combos/auto` endpoint. Auto combos are virtual — they self-manage
  * provider selection via scoring/bandit exploration at runtime.
  */
-export interface OmniRouteRawAutoCombo {
+export interface SZRouteRawAutoCombo {
   /** Stable id (e.g. "auto", "auto/coding"). */
   id: string;
   /** Human-readable name (e.g. "Auto", "Auto Coding"). */
@@ -1121,7 +1121,7 @@ export interface OmniRouteRawAutoCombo {
   candidatePool?: string[];
   /** Number of candidates resolved at fetch time. */
   candidateCount?: number;
-  /** MAX of candidates' context windows, served by newer OmniRoute builds.
+  /** MAX of candidates' context windows, served by newer SZRoute builds.
    * Absent on older servers — mapper falls back to a safe positive default. */
   context_length?: number;
   /** MAX of candidates' max output tokens (same provenance as context_length). */
@@ -1142,11 +1142,11 @@ export interface OmniRouteRawAutoCombo {
  * Fetcher contract for `/api/combos/auto`. Returns the list of virtual
  * auto combos the server can create. Same DI pattern as other fetchers.
  */
-export type OmniRouteAutoCombosFetcher = (
+export type SZRouteAutoCombosFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteRawAutoCombo[]>;
+) => Promise<SZRouteRawAutoCombo[]>;
 
 /**
  * Default auto combos fetcher: `GET <baseURL>/api/combos/auto`.
@@ -1154,7 +1154,7 @@ export type OmniRouteAutoCombosFetcher = (
  * Fault-tolerant: returns empty array on 404 (endpoint doesn't exist yet)
  * or any non-2xx / network error. Logs a warning in those cases.
  */
-export const defaultOmniRouteAutoCombosFetcher: OmniRouteAutoCombosFetcher =
+export const defaultSZRouteAutoCombosFetcher: SZRouteAutoCombosFetcher =
   async (baseURL, apiKey, timeoutMs = 5_000) => {
     if (!apiKey || !baseURL) return [];
 
@@ -1176,13 +1176,13 @@ export const defaultOmniRouteAutoCombosFetcher: OmniRouteAutoCombosFetcher =
       // 404 = endpoint not deployed yet — expected during rollout
       if (res.status === 404) {
         console.warn(
-          `[omniroute-plugin] /api/combos/auto not available (404) — auto combos disabled`,
+          `[szroute-plugin] /api/combos/auto not available (404) — auto combos disabled`,
         );
         return [];
       }
       if (!res.ok) {
         console.warn(
-          `[omniroute-plugin] /api/combos/auto failed: ${res.status} ${res.statusText} — auto combos disabled`,
+          `[szroute-plugin] /api/combos/auto failed: ${res.status} ${res.statusText} — auto combos disabled`,
         );
         return [];
       }
@@ -1194,21 +1194,21 @@ export const defaultOmniRouteAutoCombosFetcher: OmniRouteAutoCombosFetcher =
             Array.isArray((body as { combos?: unknown }).combos)
           ? ((body as { combos: unknown[] }).combos as unknown[])
           : [];
-      const out: OmniRouteRawAutoCombo[] = [];
+      const out: SZRouteRawAutoCombo[] = [];
       for (const r of rawList) {
         if (
           r &&
           typeof r === "object" &&
           typeof (r as { id?: unknown }).id === "string"
         ) {
-          out.push(r as OmniRouteRawAutoCombo);
+          out.push(r as SZRouteRawAutoCombo);
         }
       }
       return out;
     } catch (err) {
       // Network error, timeout, abort — all non-fatal
       console.warn(
-        `[omniroute-plugin] /api/combos/auto fetch failed: ${err instanceof Error ? err.message : String(err)} — auto combos disabled`,
+        `[szroute-plugin] /api/combos/auto fetch failed: ${err instanceof Error ? err.message : String(err)} — auto combos disabled`,
       );
       return [];
     } finally {
@@ -1217,7 +1217,7 @@ export const defaultOmniRouteAutoCombosFetcher: OmniRouteAutoCombosFetcher =
   };
 
 /** Fallbacks when the server does not advertise auto-combo limits (older
- * OmniRoute builds). MUST be positive: OpenCode's overflow guard treats
+ * SZRoute builds). MUST be positive: OpenCode's overflow guard treats
  * `limit.context === 0` as "never overflow" and silently DISABLES smart
  * auto-compaction, letting the session grow until the gateway's destructive
  * history purge kicks in (the "agent keeps forgetting things" bug). */
@@ -1233,8 +1233,8 @@ const AUTO_COMBO_FALLBACK_OUTPUT = 8_192;
  * applies when the server omits them. Never 0.
  */
 export function mapAutoComboToStaticEntry(
-  autoCombo: OmniRouteRawAutoCombo,
-): OmniRouteStaticModelEntry {
+  autoCombo: SZRouteRawAutoCombo,
+): SZRouteStaticModelEntry {
   const variant = autoCombo.variant;
   const name = formatAutoComboName(variant, autoCombo.candidateCount);
   const context =
@@ -1266,7 +1266,7 @@ export function mapAutoComboToStaticEntry(
 // ─────────────────────────────────────────────────────────────────────────
 
 /**
- * Per-model enrichment overlay derived from OmniRoute's
+ * Per-model enrichment overlay derived from SZRoute's
  * `/api/pricing/models` endpoint. The endpoint returns a per-provider
  * catalog with curated `name` strings (e.g. `Claude 4.7 Opus`,
  * `GPT 5.5 Pro`, `Gemini 3.1 Pro`) and per-million-token pricing
@@ -1274,7 +1274,7 @@ export function mapAutoComboToStaticEntry(
  * `pricing.cacheWrite`). These overlay the ModelV2 entries produced by
  * `mapRawModelToModelV2`.
  */
-export interface OmniRouteEnrichmentEntry {
+export interface SZRouteEnrichmentEntry {
   /** Human-readable display name. Replaces ModelV2.name when present. */
   name?: string;
   /** Per-million-token cost overlay onto ModelV2.cost. */
@@ -1286,7 +1286,7 @@ export interface OmniRouteEnrichmentEntry {
   };
   /**
    * Provider alias prefix seen in `/v1/models` ids (e.g. `cc`, `gemini-cli`).
-   * Populated by `defaultOmniRouteEnrichmentFetcher` from
+   * Populated by `defaultSZRouteEnrichmentFetcher` from
    * `/api/pricing/models` keys. Drives the `usableOnly` alias↔canonical
    * resolution.
    */
@@ -1315,13 +1315,13 @@ export interface OmniRouteEnrichmentEntry {
 }
 
 /** Map keyed by full model id (possibly namespaced, e.g. `cc/claude-sonnet-4-6`). */
-export type OmniRouteEnrichmentMap = Map<string, OmniRouteEnrichmentEntry>;
+export type SZRouteEnrichmentMap = Map<string, SZRouteEnrichmentEntry>;
 
-export type OmniRouteEnrichmentFetcher = (
+export type SZRouteEnrichmentFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteEnrichmentMap>;
+) => Promise<SZRouteEnrichmentMap>;
 
 /**
  * Default enrichment fetcher — pulls nice display names from
@@ -1344,9 +1344,9 @@ export type OmniRouteEnrichmentFetcher = (
  * the two fetches are independent so one missing source still surfaces the
  * other.
  */
-export const defaultOmniRouteEnrichmentFetcher: OmniRouteEnrichmentFetcher =
+export const defaultSZRouteEnrichmentFetcher: SZRouteEnrichmentFetcher =
   async (baseURL, apiKey, timeoutMs = 10_000) => {
-    const out: OmniRouteEnrichmentMap = new Map();
+    const out: SZRouteEnrichmentMap = new Map();
     if (!baseURL || !apiKey) return out;
     const root = baseURL.replace(/\/v1\/?$/, "").replace(/\/$/, "");
     const headers = {
@@ -1383,7 +1383,7 @@ export const defaultOmniRouteEnrichmentFetcher: OmniRouteEnrichmentFetcher =
                 : providerAlias;
             // Upstream provider human label (e.g. `Claude`, `Kiro`,
             // `GitHub Models`). Optional — falls back to undefined when
-            // OmniRoute hasn't curated a label for this slot.
+            // SZRoute hasn't curated a label for this slot.
             const slotNameRaw = (slot as { name?: unknown }).name;
             const providerDisplayName =
               typeof slotNameRaw === "string" && slotNameRaw.trim().length > 0
@@ -1394,7 +1394,7 @@ export const defaultOmniRouteEnrichmentFetcher: OmniRouteEnrichmentFetcher =
               const id = (m as { id?: unknown }).id;
               if (typeof id !== "string" || id.length === 0) continue;
               const name = (m as { name?: unknown }).name;
-              const entry: OmniRouteEnrichmentEntry = {
+              const entry: SZRouteEnrichmentEntry = {
                 providerAlias,
                 providerCanonical,
               };
@@ -1437,9 +1437,9 @@ export const defaultOmniRouteEnrichmentFetcher: OmniRouteEnrichmentFetcher =
             )) {
               if (!raw || typeof raw !== "object") continue;
               const p = raw as Record<string, unknown>;
-              const parsed: NonNullable<OmniRouteEnrichmentEntry["pricing"]> =
+              const parsed: NonNullable<SZRouteEnrichmentEntry["pricing"]> =
                 {};
-              // OmniRoute `/api/pricing` keys:
+              // SZRoute `/api/pricing` keys:
               //   input         → cost.input
               //   output        → cost.output
               //   cached        → cost.cache.read   (alias: cacheRead)
@@ -1573,8 +1573,8 @@ async function writeStartupDiagnostics(params: {
   comboCount: number;
   enrichmentSize: number;
   autoComboCount: number;
-  enrichment: OmniRouteEnrichmentMap;
-  autoCombos: OmniRouteRawAutoCombo[];
+  enrichment: SZRouteEnrichmentMap;
+  autoCombos: SZRouteRawAutoCombo[];
 }): Promise<void> {
   const {
     providerId,
@@ -1640,7 +1640,7 @@ async function writeStartupDiagnostics(params: {
     const diagPath = path.join(
       diagDir,
       "plugins",
-      "omniroute-startup-diagnostics.log",
+      "szroute-startup-diagnostics.log",
     );
     let existing = "";
     try {
@@ -1672,9 +1672,9 @@ async function writeStartupDiagnostics(params: {
  */
 export const PROVIDER_TAG_SEPARATOR = _PROVIDER_TAG_SEPARATOR;
 
-// Re-export from naming.ts — thin wrapper preserving OmniRouteEnrichmentEntry signature
+// Re-export from naming.ts — thin wrapper preserving SZRouteEnrichmentEntry signature
 export function shortProviderLabel(
-  enrichment: OmniRouteEnrichmentEntry | undefined,
+  enrichment: SZRouteEnrichmentEntry | undefined,
 ): string | undefined {
   return _shortProviderLabel(enrichment);
 }
@@ -1706,7 +1706,7 @@ export function shortProviderLabel(
  */
 export function applyProviderTag(
   model: ModelV2,
-  enrichment: OmniRouteEnrichmentEntry | undefined,
+  enrichment: SZRouteEnrichmentEntry | undefined,
 ): ModelV2 {
   const label = shortProviderLabel(enrichment);
   if (!label) return model;
@@ -1725,7 +1725,7 @@ export function applyProviderTag(
 /**
  * Reverse-index the enrichment map from `providerCanonical → providerAlias`.
  *
- * OmniRoute's `/api/pricing/models` is keyed by short ALIAS (`cc`, `cx`,
+ * SZRoute's `/api/pricing/models` is keyed by short ALIAS (`cc`, `cx`,
  * `pol`). But `/v1/models` exposes some models a SECOND time under their
  * CANONICAL name (`claude/claude-opus-4-7`, `codex/gpt-5.5`,
  * `pollinations/midjourney`). Without a reverse map, those canonical
@@ -1737,7 +1737,7 @@ export function applyProviderTag(
  * like `kiro`).
  */
 export function buildCanonicalToAliasMap(
-  enrichment: OmniRouteEnrichmentMap | undefined,
+  enrichment: SZRouteEnrichmentMap | undefined,
 ): Map<string, string> {
   const out = new Map<string, string>();
   if (!enrichment) return out;
@@ -1773,9 +1773,9 @@ export function buildCanonicalToAliasMap(
  */
 export function lookupEnrichment(
   rawId: string,
-  enrichment: OmniRouteEnrichmentMap | undefined,
+  enrichment: SZRouteEnrichmentMap | undefined,
   canonicalToAlias: Map<string, string>,
-): OmniRouteEnrichmentEntry | undefined {
+): SZRouteEnrichmentEntry | undefined {
   if (!enrichment) return undefined;
   const direct = enrichment.get(rawId);
   if (direct) return direct;
@@ -1808,7 +1808,7 @@ export function lookupEnrichment(
  * Built once per refresh. Cheap — O(M) where M = raw model count.
  */
 export function canonicalDedupSet(
-  rawModels: ReadonlyArray<OmniRouteRawModelEntry>,
+  rawModels: ReadonlyArray<SZRouteRawModelEntry>,
   canonicalToAlias: Map<string, string>,
 ): Set<string> {
   const drop = new Set<string>();
@@ -1838,7 +1838,7 @@ export function canonicalDedupSet(
  * provider prefix even for raw models that don't have their own
  * curated `/api/pricing/models` entry.
  *
- * Real example: OmniRoute's `pricing['cohere']` slot lists 10 curated
+ * Real example: SZRoute's `pricing['cohere']` slot lists 10 curated
  * models but `/v1/models` also returns `cohere/rerank-multilingual-v3.0`
  * and `cohere/rerank-v4.0-fast` (not in the curated 10). Without this
  * index, those rows surface in the picker as `cohere/...` with no
@@ -1846,16 +1846,16 @@ export function canonicalDedupSet(
  *
  * This index records the first non-empty `providerDisplayName` seen
  * for each alias, plus the alias itself. Callers use it to synthesize
- * a minimal `OmniRouteEnrichmentEntry` whenever the direct lookup
+ * a minimal `SZRouteEnrichmentEntry` whenever the direct lookup
  * misses but the raw id's prefix matches a known alias.
  *
  * Built once per refresh; first-wins on duplicate alias (matches
  * `buildCanonicalToAliasMap` semantics).
  */
 export function buildAliasIndex(
-  enrichment: OmniRouteEnrichmentMap | undefined,
-): Map<string, OmniRouteEnrichmentEntry> {
-  const out = new Map<string, OmniRouteEnrichmentEntry>();
+  enrichment: SZRouteEnrichmentMap | undefined,
+): Map<string, SZRouteEnrichmentEntry> {
+  const out = new Map<string, SZRouteEnrichmentEntry>();
   if (!enrichment) return out;
   for (const entry of enrichment.values()) {
     const alias =
@@ -1905,10 +1905,10 @@ export function buildAliasIndex(
  */
 export function resolveProviderTagEntry(
   rawId: string,
-  direct: OmniRouteEnrichmentEntry | undefined,
-  aliasIndex: Map<string, OmniRouteEnrichmentEntry>,
+  direct: SZRouteEnrichmentEntry | undefined,
+  aliasIndex: Map<string, SZRouteEnrichmentEntry>,
   canonicalToAlias?: Map<string, string>,
-): OmniRouteEnrichmentEntry | undefined {
+): SZRouteEnrichmentEntry | undefined {
   if (direct) {
     const alias =
       typeof direct.providerAlias === "string"
@@ -1957,7 +1957,7 @@ export { _normaliseFreeLabel as normaliseFreeLabel };
 
 export function applyEnrichment(
   model: ModelV2,
-  enrichment: OmniRouteEnrichmentEntry | undefined,
+  enrichment: SZRouteEnrichmentEntry | undefined,
 ): ModelV2 {
   if (!enrichment) return model;
   if (enrichment.name && enrichment.name.trim().length > 0) {
@@ -1987,34 +1987,34 @@ export function applyEnrichment(
 // ─────────────────────────────────────────────────────────────────────────
 
 /** Single step in a compression combo's pipeline. */
-export interface OmniRouteCompressionStep {
+export interface SZRouteCompressionStep {
   engine: string; // "rtk" | "caveman" | "aggressive" | ...
   intensity?: string; // "minimal" | "lite" | "standard" | "full" | "ultra" | "aggressive"
 }
 
 /** Compression combo as returned by /api/context/combos. */
-export interface OmniRouteCompressionCombo {
+export interface SZRouteCompressionCombo {
   id: string;
   name?: string;
   description?: string;
-  pipeline: OmniRouteCompressionStep[];
+  pipeline: SZRouteCompressionStep[];
   isDefault?: boolean;
 }
 
-export type OmniRouteCompressionMetaFetcher = (
+export type SZRouteCompressionMetaFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteCompressionCombo[]>;
+) => Promise<SZRouteCompressionCombo[]>;
 
 /**
  * Default compression-metadata fetcher — calls `GET /api/context/combos`.
  * Tolerates envelope shapes `{ combos: [...] }`, `[...]`, or
  * `{ data: [...] }`. Soft-fails (returns []) on non-2xx or parse errors.
  */
-export const defaultOmniRouteCompressionMetaFetcher: OmniRouteCompressionMetaFetcher =
+export const defaultSZRouteCompressionMetaFetcher: SZRouteCompressionMetaFetcher =
   async (baseURL, apiKey, timeoutMs = 10_000) => {
-    const empty: OmniRouteCompressionCombo[] = [];
+    const empty: SZRouteCompressionCombo[] = [];
     if (!baseURL || !apiKey) return empty;
     const root = baseURL.replace(/\/v1\/?$/, "").replace(/\/$/, "");
     const url = `${root}/api/context/combos`;
@@ -2038,26 +2038,26 @@ export const defaultOmniRouteCompressionMetaFetcher: OmniRouteCompressionMetaFet
           : Array.isArray((body as { data?: unknown[] })?.data)
             ? (body as { data: unknown[] }).data
             : [];
-      const out: OmniRouteCompressionCombo[] = [];
+      const out: SZRouteCompressionCombo[] = [];
       for (const raw of list) {
         if (!raw || typeof raw !== "object") continue;
         const id = (raw as { id?: unknown }).id;
         const pipeline = (raw as { pipeline?: unknown }).pipeline;
         if (typeof id !== "string" || id.length === 0) continue;
         if (!Array.isArray(pipeline)) continue;
-        const steps: OmniRouteCompressionStep[] = [];
+        const steps: SZRouteCompressionStep[] = [];
         for (const step of pipeline) {
           if (!step || typeof step !== "object") continue;
           const engine = (step as { engine?: unknown }).engine;
           if (typeof engine !== "string" || engine.length === 0) continue;
           const intensity = (step as { intensity?: unknown }).intensity;
-          const entry: OmniRouteCompressionStep = { engine };
+          const entry: SZRouteCompressionStep = { engine };
           if (typeof intensity === "string" && intensity.length > 0) {
             entry.intensity = intensity;
           }
           steps.push(entry);
         }
-        const combo: OmniRouteCompressionCombo = { id, pipeline: steps };
+        const combo: SZRouteCompressionCombo = { id, pipeline: steps };
         const name = (raw as { name?: unknown }).name;
         if (typeof name === "string" && name.length > 0) combo.name = name;
         const description = (raw as { description?: unknown }).description;
@@ -2085,7 +2085,7 @@ export const defaultOmniRouteCompressionMetaFetcher: OmniRouteCompressionMetaFet
  *
  * Lookup is case-insensitive. Unknown intensities fall through to the
  * raw text form (`engine:<intensity>`) so we never hide a value that
- * OmniRoute knows but the plugin doesn't.
+ * SZRoute knows but the plugin doesn't.
  *
  * Exported for callers (and tests) that want to assemble their own
  * pipeline strings.
@@ -2111,7 +2111,7 @@ export const COMPRESSION_INTENSITY_EMOJI: Record<string, string> = {
  *   `[rtk:custom-thing]`      (unknown intensity, raw-text fallback)
  */
 export function formatCompressionPipeline(
-  pipeline: OmniRouteCompressionStep[],
+  pipeline: SZRouteCompressionStep[],
 ): string {
   if (!pipeline || pipeline.length === 0) return "";
   return (
@@ -2129,7 +2129,7 @@ export function formatCompressionPipeline(
 
 // ─────────────────────────────────────────────────────────────────────────
 // /api/providers (provider-connection status) — optional read used by the
-// `features.usableOnly` filter. Returns the operator's installed OmniRoute
+// `features.usableOnly` filter. Returns the operator's installed SZRoute
 // provider connections, each with `provider` (canonical id), `isActive`,
 // `testStatus`. We treat a provider as USABLE when at least one of its
 // connections is `isActive: true && testStatus: 'active'`. Aliases (e.g.
@@ -2137,7 +2137,7 @@ export function formatCompressionPipeline(
 // ─────────────────────────────────────────────────────────────────────────
 
 /** Subset of `/api/providers/connections[]` we read. Other fields are kept as a permissive index signature. */
-export interface OmniRouteProviderConnection {
+export interface SZRouteProviderConnection {
   /** Connection UUID. */
   id: string;
   /** Canonical provider id, e.g. `claude`, `gemini-cli`, `kiro`. Matches `entry.id` in `/api/pricing/models`. */
@@ -2154,11 +2154,11 @@ export interface OmniRouteProviderConnection {
   [k: string]: unknown;
 }
 
-export type OmniRouteProvidersFetcher = (
+export type SZRouteProvidersFetcher = (
   baseURL: string,
   apiKey: string,
   timeoutMs?: number,
-) => Promise<OmniRouteProviderConnection[]>;
+) => Promise<SZRouteProviderConnection[]>;
 
 /**
  * Default providers fetcher — calls `GET /api/providers`. Tolerates envelope
@@ -2166,9 +2166,9 @@ export type OmniRouteProvidersFetcher = (
  * (returns []) on non-2xx or parse errors so the `usableOnly` filter
  * gracefully degrades to "no filter" instead of hiding the whole catalog.
  */
-export const defaultOmniRouteProvidersFetcher: OmniRouteProvidersFetcher =
+export const defaultSZRouteProvidersFetcher: SZRouteProvidersFetcher =
   async (baseURL, apiKey, timeoutMs = 10_000) => {
-    const empty: OmniRouteProviderConnection[] = [];
+    const empty: SZRouteProviderConnection[] = [];
     if (!baseURL || !apiKey) return empty;
     const root = baseURL.replace(/\/v1\/?$/, "").replace(/\/$/, "");
     const url = `${root}/api/providers`;
@@ -2192,7 +2192,7 @@ export const defaultOmniRouteProvidersFetcher: OmniRouteProvidersFetcher =
           : Array.isArray((body as { data?: unknown[] })?.data)
             ? (body as { data: unknown[] }).data
             : [];
-      const out: OmniRouteProviderConnection[] = [];
+      const out: SZRouteProviderConnection[] = [];
       for (const raw of list) {
         if (!raw || typeof raw !== "object") continue;
         const provider = (raw as { provider?: unknown }).provider;
@@ -2221,7 +2221,7 @@ export const defaultOmniRouteProvidersFetcher: OmniRouteProvidersFetcher =
  *
  * Callers should treat membership in EITHER set as "usable" — raw model
  * ids may be `<alias>/<model>` (`cc/claude-opus-4-7`) OR `<canonical>/<model>`
- * (`claude/sonnet-4`) depending on the OmniRoute deployment's `/v1/models`
+ * (`claude/sonnet-4`) depending on the SZRoute deployment's `/v1/models`
  * surface shape.
  *
  * Subtract-filter semantics: callers MUST also keep models whose prefix is
@@ -2230,8 +2230,8 @@ export const defaultOmniRouteProvidersFetcher: OmniRouteProvidersFetcher =
  * prefix in EITHER catalog table AND it's not usable, drop; otherwise keep".
  */
 export function usableProviderAliasSet(
-  connections: OmniRouteProviderConnection[],
-  enrichment: OmniRouteEnrichmentMap | undefined,
+  connections: SZRouteProviderConnection[],
+  enrichment: SZRouteEnrichmentMap | undefined,
 ): {
   aliases: Set<string>;
   canonicals: Set<string>;
@@ -2249,7 +2249,7 @@ export function usableProviderAliasSet(
   const knownAliases = new Set<string>();
   if (enrichment) {
     // Walk enrichment entries to map alias → canonical via the metadata
-    // populated by `defaultOmniRouteEnrichmentFetcher`. Every entry carries
+    // populated by `defaultSZRouteEnrichmentFetcher`. Every entry carries
     // its providerAlias + providerCanonical so the namespaced/bare key
     // duplication is harmless. Collect EVERY alias we encounter (regardless
     // of usability) into `knownAliases` so the downstream filter can decide
@@ -2290,7 +2290,7 @@ export function isUsableRawModelId(
     canonicals: Set<string>;
     knownAliases: Set<string>;
   },
-  enrichment: OmniRouteEnrichmentMap | undefined,
+  enrichment: SZRouteEnrichmentMap | undefined,
 ): boolean {
   const slash = id.indexOf("/");
   if (slash <= 0) return true;
@@ -2311,7 +2311,7 @@ export function isUsableRawModelId(
  * all-false LCD posture and surfaced as cosmetic-only entries).
  */
 export function isUsableCombo(
-  combo: OmniRouteRawCombo,
+  combo: SZRouteRawCombo,
   usable: {
     aliases: Set<string>;
     canonicals: Set<string>;
@@ -2320,7 +2320,7 @@ export function isUsableCombo(
 ): boolean {
   const steps = Array.isArray(combo.models) ? combo.models : [];
   if (steps.length === 0) return true;
-  // The provider id is folded INTO the full model string by OmniRoute's
+  // The provider id is folded INTO the full model string by SZRoute's
   // `normalizeComboRecord` (e.g. "cc/claude-opus-4-7") — combo member refs do
   // NOT carry a separate `providerId` field. Derive the prefix from `step.model`
   // and apply the same subtract-filter verdict as `isUsableRawModelId`.
@@ -2371,7 +2371,7 @@ export function slugifyComboName(name: string): string {
  * string (e.g. a combo named just punctuation).
  */
 export function buildComboKey(
-  combo: OmniRouteRawCombo,
+  combo: SZRouteRawCombo,
   used: Set<string>,
 ): string {
   const friendlyName =
@@ -2394,7 +2394,7 @@ export function buildComboKey(
  * Internal cache key: `${baseURL}::sha256(apiKey)`. We hash the apiKey so
  * the key is safe to log / inspect via debugger without leaking the secret.
  * Different (baseURL, apiKey) tuples MUST keep independent cache entries:
- * a single OC user may register prod + preprod OmniRoute side-by-side with
+ * a single OC user may register prod + preprod SZRoute side-by-side with
  * distinct keys, and serving one's catalog from the other's cache would be
  * a correctness bug, not just a privacy one.
  */
@@ -2424,24 +2424,24 @@ function modelsCacheKey(baseURL: string, credentialId: string): string {
  *     `cost`/`status`/`headers`). Caching the raw responses is the only
  *     lossless option.
  *   - On OC ≥1.14.49 cold start BOTH hooks fire within the same
- *     OmniRoutePlugin instance — sharing the cache means /v1/models +
+ *     SZRoutePlugin instance — sharing the cache means /v1/models +
  *     /api/combos each hit the gateway exactly ONCE per TTL refresh, not
  *     twice.
  */
-export interface OmniRouteFetchCacheEntry {
-  rawModels: OmniRouteRawModelEntry[];
-  rawCombos: OmniRouteRawCombo[];
-  rawAutoCombos: OmniRouteRawAutoCombo[];
+export interface SZRouteFetchCacheEntry {
+  rawModels: SZRouteRawModelEntry[];
+  rawCombos: SZRouteRawCombo[];
+  rawAutoCombos: SZRouteRawAutoCombo[];
   /** Display-name + pricing overlay from /api/pricing/models. Empty Map when feature is disabled or fetch failed. */
-  rawEnrichment: OmniRouteEnrichmentMap;
+  rawEnrichment: SZRouteEnrichmentMap;
   /** Compression combos from /api/context/combos. Empty array when feature is disabled or fetch failed. */
-  rawCompressionCombos: OmniRouteCompressionCombo[];
+  rawCompressionCombos: SZRouteCompressionCombo[];
   /** Provider connections from /api/providers. Empty array when feature is disabled or fetch failed. */
-  rawConnections: OmniRouteProviderConnection[];
+  rawConnections: SZRouteProviderConnection[];
   expiresAt: number;
 }
 
-export type OmniRouteFetchCache = Map<string, OmniRouteFetchCacheEntry>;
+export type SZRouteFetchCache = Map<string, SZRouteFetchCacheEntry>;
 
 /**
  * Build the ProviderHook portion of the plugin for a given options bag.
@@ -2459,7 +2459,7 @@ export type OmniRouteFetchCache = Map<string, OmniRouteFetchCacheEntry>;
  *     through `mapComboToModelV2` (LCD across its member models); merges
  *     combos into the same map under their combo id; caches the unified
  *     result by `(baseURL, sha256(apiKey))` for `modelCacheTtl`.
- *   - **Combo / model ID collisions: combos win.** OmniRoute treats combos
+ *   - **Combo / model ID collisions: combos win.** SZRoute treats combos
  *     as the curated routing surface; if a combo and a raw model share an
  *     id the operator's intent is clearly the combo. We emit a
  *     `console.warn` exactly once per `(baseURL, apiKey, comboId)`
@@ -2467,7 +2467,7 @@ export type OmniRouteFetchCache = Map<string, OmniRouteFetchCacheEntry>;
  *     without log spam on every cache refresh.
  *   - **Combos fetch failure does NOT break the catalog**: soft-fail with
  *     a `console.warn` and fall back to a models-only catalog. Rationale:
- *     `/api/combos` requires a management-scoped key and OmniRoute may
+ *     `/api/combos` requires a management-scoped key and SZRoute may
  *     not have any combos provisioned (preprod returned `{combos: []}`
  *     at probe time). Hard-failing the entire catalog when combos are
  *     optional would silently hide the whole provider from OC's model
@@ -2487,34 +2487,34 @@ export type OmniRouteFetchCache = Map<string, OmniRouteFetchCacheEntry>;
  *             lets the caller share state across reconstructions (unused
  *             outside tests today).
  */
-export function createOmniRouteProviderHook(
-  opts?: OmniRoutePluginOptions,
+export function createSZRouteProviderHook(
+  opts?: SZRoutePluginOptions,
   deps: {
-    fetcher?: OmniRouteModelsFetcher;
-    combosFetcher?: OmniRouteCombosFetcher;
-    autoCombosFetcher?: OmniRouteAutoCombosFetcher;
-    enrichmentFetcher?: OmniRouteEnrichmentFetcher;
-    compressionMetaFetcher?: OmniRouteCompressionMetaFetcher;
-    providersFetcher?: OmniRouteProvidersFetcher;
+    fetcher?: SZRouteModelsFetcher;
+    combosFetcher?: SZRouteCombosFetcher;
+    autoCombosFetcher?: SZRouteAutoCombosFetcher;
+    enrichmentFetcher?: SZRouteEnrichmentFetcher;
+    compressionMetaFetcher?: SZRouteCompressionMetaFetcher;
+    providersFetcher?: SZRouteProvidersFetcher;
     now?: () => number;
-    cache?: OmniRouteFetchCache;
+    cache?: SZRouteFetchCache;
   } = {},
 ): ProviderHook {
-  const resolved = resolveOmniRoutePluginOptions(opts);
-  const fetcher = deps.fetcher ?? defaultOmniRouteModelsFetcher;
+  const resolved = resolveSZRoutePluginOptions(opts);
+  const fetcher = deps.fetcher ?? defaultSZRouteModelsFetcher;
   // T-05: combo discovery merges `/api/combos` entries into the same map as
   // `/v1/models`. Default fetcher is declared further down the file; the
   // reference resolves at hook-invocation time, not at hook-construction
   // time, so source-order beyond hoisting rules has no semantic effect.
-  const combosFetcher = deps.combosFetcher ?? defaultOmniRouteCombosFetcher;
+  const combosFetcher = deps.combosFetcher ?? defaultSZRouteCombosFetcher;
   const autoCombosFetcher =
-    deps.autoCombosFetcher ?? defaultOmniRouteAutoCombosFetcher;
+    deps.autoCombosFetcher ?? defaultSZRouteAutoCombosFetcher;
   const enrichmentFetcher =
-    deps.enrichmentFetcher ?? defaultOmniRouteEnrichmentFetcher;
+    deps.enrichmentFetcher ?? defaultSZRouteEnrichmentFetcher;
   const compressionMetaFetcher =
-    deps.compressionMetaFetcher ?? defaultOmniRouteCompressionMetaFetcher;
+    deps.compressionMetaFetcher ?? defaultSZRouteCompressionMetaFetcher;
   const providersFetcher =
-    deps.providersFetcher ?? defaultOmniRouteProvidersFetcher;
+    deps.providersFetcher ?? defaultSZRouteProvidersFetcher;
   // Features defaults (mirror v0.1.0 behavior when unset).
   const features = resolved.features ?? {};
   const wantCombos = features.combos !== false;
@@ -2527,7 +2527,7 @@ export function createOmniRouteProviderHook(
   // T-07: cache holds RAW fetch results (not pre-derived ModelV2) so that
   // the config-shim hook can share the same cache and derive its stripped
   // sibling shape from the same source without a second round-trip.
-  const cache: OmniRouteFetchCache = deps.cache ?? new Map();
+  const cache: SZRouteFetchCache = deps.cache ?? new Map();
   // T-05: collision-warning deduper. Emit warn once per (cacheKey, comboId)
   // tuple per hook instance so the operator sees the unusual naming choice
   // once per session, not once per cache refresh.
@@ -2570,12 +2570,12 @@ export function createOmniRouteProviderHook(
       const t = now();
       const cached = cache.get(cacheKey);
 
-      let rawModels: OmniRouteRawModelEntry[];
-      let rawCombos: OmniRouteRawCombo[];
-      let rawAutoCombos: OmniRouteRawAutoCombo[];
-      let rawEnrichment: OmniRouteEnrichmentMap;
-      let rawCompressionCombos: OmniRouteCompressionCombo[];
-      let rawConnections: OmniRouteProviderConnection[];
+      let rawModels: SZRouteRawModelEntry[];
+      let rawCombos: SZRouteRawCombo[];
+      let rawAutoCombos: SZRouteRawAutoCombo[];
+      let rawEnrichment: SZRouteEnrichmentMap;
+      let rawCompressionCombos: SZRouteCompressionCombo[];
+      let rawConnections: SZRouteProviderConnection[];
       if (cached && cached.expiresAt > t) {
         rawModels = cached.rawModels;
         rawCombos = cached.rawCombos;
@@ -2592,7 +2592,7 @@ export function createOmniRouteProviderHook(
         // T-05: combos fetch is best-effort, gated by features.combos.
         // Soft-fail on any error: emit a console.warn and fall back to a
         // models-only catalog. Rationale: /api/combos requires a
-        // management-scoped key and OmniRoute may not have any combos
+        // management-scoped key and SZRoute may not have any combos
         // provisioned. Hard-failing when combos are optional would
         // silently hide the whole provider from OC's picker.
         rawCombos = [];
@@ -2601,7 +2601,7 @@ export function createOmniRouteProviderHook(
             rawCombos = await combosFetcher(baseURL, apiKey, 10_000);
           } catch (err) {
             console.warn(
-              "[omniroute-plugin] combos fetch failed, falling back to models-only catalog",
+              "[szroute-plugin] combos fetch failed, falling back to models-only catalog",
               err,
             );
           }
@@ -2609,7 +2609,7 @@ export function createOmniRouteProviderHook(
 
         // Auto combos fetch — virtual server-side combos. Best-effort,
         // gated by features.autoCombos. Soft-fails silently (the endpoint
-        // may not exist yet on older OmniRoute versions).
+        // may not exist yet on older SZRoute versions).
         rawAutoCombos = [];
         if (wantAutoCombos) {
           try {
@@ -2628,7 +2628,7 @@ export function createOmniRouteProviderHook(
             rawEnrichment = await enrichmentFetcher(baseURL, apiKey, 10_000);
           } catch (err) {
             console.warn(
-              "[omniroute-plugin] enrichment fetch failed, falling back to raw ids",
+              "[szroute-plugin] enrichment fetch failed, falling back to raw ids",
               err,
             );
           }
@@ -2646,7 +2646,7 @@ export function createOmniRouteProviderHook(
             );
           } catch (err) {
             console.warn(
-              "[omniroute-plugin] compression-metadata fetch failed",
+              "[szroute-plugin] compression-metadata fetch failed",
               err,
             );
           }
@@ -2663,7 +2663,7 @@ export function createOmniRouteProviderHook(
             rawConnections = await providersFetcher(baseURL, apiKey, 10_000);
           } catch (err) {
             console.warn(
-              "[omniroute-plugin] /api/providers fetch failed; usableOnly filter disabled for this refresh",
+              "[szroute-plugin] /api/providers fetch failed; usableOnly filter disabled for this refresh",
               err,
             );
           }
@@ -2680,10 +2680,10 @@ export function createOmniRouteProviderHook(
         });
 
         // Debug breadcrumb: surface fetch result so operators can confirm
-        // the dynamic pipeline fired and how much catalog OmniRoute returned.
+        // the dynamic pipeline fired and how much catalog SZRoute returned.
         // Emitted once per cache miss (TTL refresh) — quiet on cache hits.
         console.warn(
-          `[omniroute-plugin] catalog refreshed for providerId=${resolved.providerId} baseURL=${baseURL}: ` +
+          `[szroute-plugin] catalog refreshed for providerId=${resolved.providerId} baseURL=${baseURL}: ` +
             `${rawModels.length} models + ${rawCombos.length} combos + ` +
             `${rawEnrichment.size} enrichment entries + ` +
             `${rawCompressionCombos.length} compression combos + ` +
@@ -2709,7 +2709,7 @@ export function createOmniRouteProviderHook(
       // Lookup index for LCD member resolution: O(1) per member lookup.
       // Indexed by raw model `id` — combo steps reference this exact
       // string per ComboModelStep in src/lib/combos/steps.ts.
-      const rawModelById = new Map<string, OmniRouteRawModelEntry>();
+      const rawModelById = new Map<string, SZRouteRawModelEntry>();
       for (const entry of rawModels) {
         if (entry.id) rawModelById.set(entry.id, entry);
       }
@@ -2774,7 +2774,7 @@ export function createOmniRouteProviderHook(
       }
 
       // Default compression combo (used to decorate ALL combo names when
-      // compression metadata is present). OmniRoute returns at most one
+      // compression metadata is present). SZRoute returns at most one
       // entry with `isDefault: true` per /api/context/combos.
       const defaultCompression = wantCompressionMeta
         ? rawCompressionCombos.find((c) => c.isDefault === true)
@@ -2813,7 +2813,7 @@ export function createOmniRouteProviderHook(
         if (usable && !isUsableCombo(combo, usable)) continue;
 
         const memberSteps = Array.isArray(combo.models) ? combo.models : [];
-        const memberEntries: OmniRouteRawModelEntry[] = [];
+        const memberEntries: SZRouteRawModelEntry[] = [];
         for (const step of memberSteps) {
           // Use the unknown-bridge pattern from commit 91b137e6 so the
           // DTS pass stays clean: ComboMemberRef declares `model?: string`
@@ -2833,7 +2833,7 @@ export function createOmniRouteProviderHook(
         );
         const hasMembers = memberEntries.length > 0;
 
-        // Apply enrichment overlay to combos too (OmniRoute's
+        // Apply enrichment overlay to combos too (SZRoute's
         // /api/pricing/models surfaces combos alongside provider-scoped
         // models with curated names).
         applyEnrichment(mapped, rawEnrichment.get(combo.id));
@@ -2847,7 +2847,7 @@ export function createOmniRouteProviderHook(
         }
 
         // Optionally decorate combo name with its compression pipeline.
-        // Only fires when features.compressionMetadata: true, OmniRoute
+        // Only fires when features.compressionMetadata: true, SZRoute
         // returned at least one default compression combo, AND the
         // combo has resolvable members — claiming compression on an
         // unroutable combo would mislead the picker.
@@ -2872,7 +2872,7 @@ export function createOmniRouteProviderHook(
           if (!collisionWarned.has(dedupeKey)) {
             collisionWarned.add(dedupeKey);
             console.warn(
-              `[omniroute-plugin] combo key "${comboKey}" collides with a model id; combo wins.`,
+              `[szroute-plugin] combo key "${comboKey}" collides with a model id; combo wins.`,
             );
           }
         }
@@ -2944,21 +2944,21 @@ export function createOmniRouteProviderHook(
 
 // ────────────────────────────────────────────────────────────────────────────
 // Fetch interceptor (T-04) — Bearer + Content-Type injection on outbound
-// provider requests targeting the configured OmniRoute baseURL
+// provider requests targeting the configured SZRoute baseURL
 // ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Build a `fetch`-compatible interceptor that injects `Authorization: Bearer`
  * (and a default `Content-Type`) onto outbound requests targeting the given
  * `baseURL`. Requests to any other host pass through untouched — the apiKey
- * is treated as a secret bound to the configured OmniRoute instance and
+ * is treated as a secret bound to the configured SZRoute instance and
  * MUST NOT leak to third-party endpoints (a vector AI-SDKs occasionally
  * exercise when a tool call rewrites the URL mid-flight).
  *
- * Ported from Alph4d0g's `opencode-omniroute-auth@1.2.1` `createFetchInterceptor`
+ * Ported from Alph4d0g's `opencode-szroute-auth@1.2.1` `createFetchInterceptor`
  * (their `dist/src/plugin.js:477-516`) with these intentional deviations:
  *
- *   - **`baseURL` is required** here (no `localhost:20128/v1` fallback). T-04
+ *   - **`baseURL` is required** here (no `localhost:21128/v1` fallback). T-04
  *     callers always have an authoritative baseURL (from plugin opts or
  *     auth.json); a silent local default would be a footgun.
  *   - **Content-Type defaulting is gated on `init.body` presence**. Their
@@ -2971,12 +2971,12 @@ export function createOmniRouteProviderHook(
  *   - **Header merge strategy mirrors theirs**: Request-attached headers
  *     first, then `init.headers` overlay, then our injected
  *     Authorization/Content-Type — so the apiKey we own ALWAYS wins over
- *     any caller-supplied Bearer for the same OmniRoute provider.
+ *     any caller-supplied Bearer for the same SZRoute provider.
  *
  * @see https://opencode.ai/docs/plugins for the AuthLoaderResult.fetch contract
  *      (the returned function is invoked by the AI-SDK in lieu of global fetch).
  */
-export function createOmniRouteFetchInterceptor(config: {
+export function createSZRouteFetchInterceptor(config: {
   apiKey: string;
   baseURL: string;
 }): typeof fetch {
@@ -2993,8 +2993,8 @@ export function createOmniRouteFetchInterceptor(config: {
           ? input.toString()
           : input.url;
 
-    const targetsOmniRoute = url === trimmed || url.startsWith(prefix);
-    if (!targetsOmniRoute) {
+    const targetsSZRoute = url === trimmed || url.startsWith(prefix);
+    if (!targetsSZRoute) {
       return fetch(input, init);
     }
 
@@ -3032,10 +3032,10 @@ export function createOmniRouteFetchInterceptor(config: {
  * JSON-Schema keywords that the Gemini API rejects when present anywhere in
  * a function-calling tool definition. Standard OpenAI / Anthropic clients
  * happily emit these (they're valid Draft-07 schema) but Gemini's tool
- * validator throws on them, breaking OmniRoute → Gemini chains transparently.
+ * validator throws on them, breaking SZRoute → Gemini chains transparently.
  *
  * Source: behavioural reverse-engineering from Alph4d0g's
- * opencode-omniroute-auth@1.2.1 (dist/src/plugin.js:517).
+ * opencode-szroute-auth@1.2.1 (dist/src/plugin.js:517).
  */
 const GEMINI_SCHEMA_KEYS_TO_REMOVE = new Set([
   "$schema",
@@ -3176,7 +3176,7 @@ export function sanitizeGeminiToolSchemas(payload: unknown): unknown {
  *     `gemini-2.5-flash`, etc.)
  *   - `models/gemini-…` (Google Generative AI canonical id form)
  *   - `google-vertex/gemini-…` (OpenCode + AI-SDK Vertex routing prefix)
- *   - `gemini-cli/…` (real OmniRoute alias surfaced on b35 prod `/v1/models`)
+ *   - `gemini-cli/…` (real SZRoute alias surfaced on b35 prod `/v1/models`)
  *
  * Liberal by design: a false positive (cleaning a payload that didn't
  * need cleaning) costs only a structuredClone + one walk; a false negative
@@ -3228,7 +3228,7 @@ let geminiStreamingWarningEmitted = false;
  *     OC streams plain text deltas; the operator should still know.
  *
  * @param inner The next fetch in the chain (typically the Bearer-injecting
- *              interceptor from `createOmniRouteFetchInterceptor`).
+ *              interceptor from `createSZRouteFetchInterceptor`).
  */
 export function createGeminiSanitizingFetch(inner: typeof fetch): typeof fetch {
   return async (input, init) => {
@@ -3270,7 +3270,7 @@ export function createGeminiSanitizingFetch(inner: typeof fetch): typeof fetch {
           geminiStreamingWarningEmitted = true;
 
           console.warn(
-            "[omniroute-plugin] sanitizeGemini: streaming Request body, skipping schema strip (Gemini may reject)",
+            "[szroute-plugin] sanitizeGemini: streaming Request body, skipping schema strip (Gemini may reject)",
           );
         }
         return inner(input, init);
@@ -3348,7 +3348,7 @@ export function __resetGeminiStreamingWarning(): void {
 // implements the static-publish half.
 //
 // Sibling shape source-of-truth: see
-// `@omniroute/opencode-provider/src/index.ts` (`createOmniRouteProvider`,
+// `@szroute/opencode-provider/src/index.ts` (`createSZRouteProvider`,
 // `OpenCodeProviderEntry`, `OpenCodeModelEntry`). We replicate that shape
 // here rather than depending on the sibling package — the plugin must stay
 // self-contained (npm-installable on its own, no peer dep on the provider
@@ -3357,22 +3357,22 @@ export function __resetGeminiStreamingWarning(): void {
 
 /**
  * Per-model entry shape under `provider.<id>.models[modelId]`. Mirrors
- * `OpenCodeModelEntry` exported by `@omniroute/opencode-provider`. Stripped
+ * `OpenCodeModelEntry` exported by `@szroute/opencode-provider`. Stripped
  * down to the fields OC's static catalog reader actually consumes — NOT a
  * full ModelV2 (that's the dynamic-hook shape). Optional fields are omitted
- * when OmniRoute didn't surface a value, NOT emitted as `undefined` — the
- * resulting JSON must be diffable across OmniRoute deployments without
+ * when SZRoute didn't surface a value, NOT emitted as `undefined` — the
+ * resulting JSON must be diffable across SZRoute deployments without
  * `undefined` noise.
  */
 /** Modalities accepted by OC's static catalog reader (see `@opencode-ai/sdk`). */
-export type OmniRouteModalityKind =
+export type SZRouteModalityKind =
   | "text"
   | "audio"
   | "image"
   | "video"
   | "pdf";
 
-const STATIC_MODALITY_VALUES: ReadonlySet<OmniRouteModalityKind> = new Set([
+const STATIC_MODALITY_VALUES: ReadonlySet<SZRouteModalityKind> = new Set([
   "text",
   "audio",
   "image",
@@ -3381,13 +3381,13 @@ const STATIC_MODALITY_VALUES: ReadonlySet<OmniRouteModalityKind> = new Set([
 ]);
 
 /** Normalise + filter raw modality list to the values OC accepts. Deduped. */
-function normaliseModalities(raw: unknown): OmniRouteModalityKind[] {
+function normaliseModalities(raw: unknown): SZRouteModalityKind[] {
   if (!Array.isArray(raw)) return [];
-  const out: OmniRouteModalityKind[] = [];
+  const out: SZRouteModalityKind[] = [];
   const seen = new Set<string>();
   for (const v of raw) {
     if (typeof v !== "string") continue;
-    const lower = v.toLowerCase() as OmniRouteModalityKind;
+    const lower = v.toLowerCase() as SZRouteModalityKind;
     if (!STATIC_MODALITY_VALUES.has(lower)) continue;
     if (seen.has(lower)) continue;
     seen.add(lower);
@@ -3396,7 +3396,7 @@ function normaliseModalities(raw: unknown): OmniRouteModalityKind[] {
   return out;
 }
 
-export interface OmniRouteStaticModelEntry {
+export interface SZRouteStaticModelEntry {
   /** Display label rendered in OC's model picker. Defaults to the model id. */
   name: string;
   /** ISO date the model was released. Surfaces in OC's model card when present. */
@@ -3410,7 +3410,7 @@ export interface OmniRouteStaticModelEntry {
   /** Model supports function / tool calling. */
   tool_call?: boolean;
   /**
-   * Per-million-token cost. Maps from OmniRoute `/api/pricing` shape:
+   * Per-million-token cost. Maps from SZRoute `/api/pricing` shape:
    * `input`/`output` pass through; `cached` → `cache_read`;
    * `cache_creation` → `cache_write`. Omitted when no pricing slot resolves.
    */
@@ -3431,23 +3431,23 @@ export interface OmniRouteStaticModelEntry {
   };
   /**
    * Modality lists the model accepts (input) and emits (output). Maps from
-   * OmniRoute's `input_modalities` / `output_modalities` on `/v1/models`.
+   * SZRoute's `input_modalities` / `output_modalities` on `/v1/models`.
    * Emitted only when at least one modality is known — without this field
    * OC's runtime catalog defaults `input.image: false` even when the model
    * card has `attachment: true`, which blocks clipboard image paste in the
    * TUI for vision-capable models.
    */
   modalities?: {
-    input: OmniRouteModalityKind[];
-    output: OmniRouteModalityKind[];
+    input: SZRouteModalityKind[];
+    output: SZRouteModalityKind[];
   };
 }
 
 /**
  * Static `provider.<id>` block written to `input.provider` by the config hook.
- * Mirrors `OpenCodeProviderEntry` from `@omniroute/opencode-provider`.
+ * Mirrors `OpenCodeProviderEntry` from `@szroute/opencode-provider`.
  *
- *   - `npm` is always `"@ai-sdk/openai-compatible"` — OmniRoute exposes an
+ *   - `npm` is always `"@ai-sdk/openai-compatible"` — SZRoute exposes an
  *     OpenAI-compatible surface and that's the AI-SDK adapter that speaks it.
  *   - `options.baseURL` MUST be the fully-qualified `/v1` URL (the AI-SDK
  *     appends paths like `/chat/completions` directly under it).
@@ -3456,14 +3456,14 @@ export interface OmniRouteStaticModelEntry {
  *     embedded too so OC ≤1.14.48 can construct the SDK client without
  *     going through the auth hook.
  */
-export interface OmniRouteStaticProviderEntry {
+export interface SZRouteStaticProviderEntry {
   npm: "@ai-sdk/openai-compatible";
   name: string;
   options: {
     baseURL: string;
     apiKey: string;
   };
-  models: Record<string, OmniRouteStaticModelEntry>;
+  models: Record<string, SZRouteStaticModelEntry>;
 }
 
 /**
@@ -3472,7 +3472,7 @@ export interface OmniRouteStaticProviderEntry {
  * sibling provider package. Exported so callers and tests can construct the
  * block independently of the auth.json + fetch pipeline.
  *
- * Mapping rules (per the sibling `createOmniRouteProvider` output spec):
+ * Mapping rules (per the sibling `createSZRouteProvider` output spec):
  *
  *   - One entry per raw model AND one entry per non-hidden combo.
  *   - `name` = model id (no separate display name on `/v1/models`).
@@ -3508,17 +3508,17 @@ export interface OmniRouteStaticProviderEntry {
  * @param apiKey    Bearer token — written verbatim to `options.apiKey`.
  */
 export function buildStaticProviderEntry(
-  rawModels: OmniRouteRawModelEntry[],
-  rawCombos: OmniRouteRawCombo[],
-  opts: ReturnType<typeof resolveOmniRoutePluginOptions>,
+  rawModels: SZRouteRawModelEntry[],
+  rawCombos: SZRouteRawCombo[],
+  opts: ReturnType<typeof resolveSZRoutePluginOptions>,
   baseURL: string,
   apiKey: string,
-  enrichment?: OmniRouteEnrichmentMap,
-  compressionCombos?: OmniRouteCompressionCombo[],
-  connections?: OmniRouteProviderConnection[],
-  rawAutoCombos?: OmniRouteRawAutoCombo[],
-): OmniRouteStaticProviderEntry {
-  const models: Record<string, OmniRouteStaticModelEntry> = {};
+  enrichment?: SZRouteEnrichmentMap,
+  compressionCombos?: SZRouteCompressionCombo[],
+  connections?: SZRouteProviderConnection[],
+  rawAutoCombos?: SZRouteRawAutoCombo[],
+): SZRouteStaticProviderEntry {
+  const models: Record<string, SZRouteStaticModelEntry> = {};
 
   // usableOnly filter — compute once when feature enabled AND we have
   // connection data to filter against. Soft-fail (empty connections list)
@@ -3534,7 +3534,7 @@ export function buildStaticProviderEntry(
   // (Kiro). Combos skip this by design.
   const wantProviderTag = opts.features?.providerTag !== false;
 
-  // Build a name-set of every non-hidden combo from `/api/combos`. OmniRoute
+  // Build a name-set of every non-hidden combo from `/api/combos`. SZRoute
   // pre-mirrors combos into `/v1/models` with the friendly name as the raw
   // id (e.g. `claude-primary`, `gemini-pro`), so without dedup the static
   // catalog ends up with both `claude-primary` (raw, opaque) AND the same
@@ -3603,7 +3603,7 @@ export function buildStaticProviderEntry(
           displayName = `${prefix}${displayName}`;
       }
     }
-    const entry: OmniRouteStaticModelEntry = { name: displayName };
+    const entry: SZRouteStaticModelEntry = { name: displayName };
 
     const attachment = caps.attachment ?? caps.vision;
     if (typeof attachment === "boolean") entry.attachment = attachment;
@@ -3639,7 +3639,7 @@ export function buildStaticProviderEntry(
       };
     }
 
-    // Modalities — emit when OmniRoute surfaced any. Without this field
+    // Modalities — emit when SZRoute surfaced any. Without this field
     // OC's runtime model defaults `input.image: false` even for vision-
     // capable models, blocking clipboard image paste in the TUI.
     const inModalities = normaliseModalities(raw.input_modalities);
@@ -3652,13 +3652,13 @@ export function buildStaticProviderEntry(
     }
 
     // Cost from enrichment pricing (sourced from `/api/pricing`). Map
-    // OmniRoute field names to OC's static-schema field names.
+    // SZRoute field names to OC's static-schema field names.
     const pricing = enrichmentEntry?.pricing;
     if (
       pricing &&
       (typeof pricing.input === "number" || typeof pricing.output === "number")
     ) {
-      const cost: NonNullable<OmniRouteStaticModelEntry["cost"]> = {
+      const cost: NonNullable<SZRouteStaticModelEntry["cost"]> = {
         input: typeof pricing.input === "number" ? pricing.input : 0,
         output: typeof pricing.output === "number" ? pricing.output : 0,
       };
@@ -3681,7 +3681,7 @@ export function buildStaticProviderEntry(
   // `combo/<friendly-name>` so the OC TUI model picker shows them under a
   // distinct namespace (e.g. `combo/claude-primary`) instead of the opaque
   // upstream UUID id (e.g. `b4a0211e-e3e1-472d-b252-fb9bf6d1c935`).
-  const rawModelById = new Map<string, OmniRouteRawModelEntry>();
+  const rawModelById = new Map<string, SZRouteRawModelEntry>();
   for (const m of rawModels) {
     if (m.id) rawModelById.set(m.id, m);
   }
@@ -3712,7 +3712,7 @@ export function buildStaticProviderEntry(
     if (usable && !isUsableCombo(combo, usable)) continue;
 
     const memberSteps = Array.isArray(combo.models) ? combo.models : [];
-    const memberEntries: OmniRouteRawModelEntry[] = [];
+    const memberEntries: SZRouteRawModelEntry[] = [];
     for (const step of memberSteps) {
       const modelId = (step as unknown as { model?: unknown }).model;
       if (typeof modelId !== "string" || modelId.length === 0) continue;
@@ -3731,7 +3731,7 @@ export function buildStaticProviderEntry(
       hasMembers && compressionSuffix
         ? `${prefixedName}${compressionSuffix}`
         : prefixedName;
-    const entry: OmniRouteStaticModelEntry = { name: displayName };
+    const entry: SZRouteStaticModelEntry = { name: displayName };
 
     if (hasMembers) {
       // LCD across capabilities — every member must support for the combo
@@ -3776,11 +3776,11 @@ export function buildStaticProviderEntry(
         (m) => new Set(normaliseModalities(m.output_modalities)),
       );
       const intersect = (
-        sets: Set<OmniRouteModalityKind>[],
-      ): OmniRouteModalityKind[] => {
+        sets: Set<SZRouteModalityKind>[],
+      ): SZRouteModalityKind[] => {
         if (sets.length === 0) return [];
         const [first, ...rest] = sets;
-        const out: OmniRouteModalityKind[] = [];
+        const out: SZRouteModalityKind[] = [];
         for (const v of first) {
           if (rest.every((s) => s.has(v))) out.push(v);
         }
@@ -3828,7 +3828,7 @@ export function buildStaticProviderEntry(
         if (!reportedCollisions.has(key)) {
           reportedCollisions.add(key);
           console.warn(
-            `[omniroute-plugin] auto combo key "${key}" collides with an existing model; auto combo wins.`,
+            `[szroute-plugin] auto combo key "${key}" collides with an existing model; auto combo wins.`,
           );
         }
       }
@@ -3871,12 +3871,12 @@ type AuthJsonShape = Record<
  * install — silent no-op). Returns `null` when the file exists but doesn't
  * parse as JSON (logs ONE warn so the operator sees the corruption).
  *
- * Exported as a dependency-injectable function on `createOmniRouteConfigHook`
+ * Exported as a dependency-injectable function on `createSZRouteConfigHook`
  * so tests can stub it without monkey-patching `node:fs/promises`.
  */
 // ─────────────────────────────────────────────────────────────────────────
 // Disk-cache fallback. Persists the last successful raw-fetch snapshot to
-// `${OPENCODE_DATA_DIR ?? ~/.local/share/opencode}/plugins/omniroute-<providerId>.json`.
+// `${OPENCODE_DATA_DIR ?? ~/.local/share/opencode}/plugins/szroute-<providerId>.json`.
 // When `/v1/models` is unreachable (e.g. IP whitelist drop, offline laptop)
 // AND the in-memory cache is cold, the config hook reads from disk so the
 // last-known catalog still surfaces in OC's model picker. Feature-flagged:
@@ -3884,15 +3884,15 @@ type AuthJsonShape = Record<
 // ─────────────────────────────────────────────────────────────────────────
 
 /** Disk snapshot envelope. Versioned for forward-compat. */
-interface OmniRouteDiskSnapshot {
+interface SZRouteDiskSnapshot {
   v: 1;
-  rawModels: OmniRouteRawModelEntry[];
-  rawCombos: OmniRouteRawCombo[];
-  rawAutoCombos?: OmniRouteRawAutoCombo[];
+  rawModels: SZRouteRawModelEntry[];
+  rawCombos: SZRouteRawCombo[];
+  rawAutoCombos?: SZRouteRawAutoCombo[];
   /** Serialised as array-of-pairs (Map is not JSON-friendly). */
-  rawEnrichment: Array<[string, OmniRouteEnrichmentEntry]>;
-  rawCompressionCombos: OmniRouteCompressionCombo[];
-  rawConnections: OmniRouteProviderConnection[];
+  rawEnrichment: Array<[string, SZRouteEnrichmentEntry]>;
+  rawCompressionCombos: SZRouteCompressionCombo[];
+  rawConnections: SZRouteProviderConnection[];
   /** When the snapshot was written (epoch ms). */
   writtenAt: number;
 }
@@ -3902,20 +3902,20 @@ export function diskSnapshotPath(providerId: string): string {
   const dir =
     process.env.OPENCODE_DATA_DIR ??
     path.join(os.homedir(), ".local/share/opencode");
-  return path.join(dir, "plugins", `omniroute-${providerId}.json`);
+  return path.join(dir, "plugins", `szroute-${providerId}.json`);
 }
 
-export type OmniRouteDiskSnapshotWriter = (
+export type SZRouteDiskSnapshotWriter = (
   providerId: string,
-  entry: Omit<OmniRouteFetchCacheEntry, "expiresAt">,
+  entry: Omit<SZRouteFetchCacheEntry, "expiresAt">,
 ) => Promise<void>;
 
-export type OmniRouteDiskSnapshotReader = (
+export type SZRouteDiskSnapshotReader = (
   providerId: string,
-) => Promise<Omit<OmniRouteFetchCacheEntry, "expiresAt"> | undefined>;
+) => Promise<Omit<SZRouteFetchCacheEntry, "expiresAt"> | undefined>;
 
 /** Best-effort disk write. Soft-fails on any I/O error (no exception thrown). */
-export const defaultDiskSnapshotWriter: OmniRouteDiskSnapshotWriter = async (
+export const defaultDiskSnapshotWriter: SZRouteDiskSnapshotWriter = async (
   providerId,
   entry,
 ) => {
@@ -3924,7 +3924,7 @@ export const defaultDiskSnapshotWriter: OmniRouteDiskSnapshotWriter = async (
     // Restrict perms to the owner: the snapshot lives alongside auth.json
     // (0o600) and embeds provider topology + masked connection records.
     await mkdir(path.dirname(file), { recursive: true, mode: 0o700 });
-    const snapshot: OmniRouteDiskSnapshot = {
+    const snapshot: SZRouteDiskSnapshot = {
       v: 1,
       rawModels: entry.rawModels,
       rawCombos: entry.rawCombos,
@@ -3944,13 +3944,13 @@ export const defaultDiskSnapshotWriter: OmniRouteDiskSnapshotWriter = async (
 };
 
 /** Best-effort disk read. Returns `undefined` when missing/corrupt/unreadable. */
-export const defaultDiskSnapshotReader: OmniRouteDiskSnapshotReader = async (
+export const defaultDiskSnapshotReader: SZRouteDiskSnapshotReader = async (
   providerId,
 ) => {
   try {
     const file = diskSnapshotPath(providerId);
     const body = await readFile(file, "utf8");
-    const parsed = JSON.parse(body) as Partial<OmniRouteDiskSnapshot>;
+    const parsed = JSON.parse(body) as Partial<SZRouteDiskSnapshot>;
     if (!parsed || parsed.v !== 1) return undefined;
     return {
       rawModels: Array.isArray(parsed.rawModels) ? parsed.rawModels : [],
@@ -3974,7 +3974,7 @@ export const defaultDiskSnapshotReader: OmniRouteDiskSnapshotReader = async (
 };
 
 /** No-op disk-cache pair — used by tests to avoid filesystem side effects. */
-export const noopDiskSnapshotWriter: OmniRouteDiskSnapshotWriter = async () => {};
+export const noopDiskSnapshotWriter: SZRouteDiskSnapshotWriter = async () => {};
 
 // ────────────────────────────────────────────────────────────────────────────
 // Debug logging (features.debugLog)
@@ -4007,11 +4007,11 @@ function debugLogDir(): string {
 }
 
 function debugLogPath(providerId: string): string {
-  return join(debugLogDir(), `omniroute-debug-${providerId}.jsonl`);
+  return join(debugLogDir(), `szroute-debug-${providerId}.jsonl`);
 }
 
 function debugStatePath(providerId: string): string {
-  return join(debugLogDir(), `omniroute-debug-${providerId}.state.json`);
+  return join(debugLogDir(), `szroute-debug-${providerId}.state.json`);
 }
 
 export function debugLogEnabled(providerId: string): boolean {
@@ -4035,7 +4035,7 @@ export function debugLogSetEnabled(providerId: string, enabled: boolean): void {
     );
   } catch (err) {
     // best-effort; never break the auth flow
-    console.warn(`[omniroute-plugin] debugLogSetEnabled failed: ${(err as Error).message}`);
+    console.warn(`[szroute-plugin] debugLogSetEnabled failed: ${(err as Error).message}`);
   }
 }
 
@@ -4045,7 +4045,7 @@ export function debugLogAppend(entry: DebugLogEntry): void {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     appendFileSync(debugLogPath(entry.providerId), JSON.stringify(entry) + "\n", "utf8");
   } catch (err) {
-    console.warn(`[omniroute-plugin] debugLogAppend failed: ${(err as Error).message}`);
+    console.warn(`[szroute-plugin] debugLogAppend failed: ${(err as Error).message}`);
   }
 }
 
@@ -4093,7 +4093,7 @@ export function debugLogClear(providerId: string): void {
     const p = debugLogPath(providerId);
     if (existsSync(p)) writeFileSync(p, "", "utf8");
   } catch (err) {
-    console.warn(`[omniroute-plugin] debugLogClear failed: ${(err as Error).message}`);
+    console.warn(`[szroute-plugin] debugLogClear failed: ${(err as Error).message}`);
   }
 }
 
@@ -4211,13 +4211,13 @@ export function createDebugLoggingFetch(
     }
   };
 }
-export const noopDiskSnapshotReader: OmniRouteDiskSnapshotReader = async () => undefined;
+export const noopDiskSnapshotReader: SZRouteDiskSnapshotReader = async () => undefined;
 
-export type OmniRouteReadAuthJson = () => Promise<
+export type SZRouteReadAuthJson = () => Promise<
   AuthJsonShape | undefined | null
 >;
 
-export const defaultReadAuthJson: OmniRouteReadAuthJson = async () => {
+export const defaultReadAuthJson: SZRouteReadAuthJson = async () => {
   const dir =
     process.env.OPENCODE_DATA_DIR ??
     path.join(os.homedir(), ".local/share/opencode");
@@ -4283,50 +4283,50 @@ export const defaultReadAuthJson: OmniRouteReadAuthJson = async () => {
  * @param opts Plugin options (validated, resolved with defaults).
  * @param deps Dependency injection.
  *   - `readAuthJson`     — replaces `defaultReadAuthJson` (test stub).
- *   - `fetcher`          — replaces `defaultOmniRouteModelsFetcher`.
- *   - `combosFetcher`    — replaces `defaultOmniRouteCombosFetcher`.
+ *   - `fetcher`          — replaces `defaultSZRouteModelsFetcher`.
+ *   - `combosFetcher`    — replaces `defaultSZRouteCombosFetcher`.
  *   - `now`              — clock for cache TTL (default `Date.now`).
  *   - `cache`            — shared fetch-result cache (see
- *                          `OmniRouteFetchCache`). Pass the same Map the
+ *                          `SZRouteFetchCache`). Pass the same Map the
  *                          provider hook owns to dedupe round-trips.
  *   - `logger`           — `{warn}` sink for breadcrumb capture in tests.
  *                          Defaults to `console`.
  */
-export function createOmniRouteConfigHook(
-  opts?: OmniRoutePluginOptions,
+export function createSZRouteConfigHook(
+  opts?: SZRoutePluginOptions,
   deps: {
-    readAuthJson?: OmniRouteReadAuthJson;
-    fetcher?: OmniRouteModelsFetcher;
-    combosFetcher?: OmniRouteCombosFetcher;
-    autoCombosFetcher?: OmniRouteAutoCombosFetcher;
-    enrichmentFetcher?: OmniRouteEnrichmentFetcher;
-    compressionMetaFetcher?: OmniRouteCompressionMetaFetcher;
-    providersFetcher?: OmniRouteProvidersFetcher;
-    diskSnapshotReader?: OmniRouteDiskSnapshotReader;
-    diskSnapshotWriter?: OmniRouteDiskSnapshotWriter;
+    readAuthJson?: SZRouteReadAuthJson;
+    fetcher?: SZRouteModelsFetcher;
+    combosFetcher?: SZRouteCombosFetcher;
+    autoCombosFetcher?: SZRouteAutoCombosFetcher;
+    enrichmentFetcher?: SZRouteEnrichmentFetcher;
+    compressionMetaFetcher?: SZRouteCompressionMetaFetcher;
+    providersFetcher?: SZRouteProvidersFetcher;
+    diskSnapshotReader?: SZRouteDiskSnapshotReader;
+    diskSnapshotWriter?: SZRouteDiskSnapshotWriter;
     now?: () => number;
-    cache?: OmniRouteFetchCache;
+    cache?: SZRouteFetchCache;
     logger?: { warn: (...args: unknown[]) => void };
   } = {},
 ): (input: Config) => Promise<void> {
-  const resolved = resolveOmniRoutePluginOptions(opts);
+  const resolved = resolveSZRoutePluginOptions(opts);
   const readAuthJson = deps.readAuthJson ?? defaultReadAuthJson;
-  const fetcher = deps.fetcher ?? defaultOmniRouteModelsFetcher;
-  const combosFetcher = deps.combosFetcher ?? defaultOmniRouteCombosFetcher;
+  const fetcher = deps.fetcher ?? defaultSZRouteModelsFetcher;
+  const combosFetcher = deps.combosFetcher ?? defaultSZRouteCombosFetcher;
   const autoCombosFetcher =
-    deps.autoCombosFetcher ?? defaultOmniRouteAutoCombosFetcher;
+    deps.autoCombosFetcher ?? defaultSZRouteAutoCombosFetcher;
   const enrichmentFetcher =
-    deps.enrichmentFetcher ?? defaultOmniRouteEnrichmentFetcher;
+    deps.enrichmentFetcher ?? defaultSZRouteEnrichmentFetcher;
   const compressionMetaFetcher =
-    deps.compressionMetaFetcher ?? defaultOmniRouteCompressionMetaFetcher;
+    deps.compressionMetaFetcher ?? defaultSZRouteCompressionMetaFetcher;
   const providersFetcher =
-    deps.providersFetcher ?? defaultOmniRouteProvidersFetcher;
+    deps.providersFetcher ?? defaultSZRouteProvidersFetcher;
   const diskSnapshotReader =
     deps.diskSnapshotReader ?? defaultDiskSnapshotReader;
   const diskSnapshotWriter =
     deps.diskSnapshotWriter ?? defaultDiskSnapshotWriter;
   const now = deps.now ?? Date.now;
-  const cache: OmniRouteFetchCache = deps.cache ?? new Map();
+  const cache: SZRouteFetchCache = deps.cache ?? new Map();
   const logger = deps.logger ?? console;
   const features = resolved.features ?? {};
   const wantAutoCombos = features.autoCombos !== false;
@@ -4347,7 +4347,7 @@ export function createOmniRouteConfigHook(
       existingProviders[resolved.providerId] !== undefined
     ) {
       logger.warn(
-        `[omniroute-plugin] config shim skipped: provider.${resolved.providerId} already set by user`,
+        `[szroute-plugin] config shim skipped: provider.${resolved.providerId} already set by user`,
       );
       return;
     }
@@ -4364,7 +4364,7 @@ export function createOmniRouteConfigHook(
 
     if (authJson === null) {
       logger.warn(
-        "[omniroute-plugin] config shim: auth.json failed to parse; treating as missing",
+        "[szroute-plugin] config shim: auth.json failed to parse; treating as missing",
       );
       authJson = undefined;
     }
@@ -4382,7 +4382,7 @@ export function createOmniRouteConfigHook(
       // hasn't run `/connect <providerId>` yet, OR the stored credential
       // isn't api-flavored. OC will handle the `/connect` flow at runtime.
       logger.warn(
-        `[omniroute-plugin] config shim skipped: no apiKey for providerId=${resolved.providerId}`,
+        `[szroute-plugin] config shim skipped: no apiKey for providerId=${resolved.providerId}`,
       );
       return;
     }
@@ -4395,7 +4395,7 @@ export function createOmniRouteConfigHook(
     const baseURL = resolved.baseURL ?? storedBaseURL ?? "";
     if (!baseURL) {
       logger.warn(
-        `[omniroute-plugin] config shim skipped: no baseURL for providerId=${resolved.providerId}`,
+        `[szroute-plugin] config shim skipped: no baseURL for providerId=${resolved.providerId}`,
       );
       return;
     }
@@ -4407,12 +4407,12 @@ export function createOmniRouteConfigHook(
     const t = now();
     const cached = cache.get(cacheKey);
 
-    let rawModels: OmniRouteRawModelEntry[];
-    let rawCombos: OmniRouteRawCombo[];
-    let rawAutoCombos: OmniRouteRawAutoCombo[];
-    let rawEnrichment: OmniRouteEnrichmentMap;
-    let rawCompressionCombos: OmniRouteCompressionCombo[];
-    let rawConnections: OmniRouteProviderConnection[];
+    let rawModels: SZRouteRawModelEntry[];
+    let rawCombos: SZRouteRawCombo[];
+    let rawAutoCombos: SZRouteRawAutoCombo[];
+    let rawEnrichment: SZRouteEnrichmentMap;
+    let rawCompressionCombos: SZRouteCompressionCombo[];
+    let rawConnections: SZRouteProviderConnection[];
 
     if (cached && cached.expiresAt > t) {
       rawModels = cached.rawModels;
@@ -4434,7 +4434,7 @@ export function createOmniRouteConfigHook(
         rawModels = await fetcher(baseURL, apiKey, 10_000);
       } catch (err) {
         logger.warn(
-          "[omniroute-plugin] config shim: /v1/models fetch failed; publishing stub provider entry",
+          "[szroute-plugin] config shim: /v1/models fetch failed; publishing stub provider entry",
           err,
         );
         rawModels = [];
@@ -4447,7 +4447,7 @@ export function createOmniRouteConfigHook(
         rawCombos = await combosFetcher(baseURL, apiKey, 10_000);
       } catch (err) {
         logger.warn(
-          "[omniroute-plugin] config shim: /api/combos fetch failed; publishing models-only static catalog",
+          "[szroute-plugin] config shim: /api/combos fetch failed; publishing models-only static catalog",
           err,
         );
       }
@@ -4474,7 +4474,7 @@ export function createOmniRouteConfigHook(
           rawEnrichment = await enrichmentFetcher(baseURL, apiKey, 10_000);
         } catch (err) {
           logger.warn(
-            "[omniroute-plugin] config shim: /api/pricing/models fetch failed; publishing raw-id static catalog",
+            "[szroute-plugin] config shim: /api/pricing/models fetch failed; publishing raw-id static catalog",
             err,
           );
         }
@@ -4493,7 +4493,7 @@ export function createOmniRouteConfigHook(
           );
         } catch (err) {
           logger.warn(
-            "[omniroute-plugin] config shim: /api/context/combos fetch failed; publishing combos without compression suffix",
+            "[szroute-plugin] config shim: /api/context/combos fetch failed; publishing combos without compression suffix",
             err,
           );
         }
@@ -4509,7 +4509,7 @@ export function createOmniRouteConfigHook(
           rawConnections = await providersFetcher(baseURL, apiKey, 10_000);
         } catch (err) {
           logger.warn(
-            "[omniroute-plugin] config shim: /api/providers fetch failed; usableOnly filter disabled for this refresh",
+            "[szroute-plugin] config shim: /api/providers fetch failed; usableOnly filter disabled for this refresh",
             err,
           );
         }
@@ -4525,7 +4525,7 @@ export function createOmniRouteConfigHook(
         const snapshot = await diskSnapshotReader(resolved.providerId);
         if (snapshot && snapshot.rawModels.length > 0) {
           logger.warn(
-            `[omniroute-plugin] config shim: /v1/models unreachable; using stale disk cache (${snapshot.rawModels.length} models)`,
+            `[szroute-plugin] config shim: /v1/models unreachable; using stale disk cache (${snapshot.rawModels.length} models)`,
           );
           rawModels = snapshot.rawModels;
           rawCombos = snapshot.rawCombos;
@@ -4613,7 +4613,7 @@ export function createOmniRouteConfigHook(
       const mcpKey = features.mcpToken ?? apiKey;
       if (!mcpKey) {
         logger.warn(
-          `[omniroute-plugin] mcp auto-emit skipped: no Bearer token for providerId=${resolved.providerId}`,
+          `[szroute-plugin] mcp auto-emit skipped: no Bearer token for providerId=${resolved.providerId}`,
         );
       } else {
         const inputWithMcp = input as { mcp?: Record<string, unknown> };
@@ -4622,7 +4622,7 @@ export function createOmniRouteConfigHook(
         }
         if (inputWithMcp.mcp[resolved.providerId] !== undefined) {
           logger.warn(
-            `[omniroute-plugin] mcp auto-emit skipped: mcp.${resolved.providerId} already set by user`,
+            `[szroute-plugin] mcp auto-emit skipped: mcp.${resolved.providerId} already set by user`,
           );
         } else {
           // Strip a trailing `/v1` from baseURL when present so we land on

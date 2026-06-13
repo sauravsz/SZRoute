@@ -22,4 +22,4 @@ When creating _any_ validation tests or one-off logic scripts, default to using 
 
 | Environment | URL                       | Password |
 | ----------- | ------------------------- | -------- |
-| Local VPS   | http://192.168.0.15:20128 | 123456   |
+| Local VPS   | http://192.168.0.15:21128 | 123456   |

@@ -18,7 +18,7 @@ import assert from "node:assert/strict";
 import {
   __resetGeminiStreamingWarning,
   createGeminiSanitizingFetch,
-  createOmniRouteFetchInterceptor,
+  createSZRouteFetchInterceptor,
   sanitizeGeminiToolSchemas,
   shouldSanitizeForGemini,
 } from "../src/index.js";
@@ -212,7 +212,7 @@ test("shouldSanitizeForGemini: google-vertex/gemini-1.5-flash → true", () => {
   assert.equal(shouldSanitizeForGemini({ model: "google-vertex/gemini-1.5-flash" }), true);
 });
 
-test("shouldSanitizeForGemini: gemini-cli/gemini-2.5-pro → true (real OmniRoute alias)", () => {
+test("shouldSanitizeForGemini: gemini-cli/gemini-2.5-pro → true (real SZRoute alias)", () => {
   assert.equal(shouldSanitizeForGemini({ model: "gemini-cli/gemini-2.5-pro" }), true);
 });
 
@@ -371,7 +371,7 @@ test("createGeminiSanitizingFetch: empty body → pass through unchanged", async
   assert.equal(rec.calls.length, 1);
 });
 
-test("createGeminiSanitizingFetch: composes correctly with createOmniRouteFetchInterceptor (Bearer + sanitization)", async () => {
+test("createGeminiSanitizingFetch: composes correctly with createSZRouteFetchInterceptor (Bearer + sanitization)", async () => {
   // Save and replace globalThis.fetch — the Bearer interceptor calls global
   // fetch when the URL targets its baseURL.
   const originalFetch = globalThis.fetch;
@@ -383,7 +383,7 @@ test("createGeminiSanitizingFetch: composes correctly with createOmniRouteFetchI
 
   try {
     const composed = createGeminiSanitizingFetch(
-      createOmniRouteFetchInterceptor({
+      createSZRouteFetchInterceptor({
         apiKey: "sk-test",
         baseURL: "https://or.example.com/v1",
       })

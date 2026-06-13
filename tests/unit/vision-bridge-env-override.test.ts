@@ -9,7 +9,7 @@
  *
  * The fix adds two new env vars:
  *   - VISION_BRIDGE_BASE_URL: alternate OpenAI-compatible base URL (e.g.
- *     OmniRoute self-loop, Google's Gemini OpenAI-compat endpoint).
+ *     SZRoute self-loop, Google's Gemini OpenAI-compat endpoint).
  *   - VISION_BRIDGE_API_KEY: alternate API key for that endpoint.
  *
  * These tests cover the helpers in isolation; the integration with the
@@ -52,9 +52,9 @@ test.afterEach(restoreEnv);
 
 test("#2232 — VISION_BRIDGE_BASE_URL takes precedence over OPENAI_API_URL", () => {
   clearEnv();
-  process.env.VISION_BRIDGE_BASE_URL = "http://localhost:20128/v1";
+  process.env.VISION_BRIDGE_BASE_URL = "http://localhost:21128/v1";
   process.env.OPENAI_API_URL = "https://oai.example.com/v1";
-  assert.equal(resolveVisionBridgeBaseUrl(), "http://localhost:20128/v1");
+  assert.equal(resolveVisionBridgeBaseUrl(), "http://localhost:21128/v1");
 });
 
 test("#2232 — falls back to OPENAI_API_URL when VISION_BRIDGE_BASE_URL is unset", () => {
@@ -70,8 +70,8 @@ test("#2232 — defaults to api.openai.com when both env vars are unset", () => 
 
 test("#2232 — trailing slashes on VISION_BRIDGE_BASE_URL are stripped", () => {
   clearEnv();
-  process.env.VISION_BRIDGE_BASE_URL = "http://localhost:20128/v1///";
-  assert.equal(resolveVisionBridgeBaseUrl(), "http://localhost:20128/v1");
+  process.env.VISION_BRIDGE_BASE_URL = "http://localhost:21128/v1///";
+  assert.equal(resolveVisionBridgeBaseUrl(), "http://localhost:21128/v1");
 });
 
 test("#2232 — whitespace-only VISION_BRIDGE_BASE_URL falls through to OPENAI_API_URL", () => {
@@ -81,12 +81,12 @@ test("#2232 — whitespace-only VISION_BRIDGE_BASE_URL falls through to OPENAI_A
   assert.equal(resolveVisionBridgeBaseUrl(), "https://oai.example.com/v1");
 });
 
-test("#2232 — OmniRoute-internal providers default to self-loop when no env vars set", () => {
+test("#2232 — SZRoute-internal providers default to self-loop when no env vars set", () => {
   clearEnv();
-  // Non-standard prefixes (kr/, if/, pol/, groq/) should use OmniRoute self-loop
-  assert.equal(resolveVisionBridgeBaseUrl("kr/claude-sonnet-4-5"), "http://localhost:20128/v1");
-  assert.equal(resolveVisionBridgeBaseUrl("if/kimi-k2-thinking"), "http://localhost:20128/v1");
-  assert.equal(resolveVisionBridgeBaseUrl("pol/gpt-5"), "http://localhost:20128/v1");
+  // Non-standard prefixes (kr/, if/, pol/, groq/) should use SZRoute self-loop
+  assert.equal(resolveVisionBridgeBaseUrl("kr/claude-sonnet-4-5"), "http://localhost:21128/v1");
+  assert.equal(resolveVisionBridgeBaseUrl("if/kimi-k2-thinking"), "http://localhost:21128/v1");
+  assert.equal(resolveVisionBridgeBaseUrl("pol/gpt-5"), "http://localhost:21128/v1");
 });
 
 test("#2232 — OpenAI and Anthropic models still default to api.openai.com", () => {

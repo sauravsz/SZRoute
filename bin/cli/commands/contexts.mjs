@@ -208,7 +208,7 @@ export function registerContexts(program) {
         if (typeof name !== "string" || !name) continue;
         const c = raw && typeof raw === "object" ? /** @type {Record<string,unknown>} */ (raw) : {};
         cfg.contexts[name] = {
-          baseUrl: typeof c.baseUrl === "string" ? c.baseUrl : "http://localhost:20128",
+          baseUrl: typeof c.baseUrl === "string" ? c.baseUrl : "http://localhost:21128",
           apiKey: typeof c.apiKey === "string" ? c.apiKey : null,
           description: typeof c.description === "string" ? c.description : undefined,
         };

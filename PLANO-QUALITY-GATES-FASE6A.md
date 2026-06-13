@@ -29,7 +29,7 @@ Método: releitura inline de todos os `scripts/check/*.{mjs,ts}` criados nas Fas
 | C1 | `check-fetch-targets` só varre `src/app/(dashboard)` — **20+ arquivos com `fetch("/api/…")` fora do escopo**: `src/shared/components/` (Sidebar, CommandPalette, modais…), `src/app/connect/`, `src/app/status/`, `src/lib/evals/` | P1 | 6A.7 |
 | C2 | `check-fetch-targets` ignora 100% dos template literals (`` fetch(`/api/x/${id}`) ``) — nem o prefixo estático é validado | P1 | 6A.7 |
 | C3 | `check-fetch-targets` não valida o método HTTP (fetch `POST` → rota só com `GET` = 405 em runtime, gate verde) | P2 | 6A.7 |
-| C4 | `check-deps` cobre só `package.json` raiz + `electron/` — **`@omniroute/opencode-plugin` (dep `zod` + 5 devDeps, pacote PUBLICADO no npm), `@omniroute/opencode-provider` e `open-sse/` ficam fora** | P1 | 6A.8 |
+| C4 | `check-deps` cobre só `package.json` raiz + `electron/` — **`@szroute/opencode-plugin` (dep `zod` + 5 devDeps, pacote PUBLICADO no npm), `@szroute/opencode-provider` e `open-sse/` ficam fora** | P1 | 6A.8 |
 | C5 | `check-public-creds` escaneia só 2 arquivos hardcoded — credencial literal em arquivo NOVO (executor, oauth provider) passa batida | P1 | 6A.8 |
 | C6 | `check-error-helper` cobre `open-sse/executors` + `handlers` — a Hard Rule #12 também fala de **MCP handlers** (`open-sse/mcp-server/`) e rotas HTTP (`src/app/api/`), fora do escopo | P1 | 6A.8 |
 | C7 | `check-file-size` e `check-complexity` varrem `src` + `open-sse` — `electron/` e `bin/` fora (god-file pode nascer lá) | P2 | 6A.11 |
@@ -145,7 +145,7 @@ Método: releitura inline de todos os `scripts/check/*.{mjs,ts}` criados nas Fas
 1. **error-helper** (+Rule #12 completa): incluir `open-sse/mcp-server/**` e `src/app/api/**/route.ts` no SCAN_DIRS; rodar; congelar os achados novos em KNOWN com comentário-justificativa cada (e issue por cluster).
 2. **public-creds**: além dos 2 arquivos âncora, varrer `open-sse/**` e `src/lib/oauth/**` com a mesma `CRED_KEY_RE` (linha a linha, barato); congelar achados. Limitação documentada: `const CLIENT_ID = "…"` (variável solta) continua fora — o gitleaks da Fase 7 cobre essa classe.
 3. **route-guard**: novo sub-check — todo `route.ts` (qualquer raiz) cujo fonte OU imports de 1º nível relativos contenham `child_process`/`spawn(`/`execFile(`/`worker_threads` deve ser classificado local-only por `isLocalOnlyPath()`. Mata a dependência da lista manual de 3 raízes.
-4. **deps**: `MANIFESTS` → descoberta automática de todo `package.json` do repo (fora `node_modules`/`.next`): hoje raiz, `electron/`, `open-sse/`, `@omniroute/opencode-plugin/` (dep `zod` entra na allowlist), `@omniroute/opencode-provider/`. Workspace novo amanhã entra sozinho.
+4. **deps**: `MANIFESTS` → descoberta automática de todo `package.json` do repo (fora `node_modules`/`.next`): hoje raiz, `electron/`, `open-sse/`, `@szroute/opencode-plugin/` (dep `zod` entra na allowlist), `@szroute/opencode-provider/`. Workspace novo amanhã entra sozinho.
 
 **Acceptance:** fixtures sintéticas por gate; repo real verde com achados congelados + issues; dep nova em QUALQUER manifest do repo dispara o gate.
 

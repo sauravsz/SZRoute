@@ -40,7 +40,7 @@ const console = {
  * `file://` URL, causing `fileURLToPath` to throw `ERR_INVALID_FILE_URL_PATH`.
  */
 function resolveMigrationsDir(): string {
-  const configuredDir = process.env.OMNIROUTE_MIGRATIONS_DIR;
+  const configuredDir = process.env.SZROUTE_MIGRATIONS_DIR;
   if (typeof configuredDir === "string" && configuredDir.trim().length > 0) {
     return path.resolve(configuredDir);
   }
@@ -94,7 +94,7 @@ function resolveMigrationsDir(): string {
   if (fromCwd) return fromCwd;
 
   throw new Error(
-    "[Migration] Could not resolve migrations directory. Set OMNIROUTE_MIGRATIONS_DIR."
+    "[Migration] Could not resolve migrations directory. Set SZROUTE_MIGRATIONS_DIR."
   );
 }
 
@@ -225,7 +225,7 @@ const fts5SupportCache = new WeakMap<SqliteAdapter, boolean>();
  */
 function ensureMigrationsTable(db: SqliteAdapter): void {
   db.exec(`
-    CREATE TABLE IF NOT EXISTS _omniroute_migrations (
+    CREATE TABLE IF NOT EXISTS _szroute_migrations (
       version TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -244,7 +244,7 @@ function supportsFts5(db: SqliteAdapter): boolean {
   }
 
   try {
-    const probeTable = `__omniroute_fts5_probe_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const probeTable = `__szroute_fts5_probe_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     db.transaction(() => {
       db.exec(`CREATE VIRTUAL TABLE "${probeTable}" USING fts5(content);`);
       db.exec(`DROP TABLE "${probeTable}";`);
@@ -291,7 +291,7 @@ function getMigrationFiles(): Array<{ version: string; name: string; path: strin
 
   // Detect version collisions early: two files sharing the same numeric prefix
   // would otherwise be silently skipped by the runner (only the first applied
-  // would record version=NNN in _omniroute_migrations; the rest would never run).
+  // would record version=NNN in _szroute_migrations; the rest would never run).
   // SUPERSEDED_DUPLICATE_MIGRATIONS lists legitimate "renamed" pairs and is OK.
   const byVersion = new Map<string, string[]>();
   for (const f of files) {
@@ -356,7 +356,7 @@ function filterSupersededDuplicateMigrations(
  * Get list of already-applied migration versions.
  */
 function getAppliedVersions(db: SqliteAdapter): Set<string> {
-  const rows = db.prepare("SELECT version FROM _omniroute_migrations").all() as Array<{
+  const rows = db.prepare("SELECT version FROM _szroute_migrations").all() as Array<{
     version: string;
   }>;
   return new Set(rows.map((r) => r.version));
@@ -367,7 +367,7 @@ function getAppliedVersions(db: SqliteAdapter): Set<string> {
  */
 function getAppliedRecords(db: SqliteAdapter): Array<{ version: string; name: string }> {
   return db
-    .prepare("SELECT version, name FROM _omniroute_migrations ORDER BY version")
+    .prepare("SELECT version, name FROM _szroute_migrations ORDER BY version")
     .all() as Array<{
     version: string;
     name: string;
@@ -713,7 +713,7 @@ function reconcileRenumberedMigrations(
     }
 
     const legacyRow = db
-      .prepare("SELECT version, name FROM _omniroute_migrations WHERE version = ? AND name = ?")
+      .prepare("SELECT version, name FROM _szroute_migrations WHERE version = ? AND name = ?")
       .get(compatibility.fromVersion, compatibility.fromName) as
       | { version: string; name: string }
       | undefined;
@@ -722,18 +722,18 @@ function reconcileRenumberedMigrations(
     }
 
     const targetRow = db
-      .prepare("SELECT version FROM _omniroute_migrations WHERE version = ?")
+      .prepare("SELECT version FROM _szroute_migrations WHERE version = ?")
       .get(compatibility.toVersion) as { version: string } | undefined;
 
     const applyRepair = db.transaction(() => {
       if (targetRow) {
-        db.prepare("DELETE FROM _omniroute_migrations WHERE version = ? AND name = ?").run(
+        db.prepare("DELETE FROM _szroute_migrations WHERE version = ? AND name = ?").run(
           compatibility.fromVersion,
           compatibility.fromName
         );
       } else {
         db.prepare(
-          "UPDATE _omniroute_migrations SET version = ?, name = ? WHERE version = ? AND name = ?"
+          "UPDATE _szroute_migrations SET version = ?, name = ? WHERE version = ? AND name = ?"
         ).run(
           compatibility.toVersion,
           compatibility.toName,
@@ -756,7 +756,7 @@ function reconcileRenumberedMigrations(
     // placed at that version number — e.g. 028_create_files_and_batches.sql
     // would be skipped because getAppliedVersions() still sees version "028".
     const residualRow = db
-      .prepare("SELECT version, name FROM _omniroute_migrations WHERE version = ?")
+      .prepare("SELECT version, name FROM _szroute_migrations WHERE version = ?")
       .get(compatibility.fromVersion) as { version: string; name: string } | undefined;
     if (residualRow) {
       console.warn(
@@ -764,7 +764,7 @@ function reconcileRenumberedMigrations(
           `(name: "${residualRow.name}") still present after compat rewrite — ` +
           `removing to unblock new migration at this version slot.`
       );
-      db.prepare("DELETE FROM _omniroute_migrations WHERE version = ?").run(
+      db.prepare("DELETE FROM _szroute_migrations WHERE version = ?").run(
         compatibility.fromVersion
       );
     }
@@ -787,7 +787,7 @@ function rehomeLegacyVersionSlotMigrations(
     }
 
     const legacyRow = db
-      .prepare("SELECT version, name FROM _omniroute_migrations WHERE version = ? AND name = ?")
+      .prepare("SELECT version, name FROM _szroute_migrations WHERE version = ? AND name = ?")
       .get(legacy.version, legacy.name) as { version: string; name: string } | undefined;
     if (!legacyRow) {
       continue;
@@ -796,18 +796,18 @@ function rehomeLegacyVersionSlotMigrations(
     const legacyVersion = `legacy-${legacy.version}-${legacy.name}`;
     const applyRepair = db.transaction(() => {
       const existingLegacyRow = db
-        .prepare("SELECT version FROM _omniroute_migrations WHERE version = ?")
+        .prepare("SELECT version FROM _szroute_migrations WHERE version = ?")
         .get(legacyVersion) as { version: string } | undefined;
 
       if (existingLegacyRow) {
-        db.prepare("DELETE FROM _omniroute_migrations WHERE version = ? AND name = ?").run(
+        db.prepare("DELETE FROM _szroute_migrations WHERE version = ? AND name = ?").run(
           legacy.version,
           legacy.name
         );
         return;
       }
 
-      db.prepare("UPDATE _omniroute_migrations SET version = ? WHERE version = ? AND name = ?").run(
+      db.prepare("UPDATE _szroute_migrations SET version = ? WHERE version = ? AND name = ?").run(
         legacyVersion,
         legacy.version,
         legacy.name
@@ -889,14 +889,14 @@ export function runMigrations(db: SqliteAdapter, options?: { isNewDb?: boolean }
     );
     console.error(
       `[Migration] The version-only tracking will skip these (version already applied), ` +
-        `but please report this to the OmniRoute maintainers.`
+        `but please report this to the SZRoute maintainers.`
     );
   }
 
   // ── Gap Reconciliation: Identify non-contiguous missing migrations ──
   // Do not rely on any highest-version-applied heuristic. We must explicitly
   // iterate through all missing files on disk and apply them if they are missing
-  // from the _omniroute_migrations table.
+  // from the _szroute_migrations table.
   const numericApplied = Array.from(applied)
     .map((v) => Number.parseInt(v, 10))
     .filter((n) => !Number.isNaN(n));
@@ -1006,7 +1006,7 @@ export function runMigrations(db: SqliteAdapter, options?: { isNewDb?: boolean }
         const sql = fs.readFileSync(migration.path, "utf-8");
         db.exec(sql);
       }
-      db.prepare("INSERT INTO _omniroute_migrations (version, name) VALUES (?, ?)").run(
+      db.prepare("INSERT INTO _szroute_migrations (version, name) VALUES (?, ?)").run(
         migration.version,
         migration.name
       );
@@ -1022,7 +1022,7 @@ export function runMigrations(db: SqliteAdapter, options?: { isNewDb?: boolean }
       if (message.includes("duplicate column name")) {
         const applyMarkerOnly = db.transaction(() => {
           db.prepare(
-            "INSERT OR IGNORE INTO _omniroute_migrations (version, name) VALUES (?, ?)"
+            "INSERT OR IGNORE INTO _szroute_migrations (version, name) VALUES (?, ?)"
           ).run(migration.version, migration.name);
         });
         applyMarkerOnly();
@@ -1088,7 +1088,7 @@ export function getMigrationStatus(db: SqliteAdapter): {
   ensureMigrationsTable(db);
 
   const appliedRows = db
-    .prepare("SELECT version, name, applied_at FROM _omniroute_migrations ORDER BY version")
+    .prepare("SELECT version, name, applied_at FROM _szroute_migrations ORDER BY version")
     .all() as Array<{ version: string; name: string; applied_at: string }>;
 
   const appliedVersions = new Set(appliedRows.map((r) => r.version));

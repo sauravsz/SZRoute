@@ -8,7 +8,7 @@ let tmpDir: string;
 let origDataDir: string | undefined;
 
 test.before(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), "omniroute-ctx-test-"));
+  tmpDir = mkdtempSync(join(tmpdir(), "szroute-ctx-test-"));
   origDataDir = process.env.DATA_DIR;
   process.env.DATA_DIR = tmpDir;
 });
@@ -64,10 +64,10 @@ test("resolveActiveContext aceita override pontual", async () => {
   const { resolveActiveContext, loadContexts, saveContexts } =
     await import("../../bin/cli/contexts.mjs");
   const cfg = loadContexts();
-  cfg.contexts.staging = { baseUrl: "http://staging:20128", apiKey: null };
+  cfg.contexts.staging = { baseUrl: "http://staging:21128", apiKey: null };
   saveContexts(cfg);
   const ctx = resolveActiveContext("staging");
-  assert.equal(ctx.baseUrl, "http://staging:20128");
+  assert.equal(ctx.baseUrl, "http://staging:21128");
 });
 
 test("contexts.mjs (commands) pode ser importado sem erro", async () => {

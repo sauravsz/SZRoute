@@ -173,7 +173,7 @@
 
 /* ── Focus Indicators (U-3) ── */
 :root {
-  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+  --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.4);
 }
 
 /* Visible focus ring on keyboard navigation only */
@@ -202,11 +202,33 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  user-select: none; /* Native app feel */
+  -webkit-user-select: none;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em; /* Apple's tighter tracking for headings */
+}
+
+/* Re-enable selection for interactive and content-heavy areas */
+input, textarea, [contenteditable="true"], .selectable, code, pre {
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+/* Electron window drag utilities */
+.drag-region {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
 }
 
 body.electron-macos {
-  --desktop-safe-top: 30px;
+  --desktop-safe-top: 52px;
   --desktop-safe-bottom: 8px;
+  background-color: transparent !important;
 }
 
 /* Selection — with fallback for browsers that don't support color-mix() */
@@ -216,10 +238,10 @@ body.electron-macos {
   color: var(--color-primary);
 }
 
-/* Global custom scrollbar — thin, minimal, theme-aware */
+/* Global custom scrollbar — macOS overlay style */
 *::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 14px;
+  height: 14px;
 }
 
 *::-webkit-scrollbar-track {
@@ -227,37 +249,29 @@ body.electron-macos {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
   border-radius: 9999px;
-  transition: background-color 0.2s;
+  border: 4px solid transparent;
+  background-clip: padding-box;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.45);
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.35);
 }
 
 *::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* Dark theme scrollbar — slightly brighter thumb */
-.dark *::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.08);
-}
 
-.dark *::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Firefox support */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.2) transparent;
-}
-
-.dark * {
-  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
-}
 
 /* Keep .custom-scrollbar alias for backward compatibility */
 .custom-scrollbar {

@@ -24,7 +24,7 @@ test("runFabricatedDocsCheck: runs without throwing on the real repo", () => {
   assert.ok(result.index.cliCommands instanceof Set);
 });
 
-test("runFabricatedDocsCheck: index contains real OmniRoute routes", () => {
+test("runFabricatedDocsCheck: index contains real SZRoute routes", () => {
   const result = runFabricatedDocsCheck();
   // The real repo has /api/v1/chat/completions — a known truth
   assert.ok(result.index.apiRoutes.has("/api/v1/chat/completions"));

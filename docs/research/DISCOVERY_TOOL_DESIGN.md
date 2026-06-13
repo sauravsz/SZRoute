@@ -1,11 +1,11 @@
 # Discovery Tool — Design Document
 
 > **Status:** Design + Stub (Phase 1)
-> **Related:** [Issue #2885](https://github.com/diegosouzapw/OmniRoute/issues/2885)
+> **Related:** [Issue #2885](https://github.com/sauravsz/SZRoute/issues/2885)
 
 ## Overview
 
-The Discovery Tool is an automated service that scans LLM providers for free/unlimited access methods, tests authentication bypasses, validates endpoints, and reports findings. It integrates into OmniRoute as an opt-in service (default off).
+The Discovery Tool is an automated service that scans LLM providers for free/unlimited access methods, tests authentication bypasses, validates endpoints, and reports findings. It integrates into SZRoute as an opt-in service (default off).
 
 ## Architecture
 
@@ -99,7 +99,7 @@ CREATE TABLE discovery_results (
 
 ## Settings Toggle
 
-In OmniRoute dashboard settings:
+In SZRoute dashboard settings:
 
 ```typescript
 {

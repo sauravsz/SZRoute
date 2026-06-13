@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 Get rate limit configuration
 
 ```bash
-curl https://localhost:20128/api/rate-limit \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/rate-limit \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/rate-limit
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/rate-limit \
 Update rate limit configuration
 
 ```bash
-curl -X POST https://localhost:20128/api/rate-limit \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/rate-limit \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```

@@ -5,88 +5,11 @@ export const HIDEABLE_SIDEBAR_ITEM_IDS = [
   "api-manager",
   "endpoints",
   "providers",
-  "embedded-services",
-  "combos",
   "quota",
-  // OmniProxy > Compression Context
-  "context-caveman",
-  "context-rtk",
-  "context-combos",
-  // OmniProxy > Tools
-  "cli-code",
-  "cli-agents",
-  "acp-agents",
-  "cloud-agents",
-  "agent-bridge",
-  "traffic-inspector",
-  // OmniProxy > Integrations
-  "api-endpoints",
-  "webhooks",
-  // OmniProxy > Proxy
-  "proxy",
-  "mitm-proxy",
-  "1proxy",
-  // Analytics
-  "analytics",
-  "analytics-combo-health",
-  "analytics-utilization",
-  "costs",
-  "cache",
-  "analytics-compression",
-  "analytics-search",
-  "analytics-evals",
-  "provider-stats",
-  // Monitoring — flat
-  "activity",
-  "logs",
-  "logs-proxy",
-  "logs-console",
-  "logs-activity",
-  "health",
-  "runtime",
-  // Costs section
-  "costs-pricing",
-  "costs-budget",
-  "costs-free-tiers",
-  "costs-quota-share",
-  // Monitoring > Audit
-  "audit",
-  "audit-mcp",
-  "audit-a2a",
-  // Dev Tools
-  "translator",
-  "playground",
-  "search-tools",
-  // Agentic Features
-  "memory",
-  "skills",
-  "agent-skills",
-  "mcp",
-  "a2a",
-  // Gamification
-  "leaderboard",
-  "profile",
-  "tokens",
-  // Other Features — flat
-  "media",
-  // Other Features > Batch
-  "batch",
-  "batch-files",
   // Configuration
   "settings",
   "settings-general",
-  "settings-appearance",
-  "settings-ai",
-  "settings-routing",
-  "settings-resilience",
-  "settings-advanced",
-  "settings-security",
-  "settings-feature-flags",
-  "settings-sidebar",
-  // Help
-  "docs",
-  "issues",
-  "changelog",
+  "settings-routing"
 ] as const;
 
 export type HideableSidebarItemId = (typeof HIDEABLE_SIDEBAR_ITEM_IDS)[number];
@@ -177,33 +100,12 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
     icon: "dns",
   },
   {
-    id: "embedded-services",
-    href: "/dashboard/providers/services",
-    i18nKey: "embeddedServices",
-    subtitleKey: "embeddedServicesSubtitle",
-    icon: "deployed_code",
-  },
-  {
-    id: "combos",
-    href: "/dashboard/combos",
-    i18nKey: "combos",
-    subtitleKey: "combosSubtitle",
-    icon: "layers",
-  },
-  {
     id: "quota",
     href: "/dashboard/quota",
     i18nKey: "providerQuota",
     subtitleKey: "providerQuotaSubtitle",
     icon: "tune",
-  },
-  {
-    id: "costs-quota-share",
-    href: "/dashboard/costs/quota-share",
-    i18nKey: "costsQuotaShare",
-    subtitleKey: "costsQuotaShareSubtitle",
-    icon: "pie_chart",
-  },
+  }
 ];
 
 const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
@@ -660,61 +562,12 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
     icon: "tune",
   },
   {
-    id: "settings-appearance",
-    href: "/dashboard/settings/appearance",
-    i18nKey: "settingsAppearance",
-    subtitleKey: "settingsAppearanceSubtitle",
-    icon: "palette",
-  },
-  {
-    id: "settings-ai",
-    href: "/dashboard/settings/ai",
-    i18nKey: "settingsAi",
-    subtitleKey: "settingsAiSubtitle",
-    icon: "auto_awesome",
-  },
-  {
     id: "settings-routing",
     href: "/dashboard/settings/routing",
     i18nKey: "globalRouting",
     subtitleKey: "globalRoutingSubtitle",
     icon: "route",
-  },
-  {
-    id: "settings-resilience",
-    href: "/dashboard/settings/resilience",
-    i18nKey: "settingsResilience",
-    subtitleKey: "settingsResilienceSubtitle",
-    icon: "health_and_safety",
-  },
-  {
-    id: "settings-advanced",
-    href: "/dashboard/settings/advanced",
-    i18nKey: "settingsAdvanced",
-    subtitleKey: "settingsAdvancedSubtitle",
-    icon: "engineering",
-  },
-  {
-    id: "settings-security",
-    href: "/dashboard/settings/security",
-    i18nKey: "settingsSecurity",
-    subtitleKey: "settingsSecuritySubtitle",
-    icon: "shield",
-  },
-  {
-    id: "settings-feature-flags",
-    href: "/dashboard/settings/feature-flags",
-    i18nKey: "settingsFeatureFlags",
-    subtitleKey: "settingsFeatureFlagsSubtitle",
-    icon: "flag",
-  },
-  {
-    id: "settings-sidebar",
-    href: "/dashboard/settings/sidebar",
-    i18nKey: "settingsSidebar",
-    subtitleKey: "settingsSidebarSubtitle",
-    icon: "view_sidebar",
-  },
+  }
 ];
 
 const HELP_ITEMS: readonly SidebarItemDefinition[] = [
@@ -728,7 +581,7 @@ const HELP_ITEMS: readonly SidebarItemDefinition[] = [
   },
   {
     id: "issues",
-    href: "https://github.com/diegosouzapw/OmniRoute/issues",
+    href: "https://github.com/sauravsz/SZRoute/issues",
     i18nKey: "issues",
     subtitleKey: "issuesSubtitle",
     icon: "bug_report",
@@ -757,64 +610,17 @@ export const SIDEBAR_SECTIONS: readonly SidebarSectionDefinition[] = [
     id: "omni-proxy",
     titleKey: "omniProxySection",
     titleFallback: "OmniProxy",
-    children: [
-      ...OMNI_PROXY_ITEMS,
-      COMPRESSION_CONTEXT_GROUP,
-      TOOLS_GROUP,
-      INTEGRATIONS_GROUP,
-      PROXY_GROUP,
-    ],
+    children: [...OMNI_PROXY_ITEMS],
     defaultPinned: true,
-  },
-  {
-    id: "analytics",
-    titleKey: "analyticsSection",
-    titleFallback: "Analytics",
-    children: ANALYTICS_ITEMS,
-  },
-  {
-    id: "costs",
-    titleKey: "costsSection",
-    titleFallback: "Costs",
-    children: COSTS_ITEMS,
-  },
-  {
-    id: "monitoring",
-    titleKey: "monitoringSection",
-    titleFallback: "Monitoring",
-    children: [...MONITORING_ITEMS, LOGS_GROUP, AUDIT_GROUP, SYSTEM_GROUP],
-  },
-  {
-    id: "devtools",
-    titleKey: "devtoolsSection",
-    titleFallback: "Dev Tools",
-    children: DEVTOOLS_ITEMS,
-    visibility: "debug",
-  },
-  {
-    id: "agentic-features",
-    titleKey: "agenticFeaturesSection",
-    titleFallback: "Agentic Features",
-    children: AGENTIC_FEATURES_ITEMS,
-  },
-  {
-    id: "other-features",
-    titleKey: "otherFeaturesSection",
-    titleFallback: "Other Features",
-    children: [GAMIFICATION_GROUP, ...OTHER_FEATURES_ITEMS, BATCH_GROUP],
+    showTitle: false,
   },
   {
     id: "configuration",
     titleKey: "configurationSection",
     titleFallback: "Configuration",
     children: CONFIGURATION_ITEMS,
-  },
-  {
-    id: "help",
-    titleKey: "helpSection",
-    titleFallback: "Help",
-    children: HELP_ITEMS,
-  },
+    showTitle: false,
+  }
 ] as const;
 
 // ─── Ordering & preset setting keys ──────────────────────────────────────────
@@ -823,7 +629,7 @@ export const HIDDEN_SIDEBAR_ITEMS_SETTING_KEY = "hiddenSidebarItems";
 export const SIDEBAR_SECTION_ORDER_KEY = "sidebarSectionOrder";
 export const SIDEBAR_ITEM_ORDER_KEY = "sidebarItemOrder";
 export const SIDEBAR_PRESET_KEY = "sidebarActivePreset";
-export const SIDEBAR_SETTINGS_UPDATED_EVENT = "omniroute:settings-updated";
+export const SIDEBAR_SETTINGS_UPDATED_EVENT = "szroute:settings-updated";
 
 // ─── Preset types & definitions ───────────────────────────────────────────────
 

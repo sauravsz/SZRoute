@@ -1,16 +1,16 @@
 ---
-title: "🗜️ Prompt Compression Guide — OmniRoute"
+title: "🗜️ Prompt Compression Guide — SZRoute"
 version: 3.8.2
 lastUpdated: 2026-05-13
 ---
 
-# 🗜️ Prompt Compression Guide — OmniRoute
+# 🗜️ Prompt Compression Guide — SZRoute
 
 > Save 15-95% on eligible context automatically. For a quick overview, see the [README Compression section](../README.md#%EF%B8%8F-prompt-compression--save-15-95-eligible-tokens-automatically).
 
 ## Overview
 
-OmniRoute implements a modular prompt compression pipeline that runs **proactively** before requests hit upstream providers. This means your token savings happen transparently — no changes needed to your workflow.
+SZRoute implements a modular prompt compression pipeline that runs **proactively** before requests hit upstream providers. This means your token savings happen transparently — no changes needed to your workflow.
 
 ```
 Client Request
@@ -118,15 +118,15 @@ compression combos assigned to routing combos.
 
 ## Upstream Savings Math
 
-OmniRoute documents compression savings from two sources: upstream project benchmarks and
-OmniRoute's own engine composition.
+SZRoute documents compression savings from two sources: upstream project benchmarks and
+SZRoute's own engine composition.
 
 | Source  | Upstream README number used here                                                                                      |
 | ------- | --------------------------------------------------------------------------------------------------------------------- |
 | Caveman | `~75%` fewer output tokens, `65%` benchmark average output savings, `22-87%` range, and `~46%` input compression tool |
 | RTK     | `60-90%` command-output savings; sample session `~118,000 -> ~23,900` tokens, or `79.7%` saved (`~80%`)               |
 
-For overlapping tool/context payloads, the default OmniRoute combo stacks the engines:
+For overlapping tool/context payloads, the default SZRoute combo stacks the engines:
 
 ```txt
 RTK -> Caveman
@@ -192,23 +192,23 @@ subscriptions.
 
 ```bash
 # Get compression settings
-curl http://localhost:20128/api/settings/compression
+curl http://localhost:21128/api/settings/compression
 
 # Update compression settings
-curl -X PUT http://localhost:20128/api/settings/compression \
+curl -X PUT http://localhost:21128/api/settings/compression \
   -H "Content-Type: application/json" \
   -d '{"defaultMode":"stacked","autoTriggerMode":"stacked","autoTriggerTokens":32000}'
 
 # Preview a specific RTK/stacked payload
-curl -X POST http://localhost:20128/api/compression/preview \
+curl -X POST http://localhost:21128/api/compression/preview \
   -H "Content-Type: application/json" \
   -d '{"mode":"rtk","messages":[{"role":"tool","content":"npm test output here"}]}'
 
 # List RTK filter packs
-curl http://localhost:20128/api/context/rtk/filters
+curl http://localhost:21128/api/context/rtk/filters
 
 # Test RTK directly with optional command metadata
-curl -X POST http://localhost:20128/api/context/rtk/test \
+curl -X POST http://localhost:21128/api/context/rtk/test \
   -H "Content-Type: application/json" \
   -d '{"command":"npm test","text":"FAIL tests/example.test.ts\nError: boom"}'
 ```
@@ -273,7 +273,7 @@ RTK mode is inspired by **[RTK - Rust Token Killer](https://github.com/rtk-ai/rt
 
 ## Advanced Compression Systems
 
-Beyond the 7 standard modes, OmniRoute includes several advanced compression
+Beyond the 7 standard modes, SZRoute includes several advanced compression
 systems that work automatically based on context.
 
 ### Cache-Aware Compression
@@ -297,7 +297,7 @@ The `cachingAware.ts` module solves this by **detecting caching context** and
 #### Code example
 
 ```ts
-import { detectCachingContext, getCacheAwareStrategy } from "@omniroute/open-sse/services/compression/cachingAware";
+import { detectCachingContext, getCacheAwareStrategy } from "@szroute/open-sse/services/compression/cachingAware";
 
 const body = {
   model: "anthropic/claude-sonnet-4.5",
@@ -332,7 +332,7 @@ relevant. The `progressiveAging.ts` module **degrades messages by turn distance*
 #### Code example
 
 ```ts
-import { applyAging } from "@omniroute/open-sse/services/compression/progressiveAging";
+import { applyAging } from "@szroute/open-sse/services/compression/progressiveAging";
 
 const messages = [
   { role: "system", content: "You are a helpful assistant" },

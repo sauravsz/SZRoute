@@ -1,4 +1,4 @@
-# Contributing to OmniRoute (Українська)
+# Contributing to SZRoute (Українська)
 
 🌐 **Languages:** 🇺🇸 [English](../../../CONTRIBUTING.md) · 🇸🇦 [ar](../ar/CONTRIBUTING.md) · 🇧🇬 [bg](../bg/CONTRIBUTING.md) · 🇧🇩 [bn](../bn/CONTRIBUTING.md) · 🇨🇿 [cs](../cs/CONTRIBUTING.md) · 🇩🇰 [da](../da/CONTRIBUTING.md) · 🇩🇪 [de](../de/CONTRIBUTING.md) · 🇪🇸 [es](../es/CONTRIBUTING.md) · 🇮🇷 [fa](../fa/CONTRIBUTING.md) · 🇫🇮 [fi](../fi/CONTRIBUTING.md) · 🇫🇷 [fr](../fr/CONTRIBUTING.md) · 🇮🇳 [gu](../gu/CONTRIBUTING.md) · 🇮🇱 [he](../he/CONTRIBUTING.md) · 🇮🇳 [hi](../hi/CONTRIBUTING.md) · 🇭🇺 [hu](../hu/CONTRIBUTING.md) · 🇮🇩 [id](../id/CONTRIBUTING.md) · 🇮🇹 [it](../it/CONTRIBUTING.md) · 🇯🇵 [ja](../ja/CONTRIBUTING.md) · 🇰🇷 [ko](../ko/CONTRIBUTING.md) · 🇮🇳 [mr](../mr/CONTRIBUTING.md) · 🇲🇾 [ms](../ms/CONTRIBUTING.md) · 🇳🇱 [nl](../nl/CONTRIBUTING.md) · 🇳🇴 [no](../no/CONTRIBUTING.md) · 🇵🇭 [phi](../phi/CONTRIBUTING.md) · 🇵🇱 [pl](../pl/CONTRIBUTING.md) · 🇵🇹 [pt](../pt/CONTRIBUTING.md) · 🇧🇷 [pt-BR](../pt-BR/CONTRIBUTING.md) · 🇷🇴 [ro](../ro/CONTRIBUTING.md) · 🇷🇺 [ru](../ru/CONTRIBUTING.md) · 🇸🇰 [sk](../sk/CONTRIBUTING.md) · 🇸🇪 [sv](../sv/CONTRIBUTING.md) · 🇰🇪 [sw](../sw/CONTRIBUTING.md) · 🇮🇳 [ta](../ta/CONTRIBUTING.md) · 🇮🇳 [te](../te/CONTRIBUTING.md) · 🇹🇭 [th](../th/CONTRIBUTING.md) · 🇹🇷 [tr](../tr/CONTRIBUTING.md) · 🇺🇦 [uk-UA](../uk-UA/CONTRIBUTING.md) · 🇵🇰 [ur](../ur/CONTRIBUTING.md) · 🇻🇳 [vi](../vi/CONTRIBUTING.md) · 🇨🇳 [zh-CN](../zh-CN/CONTRIBUTING.md)
 
@@ -19,8 +19,8 @@ Thank you for your interest in contributing! This guide covers everything you ne
 ### Clone & Install
 
 ```bash
-git clone https://github.com/diegosouzapw/OmniRoute.git
-cd OmniRoute
+git clone https://github.com/sauravsz/SZRoute.git
+cd SZRoute
 npm install
 ```
 
@@ -39,8 +39,8 @@ Key variables for development:
 
 | Variable               | Development Default      | Description           |
 | ---------------------- | ------------------------ | --------------------- |
-| `PORT`                 | `20128`                  | Server port           |
-| `NEXT_PUBLIC_BASE_URL` | `http://localhost:20128` | Base URL for frontend |
+| `PORT`                 | `21128`                  | Server port           |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:21128` | Base URL for frontend |
 | `JWT_SECRET`           | (generate above)         | JWT signing secret    |
 | `INITIAL_PASSWORD`     | `CHANGEME`               | First login password  |
 | `APP_LOG_LEVEL`        | `info`                   | Log verbosity level   |
@@ -67,13 +67,13 @@ npm run build
 npm run start
 
 # Common port configuration
-PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
+PORT=21128 NEXT_PUBLIC_BASE_URL=http://localhost:21128 npm run dev
 ```
 
 Default URLs:
 
-- **Dashboard**: `http://localhost:20128/dashboard`
-- **API**: `http://localhost:20128/v1`
+- **Dashboard**: `http://localhost:21128/dashboard`
+- **API**: `http://localhost:21128/v1`
 
 ---
 
@@ -217,7 +217,7 @@ src/                        # TypeScript (.ts / .tsx)
 │   └── validation/         # Zod v4 schemas
 └── sse/                    # SSE proxy pipeline
 
-open-sse/                   # @omniroute/open-sse workspace
+open-sse/                   # @szroute/open-sse workspace
 ├── executors/              # 14 provider-specific request executors
 ├── handlers/               # 11 request handlers (chat, responses, embeddings, images, etc.)
 ├── mcp-server/             # MCP server (25 tools, 3 transports, 10 scopes)
@@ -307,5 +307,5 @@ Releases are managed via the `/generate-release` workflow. When a new GitHub Rel
 
 - **Architecture**: See [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md)
 - **API Reference**: See [`docs/reference/API_REFERENCE.md`](docs/reference/API_REFERENCE.md)
-- **Issues**: [github.com/diegosouzapw/OmniRoute/issues](https://github.com/diegosouzapw/OmniRoute/issues)
+- **Issues**: [github.com/sauravsz/SZRoute/issues](https://github.com/sauravsz/SZRoute/issues)
 - **ADRs**: See `docs/adr/` for architectural decision records

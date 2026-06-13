@@ -1,7 +1,7 @@
 {
-  "name": "@omniroute/opencode-plugin",
+  "name": "@szroute/opencode-plugin",
   "version": "0.1.0",
-  "description": "OpenCode plugin for the OmniRoute AI Gateway. Drives dynamic model discovery, /connect auth flow, and multi-instance OmniRoute providers via the official @opencode-ai/plugin contract.",
+  "description": "OpenCode plugin for the SZRoute AI Gateway. Drives dynamic model discovery, /connect auth flow, and multi-instance SZRoute providers via the official @opencode-ai/plugin contract.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -30,7 +30,7 @@
     "prepublishOnly": "npm run clean && npm run build && npm test"
   },
   "keywords": [
-    "omniroute",
+    "szroute",
     "opencode",
     "opencode-plugin",
     "ai-sdk",
@@ -40,17 +40,17 @@
     "combos",
     "mcp"
   ],
-  "author": "OmniRoute contributors",
+  "author": "SZRoute contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/diegosouzapw/OmniRoute.git",
-    "directory": "@omniroute/opencode-plugin"
+    "url": "https://github.com/sauravsz/SZRoute.git",
+    "directory": "@szroute/opencode-plugin"
   },
   "bugs": {
-    "url": "https://github.com/diegosouzapw/OmniRoute/issues"
+    "url": "https://github.com/sauravsz/SZRoute/issues"
   },
-  "homepage": "https://github.com/diegosouzapw/OmniRoute/tree/main/%40omniroute/opencode-plugin#readme",
+  "homepage": "https://github.com/sauravsz/SZRoute/tree/main/%40szroute/opencode-plugin#readme",
   "engines": {
     "node": ">=22.22.3"
   },

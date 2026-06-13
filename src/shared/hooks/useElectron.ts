@@ -143,6 +143,55 @@ export function useOpenExternal() {
 }
 
 /**
+ * Trigger native OS-level system dialogs and windows
+ */
+export function useSystemDialog() {
+  const isElectron = useIsElectron();
+
+  const showMessageBox = useCallback(
+    async (options: any) => {
+      if (isElectron && window.electronAPI && window.electronAPI.showMessageBox) {
+        return window.electronAPI.showMessageBox(options);
+      }
+      // Fallback for web mode
+      if (options.type === "question" || options.buttons?.length > 1) {
+        const confirmed = window.confirm(options.message + (options.detail ? `\n\n${options.detail}` : ""));
+        return confirmed ? 0 : 1; 
+      } else {
+        window.alert(options.message + (options.detail ? `\n\n${options.detail}` : ""));
+        return 0;
+      }
+    },
+    [isElectron]
+  );
+
+  const openWindow = useCallback(
+    async (route: string, options?: any) => {
+      if (isElectron && window.electronAPI && window.electronAPI.openWindow) {
+        return window.electronAPI.openWindow(route, options || {});
+      }
+      // Fallback: just open in new tab
+      window.open(route, "_blank");
+      return true;
+    },
+    [isElectron]
+  );
+
+  const promptTouchId = useCallback(
+    async (reason?: string) => {
+      if (isElectron && window.electronAPI && window.electronAPI.promptTouchId) {
+        return window.electronAPI.promptTouchId(reason);
+      }
+      // Fallback for web mode: simply return true as if they authenticated.
+      return true;
+    },
+    [isElectron]
+  );
+
+  return { showMessageBox, openWindow, promptTouchId };
+}
+
+/**
  * Server controls for Electron
  */
 export function useServerControls() {

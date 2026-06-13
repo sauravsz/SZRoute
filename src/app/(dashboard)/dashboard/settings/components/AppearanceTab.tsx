@@ -589,9 +589,9 @@ export default function AppearanceTab() {
               </div>
               <input
                 type="text"
-                value={settings.instanceName || "OmniRoute"}
+                value={settings.instanceName || "SZRoute"}
                 onChange={(e) => updateSetting("instanceName", e.target.value)}
-                placeholder="OmniRoute"
+                placeholder="SZRoute"
                 maxLength={100}
                 className="h-10 px-3 rounded-lg bg-surface border border-border text-sm text-text-main focus:outline-none focus:border-primary w-48"
               />
@@ -792,7 +792,7 @@ export default function AppearanceTab() {
                 <div>
                   <p className="font-medium">Start on Login</p>
                   <p className="text-xs text-text-muted mt-0.5">
-                    Automatically launch OmniRoute on system startup and run silently in the
+                    Automatically launch SZRoute on system startup and run silently in the
                     background tray.
                   </p>
                 </div>

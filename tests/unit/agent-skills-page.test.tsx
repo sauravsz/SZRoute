@@ -49,8 +49,8 @@ function makeSkill(overrides: Partial<AgentSkill> = {}): AgentSkill {
     area: "providers",
     icon: "hub",
     endpoints: ["POST /api/providers", "GET /api/providers"],
-    rawUrl: "https://raw.githubusercontent.com/diegosouzapw/OmniRoute/refs/heads/main/skills/omni-providers/SKILL.md",
-    githubUrl: "https://github.com/diegosouzapw/OmniRoute/blob/main/skills/omni-providers/SKILL.md",
+    rawUrl: "https://raw.githubusercontent.com/sauravsz/SZRoute/refs/heads/main/skills/omni-providers/SKILL.md",
+    githubUrl: "https://github.com/sauravsz/SZRoute/blob/main/skills/omni-providers/SKILL.md",
     ...overrides,
   };
 }
@@ -136,7 +136,7 @@ beforeEach(() => {
   });
   // Mock window.location.origin
   Object.defineProperty(window, "location", {
-    value: { origin: "http://localhost:20128" },
+    value: { origin: "http://localhost:21128" },
     configurable: true,
   });
   // Mock window.confirm

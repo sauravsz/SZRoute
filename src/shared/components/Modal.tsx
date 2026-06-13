@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useId } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import Button from "./Button";
 
@@ -102,28 +104,35 @@ export default function Modal({
     return () => dialog.removeEventListener("keydown", handleTab);
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-        onClick={closeOnOverlay ? onClose : undefined}
-        aria-hidden="true"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="absolute inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-md"
+            onClick={closeOnOverlay ? onClose : undefined}
+            aria-hidden="true"
+          />
 
       {/* Modal content */}
-      <div
-        ref={dialogRef}
+      <motion.div
+        ref={dialogRef as any}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        transition={{ type: "spring", stiffness: 450, damping: 35 }}
         className={cn(
-          "relative w-full bg-surface",
+          "relative w-full bg-vibrancy",
           "border border-black/10 dark:border-white/10",
-          "rounded-xl shadow-2xl",
-          "animate-in fade-in zoom-in-95 duration-200",
+          "rounded-[14px] shadow-[0_20px_50px_rgba(0,0,0,0.3)]",
           sizes[size],
           className
         )}
@@ -181,9 +190,7 @@ export default function Modal({
                 aria-label="Close"
                 className="p-1.5 rounded-lg text-text-muted hover:bg-black/5 dark:hover:bg-white/5 transition-colors shrink-0"
               >
-                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                  close
-                </span>
+                <X size={20} />
               </button>
             )}
           </div>
@@ -200,8 +207,10 @@ export default function Modal({
             {footer}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
+    )}
+    </AnimatePresence>
   );
 }
 

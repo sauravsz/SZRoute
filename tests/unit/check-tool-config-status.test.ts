@@ -12,13 +12,13 @@ import path from "node:path";
 import os from "node:os";
 
 // Set DATA_DIR before importing modules that read it
-process.env.DATA_DIR = path.join(os.tmpdir(), "omniroute-check-tool-test");
+process.env.DATA_DIR = path.join(os.tmpdir(), "szroute-check-tool-test");
 
 const { checkToolConfigStatus } = await import("../../src/lib/cliTools/checkToolConfigStatus.ts");
 
 // Helper: create a temp file with given content and return its path
 async function writeTempFile(filename: string, content: string): Promise<string> {
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-clicheck-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "szroute-clicheck-"));
   const filePath = path.join(tmpDir, filename);
   await fs.writeFile(filePath, content, "utf-8");
   return filePath;
@@ -26,14 +26,14 @@ async function writeTempFile(filename: string, content: string): Promise<string>
 
 // Helper: create a temp TOML config for codex with optional auth.json alongside
 async function writeCodexConfig(opts: {
-  hasOmniRoute: boolean;
+  hasSZRoute: boolean;
   authApiKey?: string;
 }): Promise<string> {
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-codex-"));
+  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "szroute-codex-"));
   const configPath = path.join(tmpDir, "config.toml");
 
-  const tomlContent = opts.hasOmniRoute
-    ? `[openai]\nbase_url = "http://localhost:20128/v1"\napi_key_env = "OPENAI_API_KEY"\n`
+  const tomlContent = opts.hasSZRoute
+    ? `[openai]\nbase_url = "http://localhost:21128/v1"\napi_key_env = "OPENAI_API_KEY"\n`
     : `[openai]\nbase_url = "https://api.openai.com/v1"\n`;
 
   await fs.writeFile(configPath, tomlContent, "utf-8");
@@ -55,7 +55,7 @@ async function writeCodexConfig(opts: {
 test("claude: returns 'configured' when ANTHROPIC_BASE_URL is set", async () => {
   const configPath = await writeTempFile(
     "settings.json",
-    JSON.stringify({ env: { ANTHROPIC_BASE_URL: "http://localhost:20128" } })
+    JSON.stringify({ env: { ANTHROPIC_BASE_URL: "http://localhost:21128" } })
   );
   const result = await checkToolConfigStatus("claude", configPath);
   assert.equal(result, "configured");
@@ -72,37 +72,37 @@ test("claude: returns 'not_configured' when ANTHROPIC_BASE_URL is absent", async
 
 // ── Codex tests ───────────────────────────────────────────────────────────────
 
-test("codex: returns 'configured' when TOML has OmniRoute URL + valid auth key", async () => {
+test("codex: returns 'configured' when TOML has SZRoute URL + valid auth key", async () => {
   const configPath = await writeCodexConfig({
-    hasOmniRoute: true,
-    authApiKey: "sk_omniroute_testkey_1234567890abcdef",
+    hasSZRoute: true,
+    authApiKey: "sk_szroute_testkey_1234567890abcdef",
   });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "configured");
 });
 
-test("codex: returns 'not_configured' when TOML has OmniRoute URL but auth key is masked", async () => {
+test("codex: returns 'not_configured' when TOML has SZRoute URL but auth key is masked", async () => {
   const configPath = await writeCodexConfig({
-    hasOmniRoute: true,
+    hasSZRoute: true,
     authApiKey: "sk_****",
   });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "not_configured");
 });
 
-test("codex: returns 'not_configured' when TOML does not mention OmniRoute", async () => {
-  const configPath = await writeCodexConfig({ hasOmniRoute: false });
+test("codex: returns 'not_configured' when TOML does not mention SZRoute", async () => {
+  const configPath = await writeCodexConfig({ hasSZRoute: false });
   const result = await checkToolConfigStatus("codex", configPath);
   assert.equal(result, "not_configured");
 });
 
 // ── Qwen tests ────────────────────────────────────────────────────────────────
 
-test("qwen: returns 'configured' when modelProviders has OmniRoute URL", async () => {
+test("qwen: returns 'configured' when modelProviders has SZRoute URL", async () => {
   const configPath = await writeTempFile(
     "qwen.json",
     JSON.stringify({
-      modelProviders: [{ apiBase: "http://localhost:20128/v1", name: "omniroute" }],
+      modelProviders: [{ apiBase: "http://localhost:21128/v1", name: "szroute" }],
     })
   );
   const result = await checkToolConfigStatus("qwen", configPath);
@@ -117,10 +117,10 @@ test("qwen: returns 'not_configured' when modelProviders is missing", async () =
 
 // ── Hermes tests ──────────────────────────────────────────────────────────────
 
-test("hermes: returns 'configured' when config contains OmniRoute", async () => {
+test("hermes: returns 'configured' when config contains SZRoute", async () => {
   const configPath = await writeTempFile(
     "hermes.toml",
-    `[openai]\nbase_url = "http://localhost:20128/v1"\n`
+    `[openai]\nbase_url = "http://localhost:21128/v1"\n`
   );
   const result = await checkToolConfigStatus("hermes", configPath);
   assert.equal(result, "configured");
@@ -137,19 +137,19 @@ test("hermes: returns 'not_configured' when config points elsewhere", async () =
 
 // ── Droid / Openclaw / Kilo ───────────────────────────────────────────────────
 
-test("droid: returns 'configured' when JSON config contains sk_omniroute marker", async () => {
+test("droid: returns 'configured' when JSON config contains sk_szroute marker", async () => {
   const configPath = await writeTempFile(
     "droid.json",
-    JSON.stringify({ apiKey: "sk_omniroute_somekey", baseUrl: "http://localhost:20128/v1" })
+    JSON.stringify({ apiKey: "sk_szroute_somekey", baseUrl: "http://localhost:21128/v1" })
   );
   const result = await checkToolConfigStatus("droid", configPath);
   assert.equal(result, "configured");
 });
 
-test("openclaw: returns 'configured' when JSON config contains omniroute text", async () => {
+test("openclaw: returns 'configured' when JSON config contains szroute text", async () => {
   const configPath = await writeTempFile(
     "openclaw.json",
-    JSON.stringify({ openAiBaseUrl: "http://omniroute.local/v1", openAiApiKey: "sk-test" })
+    JSON.stringify({ openAiBaseUrl: "http://szroute.local/v1", openAiApiKey: "sk-test" })
   );
   const result = await checkToolConfigStatus("openclaw", configPath);
   assert.equal(result, "configured");
@@ -160,14 +160,14 @@ test("cline: returns 'configured' when openAiBaseUrl is set with openai provider
     "cline.json",
     JSON.stringify({
       actModeApiProvider: "openai",
-      openAiBaseUrl: "http://localhost:20128/v1",
+      openAiBaseUrl: "http://localhost:21128/v1",
     })
   );
   const result = await checkToolConfigStatus("cline", configPath);
   assert.equal(result, "configured");
 });
 
-test("kilo: returns 'not_configured' when no OmniRoute markers present", async () => {
+test("kilo: returns 'not_configured' when no SZRoute markers present", async () => {
   const configPath = await writeTempFile(
     "kilo.json",
     JSON.stringify({ apiProvider: "anthropic", model: "claude-3-sonnet" })

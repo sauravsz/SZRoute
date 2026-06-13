@@ -141,7 +141,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "danger",
   },
   {
-    key: "OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS",
+    key: "SZROUTE_ALLOW_PRIVATE_PROVIDER_URLS",
     label: "Allow Private Provider URLs",
     description: "Allow provider URLs pointing to private/internal networks",
     descriptionI18nKey: "featureFlagOmnirouteAllowPrivateProviderUrlsDescription",
@@ -201,7 +201,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
 
   // ──────────────── Runtime (8) ────────────────
   {
-    key: "OMNIROUTE_MCP_ENFORCE_SCOPES",
+    key: "SZROUTE_MCP_ENFORCE_SCOPES",
     label: "MCP Enforce Scopes",
     description: "Enforce scope restrictions on MCP tool access",
     descriptionI18nKey: "featureFlagOmnirouteMcpEnforceScopesDescription",
@@ -212,7 +212,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
-    key: "OMNIROUTE_MCP_COMPRESS_DESCRIPTIONS",
+    key: "SZROUTE_MCP_COMPRESS_DESCRIPTIONS",
     label: "MCP Compress Descriptions",
     description: "Compress MCP tool descriptions to reduce token usage",
     descriptionI18nKey: "featureFlagOmnirouteMcpCompressDescriptionsDescription",
@@ -223,7 +223,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
-    key: "OMNIROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS",
+    key: "SZROUTE_ENABLE_RUNTIME_BACKGROUND_TASKS",
     label: "Runtime Background Tasks",
     description: "Enable background task processing at runtime",
     descriptionI18nKey: "featureFlagOmnirouteEnableRuntimeBackgroundTasksDescription",
@@ -234,7 +234,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
-    key: "OMNIROUTE_DISABLE_BACKGROUND_SERVICES",
+    key: "SZROUTE_DISABLE_BACKGROUND_SERVICES",
     label: "Disable Background Services",
     description: "Disable all background services (quota refresh, sync, etc)",
     descriptionI18nKey: "featureFlagOmnirouteDisableBackgroundServicesDescription",
@@ -245,7 +245,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
-    key: "OMNIROUTE_RTK_TRUST_PROJECT_FILTERS",
+    key: "SZROUTE_RTK_TRUST_PROJECT_FILTERS",
     label: "RTK Trust Project Filters",
     description: "Trust project-level filters from RTK without validation",
     descriptionI18nKey: "featureFlagOmnirouteRtkTrustProjectFiltersDescription",
@@ -256,7 +256,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "caution",
   },
   {
-    key: "OMNIROUTE_ENABLE_LIVE_WS",
+    key: "SZROUTE_ENABLE_LIVE_WS",
     label: "Live Dashboard WebSocket",
     description:
       "Start the real-time dashboard WebSocket server on import (port 20129 by default).",
@@ -268,7 +268,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
-    key: "OMNIROUTE_CODEX_WS_ENABLED",
+    key: "SZROUTE_CODEX_WS_ENABLED",
     label: "Codex Responses WebSocket",
     description:
       "Allow Codex to use the Responses-over-WebSocket transport (the codex CLI WS endpoint and codexTransport=websocket). When off, Codex falls back to HTTP Responses.",
@@ -330,7 +330,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
 
   // ──────────────── Health (3) ────────────────
   {
-    key: "OMNIROUTE_DISABLE_LOCAL_HEALTHCHECK",
+    key: "SZROUTE_DISABLE_LOCAL_HEALTHCHECK",
     label: "Disable Local Health Check",
     description: "Disable the local instance health check endpoint",
     descriptionI18nKey: "featureFlagOmnirouteDisableLocalHealthcheckDescription",
@@ -341,7 +341,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     warningLevel: "info",
   },
   {
-    key: "OMNIROUTE_DISABLE_TOKEN_HEALTHCHECK",
+    key: "SZROUTE_DISABLE_TOKEN_HEALTHCHECK",
     label: "Disable Token Health Check",
     description: "Disable the token validation health check",
     descriptionI18nKey: "featureFlagOmnirouteDisableTokenHealthcheckDescription",

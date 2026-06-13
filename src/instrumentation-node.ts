@@ -21,7 +21,7 @@ function toHex(bytes: Uint8Array): string {
 }
 
 function isBackgroundServicesDisabled(): boolean {
-  const raw = process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES;
+  const raw = process.env.SZROUTE_DISABLE_BACKGROUND_SERVICES;
   if (!raw) return false;
   return new Set(["1", "true", "yes", "on"]).has(raw.trim().toLowerCase());
 }
@@ -70,7 +70,7 @@ async function ensureSecrets(): Promise<void> {
 
 export async function registerNodejs(): Promise<void> {
   // Initialize proxy fetch patch FIRST (before any HTTP requests)
-  await import("@omniroute/open-sse/index.ts");
+  await import("@szroute/open-sse/index.ts");
   console.log("[STARTUP] Global fetch proxy patch initialized");
 
   await ensureSecrets();
@@ -88,7 +88,7 @@ export async function registerNodejs(): Promise<void> {
   // that cause every connection to be skipped by getProviderCredentials(), making
   // all subsequent requests time out at Bottleneck's maxWaitMs (120 s default).
   // Terminal states (banned / expired / credits_exhausted) are intentionally kept.
-  // See: https://github.com/diegosouzapw/OmniRoute/issues/3625 (Part A)
+  // See: https://github.com/sauravsz/SZRoute/issues/3625 (Part A)
   try {
     const { clearStaleCrashCooldowns } = await import("@/lib/db/providers");
     const { cleared } = clearStaleCrashCooldowns();
@@ -149,7 +149,7 @@ export async function registerNodejs(): Promise<void> {
     console.log(
       `[STARTUP] Cloud/model sync background bootstrap ${cloudSyncInitialized ? "initialized" : "skipped"}`
     );
-    const { initBatchProcessor } = await import("@omniroute/open-sse/services/batchProcessor");
+    const { initBatchProcessor } = await import("@szroute/open-sse/services/batchProcessor");
     initBatchProcessor();
     console.log("[STARTUP] Batch processor started");
   }
@@ -183,7 +183,7 @@ export async function registerNodejs(): Promise<void> {
     // Restore Global System Prompt into in-memory config (#2468/#2470)
     if (settings.systemPrompt) {
       const { setSystemPromptConfig } =
-        await import("@omniroute/open-sse/services/systemPrompt.ts");
+        await import("@szroute/open-sse/services/systemPrompt.ts");
       setSystemPromptConfig(settings.systemPrompt);
       console.log("[STARTUP] Global System Prompt restored from settings");
     }
@@ -259,7 +259,7 @@ export async function registerNodejs(): Promise<void> {
 
     try {
       const { autoRefreshDaemon } = await import(
-        "@omniroute/open-sse/services/autoRefreshDaemon"
+        "@szroute/open-sse/services/autoRefreshDaemon"
       );
       autoRefreshDaemon.start();
     } catch (err: unknown) {

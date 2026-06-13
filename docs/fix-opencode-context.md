@@ -6,7 +6,7 @@ OpenCode v1's `opencode.json` requires an explicit `limit.context` (and
 `limit.output`) for every model. Without these fields, OpenCode's heuristic
 kicks in and reports a wrong context window.
 
-The OmniRoute `/v1/models` catalog is the single source of truth for context
+The SZRoute `/v1/models` catalog is the single source of truth for context
 windows. The bug was that some combos were published to the catalog WITHOUT
 a computed `context_length`, so any OpenCode client pulling the catalog got
 no answer for them.
@@ -86,8 +86,8 @@ The generator now:
 
 1. Pull the latest from the branch:
    `git fetch && git checkout fix/opencode-context-window`
-2. Rebuild OmniRoute: `npm run build`
-3. Restart the OmniRoute server (kill the running process and re-run).
+2. Rebuild SZRoute: `npm run build`
+3. Restart the SZRoute server (kill the running process and re-run).
 4. Trigger a models.dev sync from the Settings → Models.dev panel
    (or POST `/api/settings/models-dev` with `{"action": "sync"}`).
 5. Re-run the opencode.json generator (the CLI command or the
@@ -101,7 +101,7 @@ and every other combo will reflect its targets' min context.
 After the rebuild, hit `GET /v1/models` and inspect the response:
 
 ```bash
-curl -s http://localhost:20128/v1/models \
+curl -s http://localhost:21128/v1/models \
   -H "Authorization: Bearer $API_KEY" \
   | jq '.data[] | select(.id == "Opencode FREE Omni") | .context_length'
 # → 200000

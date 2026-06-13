@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 Get usage analytics
 
 ```bash
-curl https://localhost:20128/api/usage/analytics \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/analytics \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/call-logs
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/usage/analytics \
 Get call logs
 
 ```bash
-curl https://localhost:20128/api/usage/call-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/call-logs \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/call-logs/{id}
@@ -37,8 +37,8 @@ curl https://localhost:20128/api/usage/call-logs \
 Get a specific call log
 
 ```bash
-curl https://localhost:20128/api/usage/call-logs/{id} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/call-logs/{id} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/{connectionId}
@@ -46,8 +46,8 @@ curl https://localhost:20128/api/usage/call-logs/{id} \
 Get usage for a specific connection
 
 ```bash
-curl https://localhost:20128/api/usage/{connectionId} \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/{connectionId} \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/history
@@ -55,8 +55,8 @@ curl https://localhost:20128/api/usage/{connectionId} \
 Get usage history
 
 ```bash
-curl https://localhost:20128/api/usage/history \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/history \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/logs
@@ -64,8 +64,8 @@ curl https://localhost:20128/api/usage/history \
 Get usage logs
 
 ```bash
-curl https://localhost:20128/api/usage/logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/logs \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/proxy-logs
@@ -73,8 +73,8 @@ curl https://localhost:20128/api/usage/logs \
 Get proxy logs
 
 ```bash
-curl https://localhost:20128/api/usage/proxy-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/proxy-logs \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/request-logs
@@ -82,8 +82,8 @@ curl https://localhost:20128/api/usage/proxy-logs \
 Get request logs
 
 ```bash
-curl https://localhost:20128/api/usage/request-logs \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/request-logs \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/usage/budget
@@ -93,8 +93,8 @@ Get usage budget status
 Returns current budget limits and consumption.
 
 ```bash
-curl https://localhost:20128/api/usage/budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/usage/budget \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/usage/budget
@@ -104,8 +104,8 @@ Configure usage budget
 Set or update budget limits for usage tracking.
 
 ```bash
-curl -X POST https://localhost:20128/api/usage/budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/usage/budget \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```

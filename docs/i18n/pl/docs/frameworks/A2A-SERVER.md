@@ -1,18 +1,18 @@
-# OmniRoute A2A Server Documentation (Polski)
+# SZRoute A2A Server Documentation (Polski)
 
 🌐 **Languages:** 🇺🇸 [English](../../../../docs/A2A-SERVER.md) · 🇸🇦 [ar](../../ar/docs/A2A-SERVER.md) · 🇧🇬 [bg](../../bg/docs/A2A-SERVER.md) · 🇧🇩 [bn](../../bn/docs/A2A-SERVER.md) · 🇨🇿 [cs](../../cs/docs/A2A-SERVER.md) · 🇩🇰 [da](../../da/docs/A2A-SERVER.md) · 🇩🇪 [de](../../de/docs/A2A-SERVER.md) · 🇪🇸 [es](../../es/docs/A2A-SERVER.md) · 🇮🇷 [fa](../../fa/docs/A2A-SERVER.md) · 🇫🇮 [fi](../../fi/docs/A2A-SERVER.md) · 🇫🇷 [fr](../../fr/docs/A2A-SERVER.md) · 🇮🇳 [gu](../../gu/docs/A2A-SERVER.md) · 🇮🇱 [he](../../he/docs/A2A-SERVER.md) · 🇮🇳 [hi](../../hi/docs/A2A-SERVER.md) · 🇭🇺 [hu](../../hu/docs/A2A-SERVER.md) · 🇮🇩 [id](../../id/docs/A2A-SERVER.md) · 🇮🇹 [it](../../it/docs/A2A-SERVER.md) · 🇯🇵 [ja](../../ja/docs/A2A-SERVER.md) · 🇰🇷 [ko](../../ko/docs/A2A-SERVER.md) · 🇮🇳 [mr](../../mr/docs/A2A-SERVER.md) · 🇲🇾 [ms](../../ms/docs/A2A-SERVER.md) · 🇳🇱 [nl](../../nl/docs/A2A-SERVER.md) · 🇳🇴 [no](../../no/docs/A2A-SERVER.md) · 🇵🇭 [phi](../../phi/docs/A2A-SERVER.md) · 🇵🇱 [pl](../../pl/docs/A2A-SERVER.md) · 🇵🇹 [pt](../../pt/docs/A2A-SERVER.md) · 🇧🇷 [pt-BR](../../pt-BR/docs/A2A-SERVER.md) · 🇷🇴 [ro](../../ro/docs/A2A-SERVER.md) · 🇷🇺 [ru](../../ru/docs/A2A-SERVER.md) · 🇸🇰 [sk](../../sk/docs/A2A-SERVER.md) · 🇸🇪 [sv](../../sv/docs/A2A-SERVER.md) · 🇰🇪 [sw](../../sw/docs/A2A-SERVER.md) · 🇮🇳 [ta](../../ta/docs/A2A-SERVER.md) · 🇮🇳 [te](../../te/docs/A2A-SERVER.md) · 🇹🇭 [th](../../th/docs/A2A-SERVER.md) · 🇹🇷 [tr](../../tr/docs/A2A-SERVER.md) · 🇺🇦 [uk-UA](../../uk-UA/docs/A2A-SERVER.md) · 🇵🇰 [ur](../../ur/docs/A2A-SERVER.md) · 🇻🇳 [vi](../../vi/docs/A2A-SERVER.md) · 🇨🇳 [zh-CN](../../zh-CN/docs/A2A-SERVER.md)
 
 ---
 
-> Agent-to-Agent Protocol v0.3 — OmniRoute as an intelligent routing agent
+> Agent-to-Agent Protocol v0.3 — SZRoute as an intelligent routing agent
 
 ## Agent Discovery
 
 ```bash
-curl http://localhost:20128/.well-known/agent.json
+curl http://localhost:21128/.well-known/agent.json
 ```
 
-Returns the Agent Card describing OmniRoute's capabilities, skills, and authentication requirements.
+Returns the Agent Card describing SZRoute's capabilities, skills, and authentication requirements.
 
 ---
 
@@ -21,7 +21,7 @@ Returns the Agent Card describing OmniRoute's capabilities, skills, and authenti
 All `/a2a` requests require an API key via the `Authorization` header:
 
 ```
-Authorization: Bearer YOUR_OMNIROUTE_API_KEY
+Authorization: Bearer YOUR_SZROUTE_API_KEY
 ```
 
 If no API key is configured on the server, authentication is bypassed.
@@ -35,7 +35,7 @@ If no API key is configured on the server, authentication is bypassed.
 Sends a message to a skill and waits for the complete response.
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{
@@ -76,7 +76,7 @@ curl -X POST http://localhost:20128/a2a \
 Same as `message/send` but returns Server-Sent Events for real-time streaming.
 
 ```bash
-curl -N -X POST http://localhost:20128/a2a \
+curl -N -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{
@@ -103,7 +103,7 @@ data: {"jsonrpc":"2.0","method":"message/stream","params":{"task":{"id":"...","s
 ### `tasks/get` — Query Task Status
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{"jsonrpc":"2.0","id":"2","method":"tasks/get","params":{"taskId":"TASK_UUID"}}'
@@ -112,7 +112,7 @@ curl -X POST http://localhost:20128/a2a \
 ### `tasks/cancel` — Cancel a Task
 
 ```bash
-curl -X POST http://localhost:20128/a2a \
+curl -X POST http://localhost:21128/a2a \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
   -d '{"jsonrpc":"2.0","id":"3","method":"tasks/cancel","params":{"taskId":"TASK_UUID"}}'
@@ -124,7 +124,7 @@ curl -X POST http://localhost:20128/a2a \
 
 | Skill              | Description                                                                                                                     |
 | :----------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `smart-routing`    | Routes prompts through OmniRoute's intelligent pipeline. Returns response with routing explanation, cost, and resilience trace. |
+| `smart-routing`    | Routes prompts through SZRoute's intelligent pipeline. Returns response with routing explanation, cost, and resilience trace. |
 | `quota-management` | Answers natural-language queries about provider quotas, suggests free combos, and provides quota rankings.                      |
 
 ---
@@ -162,7 +162,7 @@ submitted → working → completed
 ```python
 import requests
 
-resp = requests.post("http://localhost:20128/a2a", json={
+resp = requests.post("http://localhost:21128/a2a", json={
     "jsonrpc": "2.0", "id": "1",
     "method": "message/send",
     "params": {
@@ -179,7 +179,7 @@ print(result["metadata"]["routing_explanation"])
 ### TypeScript (fetch)
 
 ```typescript
-const resp = await fetch("http://localhost:20128/a2a", {
+const resp = await fetch("http://localhost:21128/a2a", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

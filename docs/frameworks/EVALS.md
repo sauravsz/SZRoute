@@ -9,7 +9,7 @@ lastUpdated: 2026-05-13
 > **Source of truth:** `src/lib/evals/`, `src/lib/db/evals.ts`, `src/app/api/evals/`
 > **Last updated:** 2026-05-13 — v3.8.0
 
-OmniRoute ships a generic evaluation framework you can use to benchmark routing
+SZRoute ships a generic evaluation framework you can use to benchmark routing
 configurations, single providers/models, or the bundled "golden set" suites.
 Use it to verify routing changes, validate new providers, and gate releases
 before promoting them to production traffic.
@@ -128,7 +128,7 @@ part of the public proxy surface.
 ### Running a suite
 
 ```bash
-curl -X POST http://localhost:20128/api/evals \
+curl -X POST http://localhost:21128/api/evals \
   -H "Cookie: auth_token=..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -151,7 +151,7 @@ Optional fields:
 ### Creating a custom suite
 
 ```bash
-curl -X POST http://localhost:20128/api/evals/suites \
+curl -X POST http://localhost:21128/api/evals/suites \
   -H "Cookie: auth_token=..." \
   -H "Content-Type: application/json" \
   -d '{

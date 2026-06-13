@@ -1,12 +1,12 @@
 ---
-title: "Codex CLI — Configuration with OmniRoute"
+title: "Codex CLI — Configuration with SZRoute"
 version: 3.8.16
 lastUpdated: 2026-06-08
 ---
 
-# Codex CLI — Configuration with OmniRoute
+# Codex CLI — Configuration with SZRoute
 
-Complete guide for using the Codex CLI pointed at OmniRoute as an OpenAI-compatible backend.
+Complete guide for using the Codex CLI pointed at SZRoute as an OpenAI-compatible backend.
 
 ---
 
@@ -17,33 +17,33 @@ Replace `<YOUR_HOST>` and `<YOUR_KEY>` with your values:
 ```toml
 # ~/.codex/config.toml
 model                          = "cx/gpt-5.5"
-model_provider                 = "omniroute"
+model_provider                 = "szroute"
 model_reasoning_effort         = "xhigh"
 model_context_window           = 400000
 model_auto_compact_token_limit = 350000
 model_max_output_tokens        = 65536    # max tokens per response (model cap = 128k)
 tool_output_token_limit        = 32768    # history storage cap per tool call
 
-[model_providers.omniroute]
-name                 = "OmniRoute"
-base_url             = "http://<YOUR_HOST>:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+[model_providers.szroute]
+name                 = "SZRoute"
+base_url             = "http://<YOUR_HOST>:21128/v1"
+env_key              = "SZROUTE_API_KEY"
 requires_openai_auth = false
 wire_api             = "responses"
 ```
 
 ```bash
 # ~/.bashrc or ~/.zshrc — actual key value, never in config.toml
-export OMNIROUTE_API_KEY="<YOUR_KEY>"
+export SZROUTE_API_KEY="<YOUR_KEY>"
 ```
 
 > **Common host options**
 >
 > | Access | URL |
 > |--------|-----|
-> | Local network | `http://192.168.0.1:20128/v1` |
-> | Tailscale | `http://100.x.x.x:20128/v1` |
-> | Loopback | `http://localhost:20128/v1` |
+> | Local network | `http://192.168.0.1:21128/v1` |
+> | Tailscale | `http://100.x.x.x:21128/v1` |
+> | Loopback | `http://localhost:21128/v1` |
 
 ---
 
@@ -53,17 +53,17 @@ Codex CLI deprecated `wire_api = "chat"` (Chat Completions) in February 2026 and
 
 DeepSeek and Mistral only expose a Chat Completions endpoint — not the Responses API. If you pointed Codex directly at DeepSeek or Mistral, it would fail with a 404.
 
-**OmniRoute solves this transparently:**
+**SZRoute solves this transparently:**
 
 ```
 Codex CLI
   → wire_api = "responses"
-  → POST /v1/responses (OmniRoute)
-    → OmniRoute Responses ↔ Chat Completions transformer
+  → POST /v1/responses (SZRoute)
+    → SZRoute Responses ↔ Chat Completions transformer
     → POST /chat/completions (DeepSeek / Mistral / any provider)
 ```
 
-You never need a separate translation proxy (`codex-relay`, `LiteLLM`, etc.) when using OmniRoute. **All models use `wire_api = "responses"`** — OmniRoute handles the rest.
+You never need a separate translation proxy (`codex-relay`, `LiteLLM`, etc.) when using SZRoute. **All models use `wire_api = "responses"`** — SZRoute handles the rest.
 
 ---
 
@@ -90,7 +90,7 @@ If the session history exceeds the model's context window, the Codex CLI either 
 
 ### Context windows and output caps by model
 
-| Model | OmniRoute ID | Context window | Max output (model) | `model_max_output_tokens` | `auto_compact` | `tool_output_limit` |
+| Model | SZRoute ID | Context window | Max output (model) | `model_max_output_tokens` | `auto_compact` | `tool_output_limit` |
 |-------|-------------|----------------|--------------------|---------------------------|----------------|----------------------|
 | GPT-5.5 | `cx/gpt-5.5` | 1,050,000 (400k reliable) | **128,000** | 65,536 | 350,000 | 32,768 |
 | DeepSeek V4 Pro | `ds/deepseek-v4-pro` | 1,000,000 | **384,000** | 65,536 | 900,000 | 65,536 |
@@ -113,18 +113,18 @@ For models with smaller windows (Mistral 256k), compaction fires earlier and mor
 
 ## Model prefix: `cx/`
 
-All Codex models in OmniRoute use the `cx/` prefix:
+All Codex models in SZRoute use the `cx/` prefix:
 
-| Codex CLI name | OmniRoute model |
+| Codex CLI name | SZRoute model |
 |----------------|-----------------|
 | `cx/gpt-5.5` | GPT-5.5 standard |
 | `cx/gpt-5.4` | GPT-5.4 standard |
 | `cx/gpt-5.4-mini` | GPT-5.4 mini |
 | `cx/gpt-5.1-codex-mini` | GPT-5.1 Codex mini |
 
-Other providers use their own prefix (`ds/`, `mistral/`, etc.) — the prefix matches the OmniRoute provider alias.
+Other providers use their own prefix (`ds/`, `mistral/`, etc.) — the prefix matches the SZRoute provider alias.
 
-> **Never use bare `gpt-5.5` or `codex/gpt-5.5`** — OmniRoute does not recognize those formats for the Codex provider.
+> **Never use bare `gpt-5.5` or `codex/gpt-5.5`** — SZRoute does not recognize those formats for the Codex provider.
 
 ---
 
@@ -162,7 +162,7 @@ codex -c model_reasoning_effort=xhigh "design the auth module architecture"
 codex -m cx/gpt-5.4 -c model_reasoning_effort=medium "refactor the handler"
 ```
 
-> **About the default:** If `model_reasoning_effort` is not set, OmniRoute falls back to `"medium"`. Set it explicitly for serious engineering work.
+> **About the default:** If `model_reasoning_effort` is not set, SZRoute falls back to `"medium"`. Set it explicitly for serious engineering work.
 
 ---
 
@@ -211,7 +211,7 @@ codex -p chat "explain this function"
 #### `chat.config.toml` — no reasoning effort (server default = medium)
 ```toml
 model          = "cx/gpt-5.5"
-model_provider = "omniroute"
+model_provider = "szroute"
 # No model_reasoning_effort — uses server default (medium)
 ```
 
@@ -219,14 +219,14 @@ model_provider = "omniroute"
 ```toml
 model                  = "cx/gpt-5.5"
 model_reasoning_effort = "low"   # or medium / high / xhigh
-model_provider         = "omniroute"
+model_provider         = "szroute"
 ```
 Context window is inherited from `config.toml` (400k for gpt-5.5).
 
 #### `deepseek.config.toml` — DeepSeek V4 Pro, 1M context
 ```toml
 model          = "ds/deepseek-v4-pro"
-model_provider = "omniroute"
+model_provider = "szroute"
 
 model_context_window           = 1000000
 model_auto_compact_token_limit = 900000
@@ -237,7 +237,7 @@ tool_output_token_limit        = 65536
 #### `mistral.config.toml` — Mistral Large Latest, 256k context
 ```toml
 model          = "mistral/mistral-large-latest"
-model_provider = "omniroute"
+model_provider = "szroute"
 
 model_context_window           = 262144
 model_auto_compact_token_limit = 220000
@@ -267,7 +267,7 @@ Change only `model` and `model_provider` (and context window fields if the model
 
 ```toml
 model                         = "ds/deepseek-v4-pro"
-model_provider                = "omniroute"
+model_provider                = "szroute"
 model_context_window          = 1000000
 model_auto_compact_token_limit = 900000
 ```
@@ -276,31 +276,31 @@ model_auto_compact_token_limit = 900000
 
 ```toml
 model          = "cx/gpt-5.5"
-model_provider = "omniroute-main"
+model_provider = "szroute-main"
 
-[model_providers.omniroute-main]
-name                 = "OmniRoute (Main)"
-base_url             = "http://192.168.0.1:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+[model_providers.szroute-main]
+name                 = "SZRoute (Main)"
+base_url             = "http://192.168.0.1:21128/v1"
+env_key              = "SZROUTE_API_KEY"
 requires_openai_auth = false
 wire_api             = "responses"
 
-[model_providers.omniroute-tailscale]
-name                 = "OmniRoute (Tailscale)"
-base_url             = "http://100.x.x.x:20128/v1"
-env_key              = "OMNIROUTE_API_KEY"
+[model_providers.szroute-tailscale]
+name                 = "SZRoute (Tailscale)"
+base_url             = "http://100.x.x.x:21128/v1"
+env_key              = "SZROUTE_API_KEY"
 requires_openai_auth = false
 wire_api             = "responses"
 
-[model_providers.omniroute-staging]
-name                 = "OmniRoute (Staging)"
-base_url             = "http://192.168.0.2:20128/v1"
-env_key              = "OMNIROUTE_STAGING_KEY"
+[model_providers.szroute-staging]
+name                 = "SZRoute (Staging)"
+base_url             = "http://192.168.0.2:21128/v1"
+env_key              = "SZROUTE_STAGING_KEY"
 requires_openai_auth = false
 wire_api             = "responses"
 ```
 
-> All providers use `wire_api = "responses"` — OmniRoute handles translation for each upstream provider internally.
+> All providers use `wire_api = "responses"` — SZRoute handles translation for each upstream provider internally.
 
 ---
 
@@ -351,13 +351,13 @@ Inside an interactive session:
 ## Troubleshooting
 
 **`Error: model not found`**
-Verify the model exists in OmniRoute with the correct prefix. Open `/dashboard/providers/<provider>` and check available models.
+Verify the model exists in SZRoute with the correct prefix. Open `/dashboard/providers/<provider>` and check available models.
 
 **`Authentication error`**
-Confirm `OMNIROUTE_API_KEY` is exported: `echo $OMNIROUTE_API_KEY`.
+Confirm `SZROUTE_API_KEY` is exported: `echo $SZROUTE_API_KEY`.
 
 **`Connection refused`**
-Verify OmniRoute is running and the `base_url` host/port is correct for your network (local vs Tailscale vs VPS).
+Verify SZRoute is running and the `base_url` host/port is correct for your network (local vs Tailscale vs VPS).
 
 **Session crashes near context limit**
 Set `model_context_window` and `model_auto_compact_token_limit` explicitly for the model you are using. See the context window table above.
@@ -366,4 +366,4 @@ Set `model_context_window` and `model_auto_compact_token_limit` explicitly for t
 Lower `model_auto_compact_token_limit` to trigger compaction earlier (e.g. 75% of the window). Never set it above 90% — silently ignored.
 
 **DeepSeek / Mistral returns 404**
-You are likely pointing Codex directly at the provider API. Route through OmniRoute — it translates Responses API → Chat Completions automatically. Confirm `base_url` points to your OmniRoute instance, not directly to `api.deepseek.com` or `api.mistral.ai`.
+You are likely pointing Codex directly at the provider API. Route through SZRoute — it translates Responses API → Chat Completions automatically. Confirm `base_url` points to your SZRoute instance, not directly to `api.deepseek.com` or `api.mistral.ai`.

@@ -18,7 +18,7 @@ import {
   unwrapGeminiChunk,
 } from "./streamHelpers.ts";
 import { calculateCost } from "@/lib/usage/costCalculator";
-import { buildOmniRouteSseMetadataComment } from "@/domain/omnirouteResponseMeta";
+import { buildSZRouteSseMetadataComment } from "@/domain/szrouteResponseMeta";
 import {
   createStructuredSSECollector,
   buildStreamSummaryFromEvents,
@@ -137,7 +137,7 @@ function normalizeResponsesSseIds(payload: JsonRecord): boolean {
   return changed;
 }
 
-export const PENDING_REQUEST_CLEARED_MARKER = "__omniroutePendingRequestCleared";
+export const PENDING_REQUEST_CLEARED_MARKER = "__szroutePendingRequestCleared";
 
 function markPendingRequestCleared(error: Error): Error {
   (error as Error & Record<string, unknown>)[PENDING_REQUEST_CLEARED_MARKER] = true;
@@ -1083,7 +1083,7 @@ export function createSSEStream(options: StreamOptions = {}) {
     finalUsage: UsageTokenRecord | Record<string, unknown> | null | undefined
   ) => {
     const costUsd = finalUsage ? await calculateCost(provider, model, finalUsage) : 0;
-    const comment = buildOmniRouteSseMetadataComment({
+    const comment = buildSZRouteSseMetadataComment({
       provider,
       model,
       cacheHit: false,
@@ -1157,7 +1157,7 @@ export function createSSEStream(options: StreamOptions = {}) {
     item.summary = [
       {
         type: "summary_text",
-        text: "Codex is reasoning, but the upstream Responses API exposed this reasoning block only as encrypted state. OmniRoute cannot recover the private reasoning text.",
+        text: "Codex is reasoning, but the upstream Responses API exposed this reasoning block only as encrypted state. SZRoute cannot recover the private reasoning text.",
       },
     ];
     return true;
@@ -1678,7 +1678,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                   //
                   // For a malformed empty `choices: []` chunk WITHOUT valid usage we DROP
                   // it (log server-side only). We must NOT inject an assistant-content
-                  // chunk like "[OmniRoute] Upstream returned an empty response. Please
+                  // chunk like "[SZRoute] Upstream returned an empty response. Please
                   // retry." with finish_reason: "stop" — clients (Goose/opencode) feed that
                   // text back as a turn and spin in a retry loop. This restores the #3400
                   // behavior that #3422 inadvertently reverted (regression #3388/#3502).

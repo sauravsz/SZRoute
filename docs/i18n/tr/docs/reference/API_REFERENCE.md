@@ -4,7 +4,7 @@
 
 ---
 
-Complete reference for all OmniRoute API endpoints.
+Complete reference for all SZRoute API endpoints.
 
 ---
 
@@ -42,16 +42,16 @@ Content-Type: application/json
 
 | Header                   | Direction | Description                                      |
 | ------------------------ | --------- | ------------------------------------------------ |
-| `X-OmniRoute-No-Cache`   | Request   | Set to `true` to bypass cache                    |
-| `X-OmniRoute-Progress`   | Request   | Set to `true` for progress events                |
+| `X-SZRoute-No-Cache`   | Request   | Set to `true` to bypass cache                    |
+| `X-SZRoute-Progress`   | Request   | Set to `true` for progress events                |
 | `X-Session-Id`           | Request   | Sticky session key for external session affinity |
 | `x_session_id`           | Request   | Underscore variant also accepted (direct HTTP)   |
 | `Idempotency-Key`        | Request   | Dedup key (5s window)                            |
 | `X-Request-Id`           | Request   | Alternative dedup key                            |
-| `X-OmniRoute-Cache`      | Response  | `HIT` or `MISS` (non-streaming)                  |
-| `X-OmniRoute-Idempotent` | Response  | `true` if deduplicated                           |
-| `X-OmniRoute-Progress`   | Response  | `enabled` if progress tracking on                |
-| `X-OmniRoute-Session-Id` | Response  | Effective session ID used by OmniRoute           |
+| `X-SZRoute-Cache`      | Response  | `HIT` or `MISS` (non-streaming)                  |
+| `X-SZRoute-Idempotent` | Response  | `true` if deduplicated                           |
+| `X-SZRoute-Progress`   | Response  | `enabled` if progress tracking on                |
+| `X-SZRoute-Session-Id` | Response  | Effective session ID used by SZRoute           |
 
 > Nginx note: if you rely on underscore headers (for example `x_session_id`), enable `underscores_in_headers on;`.
 
@@ -350,7 +350,7 @@ Repairs missing or corrupted OAuth environment variables for a specific provider
 {
   "success": true,
   "repaired": ["CLAUDE_CODE_OAUTH_CLIENT_ID", "CLAUDE_CODE_OAUTH_CLIENT_SECRET"],
-  "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
+  "backupPath": "/home/user/.szroute/backups/env-repair-2026-04-11.bak"
 }
 ```
 
@@ -369,7 +369,7 @@ Transcribe audio files using Deepgram or AssemblyAI.
 **Request:**
 
 ```bash
-curl -X POST http://localhost:20128/v1/audio/transcriptions \
+curl -X POST http://localhost:21128/v1/audio/transcriptions \
   -H "Authorization: Bearer your-api-key" \
   -F "file=@recording.mp3" \
   -F "model=deepgram/nova-3"

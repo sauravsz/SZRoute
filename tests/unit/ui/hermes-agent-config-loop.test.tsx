@@ -60,8 +60,8 @@ beforeEach(() => {
             roles: {
               default: {
                 model: "openai/gpt-4o",
-                provider: "omniroute",
-                base_url: "http://localhost:20128",
+                provider: "szroute",
+                base_url: "http://localhost:21128",
               },
             },
           }),
@@ -91,7 +91,7 @@ function renderExpandedCard() {
       <HermesAgentToolCard
         tool={{ name: "Hermes Agent", description: "Hermes Agent" }}
         isExpanded={true}
-        baseUrl="http://localhost:20128"
+        baseUrl="http://localhost:21128"
         apiKeys={[{ id: "key-1" }]}
         activeProviders={[]}
         batchStatus={null}

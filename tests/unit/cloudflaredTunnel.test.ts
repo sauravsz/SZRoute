@@ -220,10 +220,10 @@ test("buildCloudflaredChildEnv injects discovered CA paths when the parent env o
 });
 
 test("getCloudflaredStartArgs keeps protocol selection out of argv", () => {
-  assert.deepEqual(getCloudflaredStartArgs("http://127.0.0.1:20128"), [
+  assert.deepEqual(getCloudflaredStartArgs("http://127.0.0.1:21128"), [
     "tunnel",
     "--url",
-    "http://127.0.0.1:20128",
+    "http://127.0.0.1:21128",
     "--no-autoupdate",
   ]);
 });
@@ -231,7 +231,7 @@ test("getCloudflaredStartArgs keeps protocol selection out of argv", () => {
 test("getCloudflaredTunnelStatus resets stale runtime state from a previous server process", async () => {
   const originalDataDir = process.env.DATA_DIR;
   const originalBinary = process.env.CLOUDFLARED_BIN;
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omniroute-cloudflared-"));
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "szroute-cloudflared-"));
   const binDir = path.join(tempDir, "bin");
   const binaryPath = path.join(binDir, "cloudflared");
   const stateDir = path.join(tempDir, "cloudflared");
@@ -254,7 +254,7 @@ test("getCloudflaredTunnelStatus resets stale runtime state from a previous serv
           pid: process.pid,
           publicUrl: "https://stale.trycloudflare.com",
           apiUrl: "https://stale.trycloudflare.com/v1",
-          targetUrl: "http://127.0.0.1:20128",
+          targetUrl: "http://127.0.0.1:21128",
           status: "running",
           lastError:
             "failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 7168 kiB, got: 416 kiB)",

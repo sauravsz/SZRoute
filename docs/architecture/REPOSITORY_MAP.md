@@ -7,14 +7,14 @@ lastUpdated: 2026-05-13
 # Repository Map
 
 > **One-line description for every directory and root file.**
-> Last updated: 2026-05-13 — OmniRoute v3.8.0
+> Last updated: 2026-05-13 — SZRoute v3.8.0
 >
 > Use this map to navigate the codebase quickly. For deep dives, follow links to dedicated docs.
 
 ## Top-level tree
 
 ```
-OmniRoute/
+SZRoute/
 ├── src/                  # Next.js 16 application (UI + API routes + libs + domain + server)
 ├── open-sse/             # Streaming engine workspace (handlers, executors, translator, MCP server)
 ├── electron/             # Desktop wrapper (Electron 41 + electron-builder 26.10)
@@ -80,7 +80,7 @@ OmniRoute/
 | **docker-compose.yml**                      | Dev compose with 4 profiles (base, cli, host, cliproxyapi) + redis sidecar                                                                      |
 | **docker-compose.prod.yml**                 | Production compose (port 20130, redis, named volumes)                                                                                           |
 | **.dockerignore**                           | Files excluded from Docker context                                                                                                              |
-| **fly.toml**                                | Fly.io deployment config (region `sin`, port 20128, /data volume)                                                                               |
+| **fly.toml**                                | Fly.io deployment config (region `sin`, port 21128, /data volume)                                                                               |
 | **.env.example**                            | Template env file (815 lines, auto-copied to `.env` on first install)                                                                           |
 | **.gitignore**                              | Git ignore patterns                                                                                                                             |
 | **.npmignore**                              | npm publish exclusion list                                                                                                                      |
@@ -238,7 +238,7 @@ src/
 
 ## `open-sse/` — Streaming Engine Workspace
 
-Separate npm workspace (`@omniroute/open-sse`). Handles request processing + provider execution.
+Separate npm workspace (`@szroute/open-sse`). Handles request processing + provider execution.
 
 ```
 open-sse/
@@ -280,7 +280,7 @@ open-sse/
 | File             | Purpose                                                                           |
 | ---------------- | --------------------------------------------------------------------------------- |
 | `main.js`        | Electron main process (BrowserWindow, embedded Next.js server, tray, auto-update) |
-| `preload.js`     | IPC bridge (contextBridge → `window.omniroute`)                                   |
+| `preload.js`     | IPC bridge (contextBridge → `window.szroute`)                                   |
 | `package.json`   | electron-builder config + Electron 41 + electron-builder 26.10 deps               |
 | `assets/`        | App icons (Windows .ico, macOS .icns, Linux .png)                                 |
 | `dist-electron/` | Build output (gitignored)                                                         |
@@ -293,7 +293,7 @@ open-sse/
 
 | File                                                                                                        | Purpose                                                                                                                    |
 | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `omniroute.mjs`                                                                                             | Main CLI entry — `omniroute serve`, `omniroute setup`, `omniroute doctor`, `omniroute providers`, `omniroute combos`, etc. |
+| `szroute.mjs`                                                                                             | Main CLI entry — `szroute serve`, `szroute setup`, `szroute doctor`, `szroute providers`, `szroute combos`, etc. |
 | `reset-password.mjs`                                                                                        | Standalone password reset CLI                                                                                              |
 | `cli/commands/setup.mjs`                                                                                    | Interactive + non-interactive setup wizard                                                                                 |
 | `cli/commands/doctor.mjs`                                                                                   | System health diagnostics (8+ checks)                                                                                      |
@@ -313,7 +313,7 @@ open-sse/
 
 | File                         | Purpose                                                                            |
 | ---------------------------- | ---------------------------------------------------------------------------------- |
-| `skills/omniroute*/SKILL.md` | 10 skill manifests for external AI agents (Claude Desktop, ChatGPT, Cursor, Cline) |
+| `skills/szroute*/SKILL.md` | 10 skill manifests for external AI agents (Claude Desktop, ChatGPT, Cursor, Cline) |
 
 ---
 
@@ -375,7 +375,7 @@ open-sse/
 | `RELEASE_CHECKLIST.md`      | Full release flow (skills, husky, conventional commits, deploy)                       |
 | `COVERAGE_PLAN.md`          | Coverage goals and current state                                                      |
 | `FREE_TIERS.md`             | Curated free-tier providers (48+ free + 11 OAuth)                                     |
-| `CLI-TOOLS.md`              | External CLI integrations + Internal OmniRoute CLI                                    |
+| `CLI-TOOLS.md`              | External CLI integrations + Internal SZRoute CLI                                    |
 | `I18N.md`                   | i18n architecture, adding a language, 30 locales                                      |
 | `UNINSTALL.md`              | Clean uninstall steps                                                                 |
 | `PROVIDER_REFERENCE.md`     | **Auto-generated** catalog of 177 providers (regen: `npm run gen:provider-reference`) |
@@ -512,7 +512,7 @@ Shipped configuration templates and sample files (referenced by setup wizard).
 These underscore-prefixed directories hold non-shipping content:
 
 - **`_ideia/`** — design notes (defer / notfit / viable categories)
-- **`_mono_repo/`** — historic subprojects (omnirouteCloud, omnirouteSite, vscode-extension)
+- **`_mono_repo/`** — historic subprojects (szrouteCloud, szrouteSite, vscode-extension)
 - **`_references/`** — read-only clones of related OSS projects (LiteLLM, 9router, ClawRouter, CLIProxyAPI, modelrelay, new-api, etc.) for cross-reference during development
 - **`_tasks/`** — per-release task tracking files (informal)
 

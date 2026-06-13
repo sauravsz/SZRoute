@@ -1,26 +1,26 @@
 /**
- * OmniRoute MCP Advanced Tools — 13 intelligence tools that differentiate
- * OmniRoute from all other AI gateways.
+ * SZRoute MCP Advanced Tools — 13 intelligence tools that differentiate
+ * SZRoute from all other AI gateways.
  *
  * Tools:
- *   1. omniroute_simulate_route     — Dry-run routing simulation
- *   2. omniroute_set_budget_guard   — Session budget with degrade/block/alert
- *   3. omniroute_set_routing_strategy — Runtime strategy switch for combos
- *   4. omniroute_set_resilience_profile — Circuit breaker/retry profiles
- *   5. omniroute_test_combo         — Live test each provider in a combo
- *   6. omniroute_get_provider_metrics — Detailed per-provider metrics
- *   7. omniroute_best_combo_for_task — AI-powered combo recommendation
- *   8. omniroute_explain_route      — Post-hoc routing decision explainer
- *   9. omniroute_get_session_snapshot — Full session state snapshot
- *  10. omniroute_db_health_check   — Diagnose and repair DB state drift
- *  11. omniroute_sync_pricing      — Sync provider pricing from external source
- *  12. omniroute_cache_stats       — Cache statistics and hit rates
- *  13. omniroute_cache_flush       — Flush/invalidate cache entries
+ *   1. szroute_simulate_route     — Dry-run routing simulation
+ *   2. szroute_set_budget_guard   — Session budget with degrade/block/alert
+ *   3. szroute_set_routing_strategy — Runtime strategy switch for combos
+ *   4. szroute_set_resilience_profile — Circuit breaker/retry profiles
+ *   5. szroute_test_combo         — Live test each provider in a combo
+ *   6. szroute_get_provider_metrics — Detailed per-provider metrics
+ *   7. szroute_best_combo_for_task — AI-powered combo recommendation
+ *   8. szroute_explain_route      — Post-hoc routing decision explainer
+ *   9. szroute_get_session_snapshot — Full session state snapshot
+ *  10. szroute_db_health_check   — Diagnose and repair DB state drift
+ *  11. szroute_sync_pricing      — Sync provider pricing from external source
+ *  12. szroute_cache_stats       — Cache statistics and hit rates
+ *  13. szroute_cache_flush       — Flush/invalidate cache entries
  */
 
 import { logToolCall } from "../audit.ts";
 import { normalizeQuotaResponse } from "../../../src/shared/contracts/quota.ts";
-import { resolveOmniRouteBaseUrl } from "../../../src/shared/utils/resolveOmniRouteBaseUrl.ts";
+import { resolveSZRouteBaseUrl } from "../../../src/shared/utils/resolveSZRouteBaseUrl.ts";
 import {
   getComboModelProvider,
   getComboModelString,
@@ -32,14 +32,14 @@ import type {
 } from "../../../src/shared/constants/routingStrategies.ts";
 import { normalizeRoutingStrategy } from "../../../src/shared/constants/routingStrategies.ts";
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const SZROUTE_BASE_URL = resolveSZRouteBaseUrl();
+const SZROUTE_API_KEY = process.env.SZROUTE_API_KEY || "";
 
 async function apiFetch(path: string, options: RequestInit = {}): Promise<unknown> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+  const url = `${SZROUTE_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(SZROUTE_API_KEY ? { Authorization: `Bearer ${SZROUTE_API_KEY}` } : {}),
     ...((options.headers as Record<string, string>) || {}),
   };
   const response = await fetch(url, { ...options, headers, signal: AbortSignal.timeout(30000) });
@@ -316,11 +316,11 @@ export async function handleSimulateRoute(args: {
       },
     };
 
-    await logToolCall("omniroute_simulate_route", args, result, Date.now() - start, true);
+    await logToolCall("szroute_simulate_route", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_simulate_route", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_simulate_route", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -361,7 +361,7 @@ export async function handleSetBudgetGuard(args: {
     };
 
     await logToolCall(
-      "omniroute_set_budget_guard",
+      "szroute_set_budget_guard",
       { maxCost: args.maxCost, action: args.action },
       result,
       Date.now() - start,
@@ -370,7 +370,7 @@ export async function handleSetBudgetGuard(args: {
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_set_budget_guard", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_set_budget_guard", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -391,7 +391,7 @@ export async function handleSetRoutingStrategy(args: {
     if (!combo) {
       const msg = `Combo '${args.comboId}' not found`;
       await logToolCall(
-        "omniroute_set_routing_strategy",
+        "szroute_set_routing_strategy",
         args,
         null,
         Date.now() - start,
@@ -405,7 +405,7 @@ export async function handleSetRoutingStrategy(args: {
     if (!comboId) {
       const msg = "Matched combo has no id";
       await logToolCall(
-        "omniroute_set_routing_strategy",
+        "szroute_set_routing_strategy",
         args,
         null,
         Date.now() - start,
@@ -463,11 +463,11 @@ export async function handleSetRoutingStrategy(args: {
       },
     };
 
-    await logToolCall("omniroute_set_routing_strategy", args, result, Date.now() - start, true);
+    await logToolCall("szroute_set_routing_strategy", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_set_routing_strategy", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_set_routing_strategy", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -485,7 +485,7 @@ export async function handleSetResilienceProfile(args: {
       };
     }
 
-    // Apply to OmniRoute via API using the plan-aligned resilience structure.
+    // Apply to SZRoute via API using the plan-aligned resilience structure.
     await apiFetch("/api/resilience", {
       method: "PATCH",
       body: JSON.stringify(settings),
@@ -493,12 +493,12 @@ export async function handleSetResilienceProfile(args: {
 
     const result = { applied: true, profile: args.profile, settings };
 
-    await logToolCall("omniroute_set_resilience_profile", args, result, Date.now() - start, true);
+    await logToolCall("szroute_set_resilience_profile", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     await logToolCall(
-      "omniroute_set_resilience_profile",
+      "szroute_set_resilience_profile",
       args,
       null,
       Date.now() - start,
@@ -602,7 +602,7 @@ export async function handleTestCombo(args: { comboId: string; testPrompt: strin
     };
 
     await logToolCall(
-      "omniroute_test_combo",
+      "szroute_test_combo",
       { comboId: args.comboId },
       result.summary,
       Date.now() - start,
@@ -611,7 +611,7 @@ export async function handleTestCombo(args: { comboId: string; testPrompt: strin
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_test_combo", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_test_combo", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -657,11 +657,11 @@ export async function handleGetProviderMetrics(args: { provider: string }) {
         : { used: 0, total: null, resetAt: null },
     };
 
-    await logToolCall("omniroute_get_provider_metrics", args, result, Date.now() - start, true);
+    await logToolCall("szroute_get_provider_metrics", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_get_provider_metrics", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_get_provider_metrics", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -735,7 +735,7 @@ export async function handleBestComboForTask(args: {
     };
 
     await logToolCall(
-      "omniroute_best_combo_for_task",
+      "szroute_best_combo_for_task",
       args,
       result.recommendedCombo,
       Date.now() - start,
@@ -744,7 +744,7 @@ export async function handleBestComboForTask(args: {
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_best_combo_for_task", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_best_combo_for_task", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -798,7 +798,7 @@ export async function handleExplainRoute(args: { requestId: string }) {
         };
 
     await logToolCall(
-      "omniroute_explain_route",
+      "szroute_explain_route",
       args,
       { requestId: args.requestId },
       Date.now() - start,
@@ -807,7 +807,7 @@ export async function handleExplainRoute(args: { requestId: string }) {
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_explain_route", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_explain_route", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -825,11 +825,11 @@ export async function handleSyncPricing(args: { sources?: string[]; dryRun?: boo
       })
     );
 
-    await logToolCall("omniroute_sync_pricing", args, result, Date.now() - start, true);
+    await logToolCall("szroute_sync_pricing", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_sync_pricing", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_sync_pricing", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -873,7 +873,7 @@ export async function handleGetSessionSnapshot() {
     };
 
     await logToolCall(
-      "omniroute_get_session_snapshot",
+      "szroute_get_session_snapshot",
       {},
       { requestCount: result.requestCount },
       Date.now() - start,
@@ -882,7 +882,7 @@ export async function handleGetSessionSnapshot() {
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_get_session_snapshot", {}, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_get_session_snapshot", {}, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -896,7 +896,7 @@ export async function handleDbHealthCheck(args: { autoRepair?: boolean }) {
     const result = runManagedDbHealthCheck({ autoRepair });
 
     await logToolCall(
-      "omniroute_db_health_check",
+      "szroute_db_health_check",
       args,
       {
         isHealthy: toBoolean(result.isHealthy, false),
@@ -909,7 +909,7 @@ export async function handleDbHealthCheck(args: { autoRepair?: boolean }) {
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_db_health_check", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_db_health_check", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -954,11 +954,11 @@ export async function handleCacheStats() {
         : undefined,
     };
 
-    await logToolCall("omniroute_cache_stats", {}, result, Date.now() - start, true);
+    await logToolCall("szroute_cache_stats", {}, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_cache_stats", {}, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_cache_stats", {}, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -991,11 +991,11 @@ export async function handleCacheFlush(args: { signature?: string; model?: strin
       scope,
     };
 
-    await logToolCall("omniroute_cache_flush", args, result, Date.now() - start, true);
+    await logToolCall("szroute_cache_flush", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_cache_flush", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_cache_flush", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -1031,11 +1031,11 @@ export async function handleOneproxyFetch(
     }));
 
     const result = { items, total: toNumber(raw.total, items.length) };
-    await logToolCall("omniroute_oneproxy_fetch", args, result, Date.now() - start, true);
+    await logToolCall("szroute_oneproxy_fetch", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_oneproxy_fetch", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_oneproxy_fetch", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -1065,11 +1065,11 @@ export async function handleOneproxyRotate(
       latencyMs: raw.latency_ms != null ? toNumber(raw.latency_ms) : null,
     };
 
-    await logToolCall("omniroute_oneproxy_rotate", args, result, Date.now() - start, true);
+    await logToolCall("szroute_oneproxy_rotate", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_oneproxy_rotate", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_oneproxy_rotate", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }
@@ -1107,11 +1107,11 @@ export async function handleOneproxyStats(args: Record<string, never> = {}) {
     };
 
     const result = { stats, status };
-    await logToolCall("omniroute_oneproxy_stats", args, result, Date.now() - start, true);
+    await logToolCall("szroute_oneproxy_stats", args, result, Date.now() - start, true);
     return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await logToolCall("omniroute_oneproxy_stats", args, null, Date.now() - start, false, msg);
+    await logToolCall("szroute_oneproxy_stats", args, null, Date.now() - start, false, msg);
     return { content: [{ type: "text" as const, text: `Error: ${msg}` }], isError: true };
   }
 }

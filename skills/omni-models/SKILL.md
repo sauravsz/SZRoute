@@ -21,8 +21,8 @@ List available models
 Returns all models available across configured providers.
 
 ```bash
-curl https://localhost:20128/api/v1/models \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/v1/models \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/models
@@ -30,8 +30,8 @@ curl https://localhost:20128/api/v1/models \
 List models (management)
 
 ```bash
-curl https://localhost:20128/api/models \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/models \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### POST /api/models/alias
@@ -39,8 +39,8 @@ curl https://localhost:20128/api/models \
 Create or update a model alias
 
 ```bash
-curl -X POST https://localhost:20128/api/models/alias \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/models/alias \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -50,8 +50,8 @@ curl -X POST https://localhost:20128/api/models/alias \
 Get full model catalog
 
 ```bash
-curl https://localhost:20128/api/models/catalog \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/models/catalog \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads

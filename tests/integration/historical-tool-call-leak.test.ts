@@ -6,8 +6,8 @@
  * never reproduces leaky annotation text in its output.
  *
  * Uses same env vars as tests/manual/gemini.http:
- *   OMNIROUTE_URL             — base URL (default http://localhost:20128)
- *   OMNIROUTE_API_KEY         — API key for auth
+ *   SZROUTE_URL             — base URL (default http://localhost:21128)
+ *   SZROUTE_API_KEY         — API key for auth
  *   TEST_GEMINI_MODEL         — model override (default gemini/gemma-4-31b-it)
  *   TEST_THINKING_GEMINI_MODEL — thinking model override, skipped if unset
  */
@@ -15,14 +15,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const API_KEY = process.env.OMNIROUTE_API_KEY;
-const BASE_URL = process.env.OMNIROUTE_URL || "http://localhost:20128";
+const API_KEY = process.env.SZROUTE_API_KEY;
+const BASE_URL = process.env.SZROUTE_URL || "http://localhost:21128";
 const MODEL = process.env.TEST_GEMINI_MODEL || "gemini/gemma-4-31b-it";
 const THINKING_MODEL = process.env.TEST_THINKING_GEMINI_MODEL || "gemini/gemini-2.5-flash";
 const NUM_HISTORICAL_ROUNDS = 15;
 
-const skip = !API_KEY ? "OMNIROUTE_API_KEY not set — skipping live test" : undefined;
-const skipThinking = !API_KEY ? "OMNIROUTE_API_KEY not set — skipping live test" : undefined;
+const skip = !API_KEY ? "SZROUTE_API_KEY not set — skipping live test" : undefined;
+const skipThinking = !API_KEY ? "SZROUTE_API_KEY not set — skipping live test" : undefined;
 
 const LEAK_PATTERNS = [
   "Historical tool-call record only",

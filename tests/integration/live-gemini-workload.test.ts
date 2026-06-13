@@ -1,12 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const API_KEY = process.env.OMNIROUTE_API_KEY;
-const BASE_URL = process.env.OMNIROUTE_URL || "http://localhost:3000";
+const API_KEY = process.env.SZROUTE_API_KEY;
+const BASE_URL = process.env.SZROUTE_URL || "http://localhost:3000";
 const MODEL = process.env.TEST_GEMINI_MODEL || "default";
 const NUM_REQUESTS = 25;
 
-const skip = !API_KEY ? "OMNIROUTE_API_KEY not set — skipping live test" : undefined;
+const skip = !API_KEY ? "SZROUTE_API_KEY not set — skipping live test" : undefined;
 
 // --------------------------------------------------------------------------
 // Test Data Generator

@@ -24,10 +24,10 @@
       "@/*": [
         "./src/*"
       ],
-      "@omniroute/open-sse": [
+      "@szroute/open-sse": [
         "./open-sse"
       ],
-      "@omniroute/open-sse/*": [
+      "@szroute/open-sse/*": [
         "./open-sse/*"
       ]
     },
@@ -62,7 +62,7 @@
     "_tasks",
     "_mono_repo",
     "_references",
-    "omnirouteCloud",
-    "omnirouteSite"
+    "szrouteCloud",
+    "szrouteSite"
   ]
 }

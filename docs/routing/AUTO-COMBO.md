@@ -1,10 +1,10 @@
 ---
-title: "OmniRoute Auto-Combo Engine"
+title: "SZRoute Auto-Combo Engine"
 version: 3.8.2
 lastUpdated: 2026-05-13
 ---
 
-# OmniRoute Auto-Combo Engine
+# SZRoute Auto-Combo Engine
 
 > **For Users**: Looking for a quick start? See the [Auto-Combo User Guide](../getting-started/AUTO-COMBO-GUIDE.md) for simple explanations and examples.
 
@@ -30,7 +30,7 @@ lastUpdated: 2026-05-13
 
 ```bash
 # Any IDE or CLI tool that supports OpenAI format
-Base URL: http://localhost:20128/v1
+Base URL: http://localhost:21128/v1
 API Key:  <your-endpoint-key>
 
 # In your code/config, set model to:
@@ -42,7 +42,7 @@ model: "auto/cheap"           # cheapest per token
 
 **What happens:**
 
-1. OmniRoute detects `auto/` prefix in `src/sse/handlers/chat.ts`
+1. SZRoute detects `auto/` prefix in `src/sse/handlers/chat.ts`
 2. Queries all **active provider connections** from the database
 3. Filters to those with valid credentials (API key or OAuth token)
 4. Determines the model per connection (`connection.defaultModel` or provider's first model)
@@ -128,7 +128,7 @@ Notes:
 
 ## All Routing Strategies
 
-OmniRoute's combo engine supports **14 routing strategies** (declared in `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). The Auto Combo engine itself is exposed under the `auto` strategy; the others are available for persisted combos.
+SZRoute's combo engine supports **14 routing strategies** (declared in `src/shared/constants/routingStrategies.ts` → `ROUTING_STRATEGY_VALUES`). The Auto Combo engine itself is exposed under the `auto` strategy; the others are available for persisted combos.
 
 | Strategy            | Description                                                        |
 | :------------------ | :----------------------------------------------------------------- |
@@ -186,13 +186,13 @@ For discovery, `GET /api/combos/auto` lists every variant with its resolved cand
 
 ```bash
 # Zero-config usage (no combo creation)
-curl -X POST http://localhost:20128/v1/chat/completions \
+curl -X POST http://localhost:21128/v1/chat/completions \
   -H "Authorization: Bearer <key>" \
   -H "Content-Type: application/json" \
   -d '{"model":"auto/coding","messages":[{"role":"user","content":"Hello"}]}'
 
 # Persisted auto combo via the regular combos endpoint
-curl -X POST http://localhost:20128/api/combos \
+curl -X POST http://localhost:21128/api/combos \
   -H "Content-Type: application/json" \
   -d '{"id":"my-auto","name":"Auto Coder","strategy":"auto","config":{"auto":{"candidatePool":["anthropic","google","openai"],"weights":{"quota":0.15,"health":0.3,"costInv":0.05,"latencyInv":0.35,"taskFit":0.1,"stability":0,"tierPriority":0.05}}}}'
 ```
@@ -385,7 +385,7 @@ follow-up requests (e.g., for caching, context continuity, or pricing consistenc
 You can register your own `RouterStrategy` implementation via the public API:
 
 ```ts
-import { registerStrategy, type RouterStrategy } from "@omniroute/open-sse/services/autoCombo/routerStrategy";
+import { registerStrategy, type RouterStrategy } from "@szroute/open-sse/services/autoCombo/routerStrategy";
 
 class MyCustomStrategy implements RouterStrategy {
   readonly name = "my-custom";

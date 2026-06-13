@@ -27,7 +27,7 @@ const ALLOWED_RESPONSES_USAGE_FIELDS = new Set([
 
 type JsonRecord = Record<string, unknown>;
 
-export const OMIT_STREAMING_CHUNK_MARKER = "__omniroute_omit_streaming_chunk";
+export const OMIT_STREAMING_CHUNK_MARKER = "__szroute_omit_streaming_chunk";
 
 const DEEPSEEK_V4_SANITIZER_MODEL_PATTERN = /deepseek[-/]v4/i;
 

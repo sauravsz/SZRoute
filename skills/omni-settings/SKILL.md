@@ -19,8 +19,8 @@ All requests require a valid Bearer token or session cookie. Obtain a token via 
 Get application settings
 
 ```bash
-curl https://localhost:20128/api/settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PATCH /api/settings
@@ -28,8 +28,8 @@ curl https://localhost:20128/api/settings \
 Update settings
 
 ```bash
-curl -X PATCH https://localhost:20128/api/settings \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PATCH https://localhost:21128/api/settings \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -39,8 +39,8 @@ curl -X PATCH https://localhost:20128/api/settings \
 Get global compression settings
 
 ```bash
-curl https://localhost:20128/api/settings/compression \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/compression \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PUT /api/settings/compression
@@ -48,8 +48,8 @@ curl https://localhost:20128/api/settings/compression \
 Update global compression settings
 
 ```bash
-curl -X PUT https://localhost:20128/api/settings/compression \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PUT https://localhost:21128/api/settings/compression \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -65,8 +65,8 @@ Requires a dashboard management session cookie when management auth is enabled.
 
 
 ```bash
-curl https://localhost:20128/api/settings/payload-rules \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/payload-rules \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PUT /api/settings/payload-rules
@@ -80,8 +80,8 @@ Requires a dashboard management session cookie when management auth is enabled.
 
 
 ```bash
-curl -X PUT https://localhost:20128/api/settings/payload-rules \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PUT https://localhost:21128/api/settings/payload-rules \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -91,8 +91,8 @@ curl -X PUT https://localhost:20128/api/settings/payload-rules \
 Get combo default settings
 
 ```bash
-curl https://localhost:20128/api/settings/combo-defaults \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/combo-defaults \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### GET /api/settings/proxy
@@ -100,8 +100,8 @@ curl https://localhost:20128/api/settings/combo-defaults \
 Get proxy settings
 
 ```bash
-curl https://localhost:20128/api/settings/proxy \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/proxy \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PATCH /api/settings/proxy
@@ -109,8 +109,8 @@ curl https://localhost:20128/api/settings/proxy \
 Update proxy settings
 
 ```bash
-curl -X PATCH https://localhost:20128/api/settings/proxy \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PATCH https://localhost:21128/api/settings/proxy \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -120,8 +120,8 @@ curl -X PATCH https://localhost:20128/api/settings/proxy \
 Test proxy connection
 
 ```bash
-curl -X POST https://localhost:20128/api/settings/proxy/test \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/settings/proxy/test \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -131,8 +131,8 @@ curl -X POST https://localhost:20128/api/settings/proxy/test \
 Toggle login requirement
 
 ```bash
-curl -X POST https://localhost:20128/api/settings/require-login \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X POST https://localhost:21128/api/settings/require-login \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -144,8 +144,8 @@ Get IP filter configuration
 Returns the current IP filter settings including blacklist, whitelist, and temp bans.
 
 ```bash
-curl https://localhost:20128/api/settings/ip-filter \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/ip-filter \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PUT /api/settings/ip-filter
@@ -156,8 +156,8 @@ Configure IP filtering with blacklist/whitelist modes, add/remove individual IPs
 
 
 ```bash
-curl -X PUT https://localhost:20128/api/settings/ip-filter \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PUT https://localhost:21128/api/settings/ip-filter \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -169,8 +169,8 @@ Get system prompt configuration
 Returns the current system prompt injection settings.
 
 ```bash
-curl https://localhost:20128/api/settings/system-prompt \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/system-prompt \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PUT /api/settings/system-prompt
@@ -178,8 +178,8 @@ curl https://localhost:20128/api/settings/system-prompt \
 Update system prompt configuration
 
 ```bash
-curl -X PUT https://localhost:20128/api/settings/system-prompt \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PUT https://localhost:21128/api/settings/system-prompt \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -191,8 +191,8 @@ Get thinking budget configuration
 Returns the current thinking/reasoning budget settings for AI models.
 
 ```bash
-curl https://localhost:20128/api/settings/thinking-budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/settings/thinking-budget \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ### PUT /api/settings/thinking-budget
@@ -200,8 +200,8 @@ curl https://localhost:20128/api/settings/thinking-budget \
 Update thinking budget configuration
 
 ```bash
-curl -X PUT https://localhost:20128/api/settings/thinking-budget \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl -X PUT https://localhost:21128/api/settings/thinking-budget \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -213,8 +213,8 @@ List Ollama-compatible model tags
 Returns models in Ollama /api/tags format for Ollama client compatibility
 
 ```bash
-curl https://localhost:20128/api/tags \
-  -H "Authorization: Bearer $OMNIROUTE_TOKEN"
+curl https://localhost:21128/api/tags \
+  -H "Authorization: Bearer $SZROUTE_TOKEN"
 ```
 
 ## Payloads

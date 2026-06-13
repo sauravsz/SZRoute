@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ConfirmModal, RequestLoggerV2 } from "@/shared/components";
+import { RequestLoggerV2 } from "@/shared/components";
 import EmailPrivacyToggle from "@/shared/components/EmailPrivacyToggle";
 import { useTranslations } from "next-intl";
+import { useSystemDialog } from "@/shared/hooks/useElectron";
+import { CopyPlus, FileOutput } from "lucide-react";
 
 const TIME_RANGES = [
   { label: "1h", hours: 1 },
@@ -15,13 +17,20 @@ const TIME_RANGES = [
 export default function LogsPage() {
   const [showExport, setShowExport] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [showCleanHistory, setShowCleanHistory] = useState(false);
   const [cleaningHistory, setCleaningHistory] = useState(false);
   const [cleanHistoryStatus, setCleanHistoryStatus] = useState<string | null>(null);
   const [requestLogKey, setRequestLogKey] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const requestLoggerRef = useRef<any>(null);
   const t = useTranslations("logs");
+  const { showMessageBox, openWindow } = useSystemDialog();
+  const [isWindowMode, setIsWindowMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsWindowMode(new URLSearchParams(window.location.search).get("windowMode") === "true");
+    }
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -47,7 +56,7 @@ export default function LogsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `omniroute-${logType}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `szroute-${logType}-${hours}h-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -60,8 +69,17 @@ export default function LogsPage() {
   }
 
   async function handleCleanHistory() {
+    const confirmed = await showMessageBox({
+      type: "question",
+      message: "Clean log history?",
+      detail: "This clears expired log history and prunes related artifacts using the current retention policy. The live page will refresh after cleanup.",
+      buttons: ["Clean history", "Cancel"],
+      defaultId: 1,
+      cancelId: 1,
+    });
+    if (confirmed !== 0) return;
+
     setCleaningHistory(true);
-    setShowCleanHistory(false);
     setCleanHistoryStatus(null);
     try {
       const res = await fetch("/api/settings/purge-logs", { method: "POST" });
@@ -95,11 +113,21 @@ export default function LogsPage() {
         <h2 className="text-lg font-semibold text-text-main">{t("requestLogs")}</h2>
 
         <div className="flex items-center gap-2">
+          {!isWindowMode && (
+            <button
+              onClick={() => openWindow("/dashboard/logs", { width: 1000, height: 800, title: "Detached Logs" })}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200"
+            >
+              <CopyPlus size={16} />
+              Pop Out
+            </button>
+          )}
+
           <EmailPrivacyToggle size="md" />
 
           <button
             id="clean-log-history-btn"
-            onClick={() => setShowCleanHistory(true)}
+            onClick={handleCleanHistory}
             disabled={cleaningHistory}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
               border border-red-500/30 bg-red-500/10 text-red-200 hover:bg-red-500/20
@@ -134,20 +162,7 @@ export default function LogsPage() {
                 hover:border-[var(--accent,#7c3aed)] transition-all duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path
-                  d="M8 2v8m0 0l-3-3m3 3l3-3M3 12h10"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <FileOutput size={16} />
               {exporting ? t("exporting") : t("export")}
             </button>
 
@@ -190,17 +205,6 @@ export default function LogsPage() {
       <div className="flex-1 min-h-0 overflow-hidden">
         <RequestLoggerV2 key={requestLogKey} ref={requestLoggerRef} initialSelectedId={initialId} />
       </div>
-
-      <ConfirmModal
-        isOpen={showCleanHistory}
-        onClose={() => setShowCleanHistory(false)}
-        onConfirm={handleCleanHistory}
-        title="Clean log history?"
-        message="This clears expired log history and prunes related artifacts using the current retention policy. The live page will refresh after cleanup."
-        confirmText="Clean history"
-        cancelText="Cancel"
-        loading={cleaningHistory}
-      />
     </div>
   );
 }

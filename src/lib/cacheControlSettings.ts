@@ -6,7 +6,7 @@
  */
 
 import { getSettings } from "./db/settings";
-import type { CacheControlMode } from "@omniroute/open-sse/utils/cacheControlPolicy";
+import type { CacheControlMode } from "@szroute/open-sse/utils/cacheControlPolicy";
 
 let cachedSettings: CacheControlMode | null = null;
 

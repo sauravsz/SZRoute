@@ -5,7 +5,7 @@
  */
 
 import type { A2ATask, TaskArtifact } from "../taskManager";
-import { resolveOmniRouteBaseUrl } from "@/shared/utils/resolveOmniRouteBaseUrl";
+import { resolveSZRouteBaseUrl } from "@/shared/utils/resolveSZRouteBaseUrl";
 import { formatCost } from "@/shared/utils/formatting";
 
 type AnalyticsRecord = Record<string, unknown>;
@@ -17,8 +17,8 @@ type CostEntry = {
   tokens: number;
 };
 
-const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
-const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
+const SZROUTE_BASE_URL = resolveSZRouteBaseUrl();
+const SZROUTE_API_KEY = process.env.SZROUTE_API_KEY || "";
 
 function detectRange(task: A2ATask): string {
   const metadataRange = task.input.metadata?.range;
@@ -33,10 +33,10 @@ function detectRange(task: A2ATask): string {
 }
 
 async function costFetch(path: string): Promise<AnalyticsRecord> {
-  const url = `${OMNIROUTE_BASE_URL}${path}`;
+  const url = `${SZROUTE_BASE_URL}${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(OMNIROUTE_API_KEY ? { Authorization: `Bearer ${OMNIROUTE_API_KEY}` } : {}),
+    ...(SZROUTE_API_KEY ? { Authorization: `Bearer ${SZROUTE_API_KEY}` } : {}),
   };
   const response = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
   if (!response.ok) {

@@ -3,8 +3,8 @@ import {
   antigravityNativeOAuthUserAgent,
   getAntigravityHeaders,
   getAntigravityLoadCodeAssistMetadata,
-} from "@omniroute/open-sse/services/antigravityHeaders.ts";
-import { extractCodeAssistOnboardTierId } from "@omniroute/open-sse/services/codeAssistSubscription.ts";
+} from "@szroute/open-sse/services/antigravityHeaders.ts";
+import { extractCodeAssistOnboardTierId } from "@szroute/open-sse/services/codeAssistSubscription.ts";
 
 async function fetchFirstOk(endpoints: string[], init: RequestInit) {
   let lastError: unknown = null;

@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const API_KEY = process.env.OMNIROUTE_API_KEY;
-const BASE_URL = process.env.OMNIROUTE_URL || "http://localhost:20128";
+const API_KEY = process.env.SZROUTE_API_KEY;
+const BASE_URL = process.env.SZROUTE_URL || "http://localhost:21128";
 const MODEL = process.env.TEST_GEMINI_MODEL || "default";
 
-const skip = !API_KEY ? "OMNIROUTE_API_KEY not set — skipping live test" : undefined;
+const skip = !API_KEY ? "SZROUTE_API_KEY not set — skipping live test" : undefined;
 
 // Simple SSE reader (compatible with streamed chat completions)
 async function readSSEStream(response: Response, onChunk?: (chunk: string) => void) {
@@ -54,7 +54,7 @@ async function readSSEStream(response: Response, onChunk?: (chunk: string) => vo
 }
 
 test("live request returns streamChunks", { skip }, async () => {
-  console.log("[TEST] BASE_URL=", BASE_URL, "OMNIROUTE_URL=", process.env.OMNIROUTE_URL, "API_KEY set=", !!API_KEY);
+  console.log("[TEST] BASE_URL=", BASE_URL, "SZROUTE_URL=", process.env.SZROUTE_URL, "API_KEY set=", !!API_KEY);
 
   const messages = [
     { role: "system", content: "Execute the user prompt and provide a detailed explanation." },
@@ -81,8 +81,8 @@ test("live request returns streamChunks", { skip }, async () => {
       `expected 200 from chat/completions, got ${completionsResponse.status}`
     );
 
-    const requestId = completionsResponse.headers.get("x-omniroute-request-id");
-    assert.ok(requestId, "expected x-omniroute-request-id header in response");
+    const requestId = completionsResponse.headers.get("x-szroute-request-id");
+    assert.ok(requestId, "expected x-szroute-request-id header in response");
 
     let streamFinished = false;
 
