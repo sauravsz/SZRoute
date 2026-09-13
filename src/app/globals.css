@@ -1,443 +1,184 @@
-@import "tailwindcss";
-@import "fumadocs-ui/css/neutral.css";
-@import "fumadocs-ui/css/preset.css";
-@source "../../node_modules/fumadocs-ui/css/generated/*.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
-/* Tailwind v4 auto-detection cannot scan directories with parentheses
-   (e.g. Next.js route groups like "(dashboard)"). Explicit @source
-   directives ensure all utility classes in route groups are included. */
-@source "../app/(dashboard)";
-@source "../../node_modules/fumadocs-ui/dist/**/*.js";
-@source not "../../*.sqlite*";
-@source not "../../.claude*";
-@source not "../../.claude-memory";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Fumadocs sidebar width override */
-:root {
-  --fd-sidebar-width: 220px;
-}
-
-/* OpenClaw × ClawHub Color Palette */
-:root {
-  --desktop-safe-top: 0px;
-  --desktop-safe-bottom: 0px;
-  color-scheme: light;
-
-  /* Primary - Coral Red (OpenClaw) */
-  --color-primary: #e54d5e;
-  --color-primary-hover: #c93d4e;
-
-  /* Accent - Indigo/Violet (buttons, links, gradients) */
-  --color-accent: #6366f1;
-  --color-accent-hover: #8b5cf6;
-  --color-accent-light: #a855f7;
-
-  /* Semantic */
-  --color-error: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-
-  /* Traffic lights */
-  --color-traffic-red: #ff5f56;
-  --color-traffic-yellow: #ffbd2e;
-  --color-traffic-green: #27c93f;
-
-  /* Light theme */
-  --color-bg: #f9f9fb;
-  --color-bg-alt: #f0f0f5;
-  --color-bg-primary: #f9f9fb;
-  --color-bg-subtle: #f0f0f5;
-  --color-surface: #ffffff;
-  --color-card: #ffffff;
-  --color-sidebar: #f5f5fa;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-text-main: #1a1a2e;
-  --color-text-primary: #1a1a2e;
-  --color-text-muted: #71717a;
-
-  /* Fumadocs light theme */
-  --color-fd-background: #f9f9fb;
-  --color-fd-foreground: #1a1a2e;
-  --color-fd-muted: #f0f0f5;
-  --color-fd-muted-foreground: #71717a;
-  --color-fd-popover: #ffffff;
-  --color-fd-popover-foreground: #1a1a2e;
-  --color-fd-card: #ffffff;
-  --color-fd-card-foreground: #1a1a2e;
-  --color-fd-border: rgba(0, 0, 0, 0.08);
-  --color-fd-primary: #e54d5e;
-  --color-fd-primary-foreground: #ffffff;
-  --color-fd-secondary: #f0f0f5;
-  --color-fd-secondary-foreground: #1a1a2e;
-  --color-fd-accent: rgba(229, 77, 94, 0.08);
-  --color-fd-accent-foreground: #1a1a2e;
-  --color-fd-ring: #e54d5e;
-
-  /* Shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.015);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 77, 94, 0.12);
-  --shadow-elevated: 0 12px 28px -4px rgba(20, 20, 40, 0.06);
-}
-
-.dark {
-  /* Dark theme (ClawHub deep) */
-  color-scheme: dark;
-  --color-bg: #0b0e14;
-  --color-bg-alt: #111520;
-  --color-bg-primary: #0b0e14;
-  --color-bg-subtle: #111520;
-  --color-surface: #161b22;
-  --color-card: #161b22;
-  --color-sidebar: #10141e;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-text-main: #e6e6ef;
-  --color-text-primary: #e6e6ef;
-  --color-text-muted: #a1a1aa;
-
-  /* Fumadocs theme mapping */
-  --color-fd-background: #0b0e14;
-  --color-fd-foreground: #e6e6ef;
-  --color-fd-muted: #111520;
-  --color-fd-muted-foreground: #a1a1aa;
-  --color-fd-popover: #161b22;
-  --color-fd-popover-foreground: #e6e6ef;
-  --color-fd-card: #161b22;
-  --color-fd-card-foreground: #e6e6ef;
-  --color-fd-border: rgba(255, 255, 255, 0.08);
-  --color-fd-primary: #e54d5e;
-  --color-fd-primary-foreground: #ffffff;
-  --color-fd-secondary: #111520;
-  --color-fd-secondary-foreground: #e6e6ef;
-  --color-fd-accent: rgba(229, 77, 94, 0.12);
-  --color-fd-accent-foreground: #e6e6ef;
-  --color-fd-ring: #e54d5e;
-
-  /* Dark shadows */
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 77, 94, 0.15);
-  --shadow-elevated: 0 12px 28px -4px rgba(0, 0, 0, 0.3);
-}
-
-@theme inline {
-  /* Primary */
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-hover);
-
-  /* Accent */
-  --color-accent: var(--color-accent);
-  --color-accent-hover: var(--color-accent-hover);
-  --color-accent-light: var(--color-accent-light);
-
-  /* Semantic */
-  --color-error: var(--color-error);
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-
-  /* Auto-switch colors (use CSS variables from :root/.dark) */
-  --color-bg: var(--color-bg);
-  --color-bg-primary: var(--color-bg-primary);
-  --color-bg-subtle: var(--color-bg-subtle);
-  --color-surface: var(--color-surface);
-  --color-card: var(--color-card);
-  --color-sidebar: var(--color-sidebar);
-  --color-border: var(--color-border);
-  --color-text-main: var(--color-text-main);
-  --color-text-primary: var(--color-text-primary);
-  --color-text-muted: var(--color-text-muted);
-
-  /* Static colors (for explicit light/dark usage) */
-  --color-bg-light: #f9f9fb;
-  --color-bg-dark: #0b0e14;
-  --color-surface-light: #ffffff;
-  --color-surface-dark: #161b22;
-  --color-sidebar-light: #ededf2;
-  --color-sidebar-dark: #111520;
-  --color-border-light: #e2e2ea;
-  --color-border-dark: #2d333b;
-  --color-text-main-light: #1a1a2e;
-  --color-text-main-dark: #e6e6ef;
-  --color-text-muted-light: #71717a;
-  --color-text-muted-dark: #a1a1aa;
-
-  /* Shadows */
-  --shadow-soft: var(--shadow-soft);
-  --shadow-warm: var(--shadow-warm);
-  --shadow-elevated: var(--shadow-elevated);
-
-  /* Font - macOS system fonts */
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
-}
-
-/* ── Focus Indicators (U-3) ── */
-:root {
-  --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.4);
-}
-
-/* Visible focus ring on keyboard navigation only */
-:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-radius: 4px;
-}
-
-/* Utility class for custom focus ring */
-.focus-ring:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-/* Remove focus ring from mouse clicks */
-:focus:not(:focus-visible) {
-  outline: none;
-  box-shadow: none;
-}
-
-/* Base styles */
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text-main);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  user-select: none; /* Native app feel */
-  -webkit-user-select: none;
-  line-height: 1.5;
-}
-
-h1, h2, h3, h4 {
-  letter-spacing: -0.02em; /* Apple's tighter tracking for headings */
-}
-
-/* Re-enable selection for interactive and content-heavy areas */
-input, textarea, [contenteditable="true"], .selectable, code, pre {
-  user-select: auto;
-  -webkit-user-select: auto;
-}
-
-/* Electron window drag utilities */
-.drag-region {
-  -webkit-app-region: drag;
-}
-.no-drag {
-  -webkit-app-region: no-drag;
-}
-
-body.electron-macos {
-  --desktop-safe-top: 52px;
-  --desktop-safe-bottom: 8px;
-  background-color: transparent !important;
-}
-
-/* Selection — with fallback for browsers that don't support color-mix() */
-::selection {
-  background-color: rgba(229, 77, 94, 0.22);
-  background-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
-  color: var(--color-primary);
-}
-
-/* Global custom scrollbar — macOS overlay style */
-*::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 9999px;
-  border: 4px solid transparent;
-  background-clip: padding-box;
-}
-
-.dark *::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.35);
-}
-
-.dark *::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.35);
-}
-
-*::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-
-
-/* Keep .custom-scrollbar alias for backward compatibility */
-.custom-scrollbar {
-  scrollbar-width: thin;
-}
-
-/* Hero gradient */
-.bg-hero-gradient {
-  background: linear-gradient(180deg, #f0f0f5 0%, #f9f9fb 100%);
-}
-
-.dark .bg-hero-gradient {
-  background: linear-gradient(180deg, #111520 0%, #0b0e14 100%);
-}
-
-/* Material Symbols */
-.material-symbols-outlined {
-  font-family: "Material Symbols Outlined", sans-serif !important;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
-  user-select: none;
-}
-
-/* Ensure icon clicks always bubble to the parent button */
-button .material-symbols-outlined,
-[role="button"] .material-symbols-outlined {
-  pointer-events: none;
-}
-
-.material-symbols-outlined.fill-1 {
-  font-variation-settings:
-    "FILL" 1,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
-}
-
-/* Animations */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+@layer base {
+  :root {
+    --canvas: #07080a;
+    --surface: #0d0d0d;
+    --surface-elevated: #101111;
+    --surface-card: #121212;
+    --hairline: #242728;
+    --hairline-soft: rgba(255, 255, 255, 0.08);
+    --hairline-strong: rgba(255, 255, 255, 0.16);
+    --primary: #ffffff;
+    --primary-pressed: #e8e8e8;
+    --on-primary: #000000;
+    --ink: #f4f4f6;
+    --body: #cdcdcd;
+    --charcoal: #d3d3d4;
+    --mute: #9c9c9d;
+    --ash: #6a6b6c;
+    --stone: #434345;
+    --accent-yellow: #ffc533;
+    --accent-red: #ff6161;
+    --accent-green: #59d499;
+    --accent-blue: #57c1ff;
   }
-  to {
-    transform: rotate(360deg);
+
+  html,
+  body {
+    background-color: #07080a;
+    color: #cdcdcd;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: "calt" 1, "kern" 1, "liga" 1, "ss03" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  /* Custom Scrollbar in Raycast Dark Style */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #07080a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #242728;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #434345;
   }
 }
 
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes border-glow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 5px rgba(229, 77, 94, 0.3),
-      0 0 10px rgba(229, 77, 94, 0.2);
-    border-color: rgba(229, 77, 94, 0.5);
-  }
-  50% {
-    box-shadow:
-      0 0 10px rgba(229, 77, 94, 0.5),
-      0 0 20px rgba(229, 77, 94, 0.3);
-    border-color: rgba(229, 77, 94, 0.8);
-  }
-}
-
-.animate-border-glow {
-  animation: border-glow 2s ease-in-out infinite;
-}
-
-/* macOS Vibrancy/Blur Effect */
-.bg-vibrancy {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.dark .bg-vibrancy {
-  background: rgba(16, 20, 30, 0.72);
-}
-
-/* macOS Traffic Lights */
-.traffic-lights {
-  display: flex;
-  gap: 8px;
-}
-
-.traffic-light {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.traffic-light.red {
-  background: var(--color-traffic-red);
-}
-
-.traffic-light.yellow {
-  background: var(--color-traffic-yellow);
-}
-
-.traffic-light.green {
-  background: var(--color-traffic-green);
-}
-
-/* ── Mobile Layout Fixes (Issue #659) ── */
-@media (max-width: 768px) {
-  .ant-table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100vw;
+@layer components {
+  /* Raycast Keycap */
+  .keycap {
+    background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
+    border: 1px solid #242728;
+    color: #cdcdcd;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 6px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.5);
   }
 
-  .ant-table {
-    min-width: 600px; /* Prevent columns from crushing together */
+  /* Raycast Card */
+  .raycast-card {
+    background-color: #0d0d0d;
+    border: 1px solid #242728;
+    border-radius: 10px;
   }
-}
 
-/* Fix for native dropdown options visibility in dark mode */
-select option {
-  background-color: var(--color-surface);
-  color: var(--color-text-main);
-}
+  .raycast-card-elevated {
+    background-color: #101111;
+    border: 1px solid #242728;
+    border-radius: 10px;
+  }
 
-/* ReactFlow Controls (zoom +/- buttons) dark mode theming */
-.react-flow__controls-button {
-  background-color: var(--color-surface);
-  border-bottom-color: var(--color-border);
-  fill: var(--color-text-main);
-}
+  /* Raycast Primary White Button */
+  .btn-primary {
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
+    border-radius: 8px;
+    padding: 6px 16px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
 
-.react-flow__controls-button:hover {
-  background-color: var(--color-bg-subtle);
-}
+  .btn-primary:active {
+    background-color: #e8e8e8;
+    transform: scale(0.98);
+  }
 
-.react-flow__controls-button svg {
-  fill: var(--color-text-main);
+  /* Raycast Secondary Transparent Button */
+  .btn-secondary {
+    background-color: transparent;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 14px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: #101111;
+    border-color: #242728;
+  }
+
+  /* Raycast Tertiary Button */
+  .btn-tertiary {
+    background-color: #101111;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 14px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #242728;
+    transition: all 0.15s ease;
+  }
+
+  .btn-tertiary:hover {
+    background-color: #121212;
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  /* Raycast Text Input */
+  .raycast-input {
+    background-color: #101111;
+    color: #ffffff;
+    border: 1px solid #242728;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .raycast-input:focus {
+    border-color: rgba(255, 255, 255, 0.24);
+  }
+
+  /* Hero Stripe Gradient Accent Band */
+  .hero-stripe-band {
+    background: linear-gradient(135deg, rgba(255, 87, 87, 0.15) 0%, rgba(161, 19, 26, 0.05) 50%, transparent 100%);
+    position: relative;
+  }
 }
