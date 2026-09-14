@@ -15,11 +15,109 @@ export async function OPTIONS() {
   });
 }
 
+/**
+ * Transforms an upstream OpenAI SSE stream into standard Anthropic SSE events
+ */
+function createOpenAIToAnthropicTransformStream(modelName: string): TransformStream<Uint8Array, Uint8Array> {
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let messageStarted = false;
+  let blockStarted = false;
+  const messageId = `msg_szroute_${Date.now()}`;
+
+  return new TransformStream({
+    transform(chunk, controller) {
+      buffer += decoder.decode(chunk, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith(":")) continue;
+
+        if (trimmed === "data: [DONE]") {
+          if (blockStarted) {
+            controller.enqueue(encoder.encode(`event: content_block_stop\ndata: {"type":"content_block_stop","index":0}\n\n`));
+          }
+          controller.enqueue(
+            encoder.encode(
+              `event: message_delta\ndata: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"output_tokens":0}}\n\n`
+            )
+          );
+          controller.enqueue(encoder.encode(`event: message_stop\ndata: {"type":"message_stop"}\n\n`));
+          continue;
+        }
+
+        if (trimmed.startsWith("data: ")) {
+          try {
+            const data = JSON.parse(trimmed.slice(6));
+
+            // 1. Emit message_start if not emitted yet
+            if (!messageStarted) {
+              messageStarted = true;
+              const startPayload = {
+                type: "message_start",
+                message: {
+                  id: messageId,
+                  type: "message",
+                  role: "assistant",
+                  model: modelName,
+                  content: [],
+                  stop_reason: null,
+                  stop_sequence: null,
+                  usage: { input_tokens: 0, output_tokens: 0 },
+                },
+              };
+              controller.enqueue(encoder.encode(`event: message_start\ndata: ${JSON.stringify(startPayload)}\n\n`));
+            }
+
+            // 2. Emit content_block_start before first delta
+            if (!blockStarted) {
+              blockStarted = true;
+              const blockStartPayload = {
+                type: "content_block_start",
+                index: 0,
+                content_block: { type: "text", text: "" },
+              };
+              controller.enqueue(encoder.encode(`event: content_block_start\ndata: ${JSON.stringify(blockStartPayload)}\n\n`));
+            }
+
+            // 3. Extract text delta
+            const deltaText = data.choices?.[0]?.delta?.content || "";
+            if (deltaText) {
+              const deltaPayload = {
+                type: "content_block_delta",
+                index: 0,
+                delta: { type: "text_delta", text: deltaText },
+              };
+              controller.enqueue(encoder.encode(`event: content_block_delta\ndata: ${JSON.stringify(deltaPayload)}\n\n`));
+            }
+          } catch {
+            // If raw non-JSON chunk, pass through
+          }
+        }
+      }
+    },
+    flush(controller) {
+      if (blockStarted) {
+        controller.enqueue(encoder.encode(`event: content_block_stop\ndata: {"type":"content_block_stop","index":0}\n\n`));
+      }
+      controller.enqueue(
+        encoder.encode(
+          `event: message_delta\ndata: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"output_tokens":0}}\n\n`
+        )
+      );
+      controller.enqueue(encoder.encode(`event: message_stop\ndata: {"type":"message_stop"}\n\n`));
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body: Record<string, unknown> = await req.json();
 
-    const model = typeof body.model === "string" ? body.model : "claude-3-7-sonnet-20250219";
+    const model = typeof body.model === "string" ? body.model : "free-auto";
     const rawMessages = Array.isArray(body.messages) ? body.messages : [];
     const system = typeof body.system === "string" ? body.system : "";
     const stream = Boolean(body.stream);
@@ -58,29 +156,45 @@ export async function POST(req: NextRequest) {
     const apiKeyMap: Record<string, string> = {};
     const apiKey = req.headers.get("x-api-key") || req.headers.get("Authorization") || "";
     if (apiKey) {
-      apiKeyMap["anthropic"] = apiKey.replace(/^Bearer\s+/i, "");
+      const cleanKey = apiKey.replace(/^Bearer\s+/i, "").trim();
+      apiKeyMap["anthropic"] = cleanKey;
+      apiKeyMap["default"] = cleanKey;
+    }
+
+    const customKeysHeader = req.headers.get("x-szroute-keys");
+    if (customKeysHeader) {
+      try {
+        const parsed = JSON.parse(customKeysHeader);
+        if (typeof parsed === "object" && parsed !== null) {
+          Object.assign(apiKeyMap, parsed);
+        }
+      } catch {}
     }
 
     const result = await executeGatewayChat(gatewayReq, apiKeyMap);
 
-    // If streaming, return the stream with anthropic headers
+    // If streaming, transform OpenAI SSE chunks to Anthropic SSE events
     if (stream && result.response.body) {
-      return new Response(result.response.body, {
+      const transformedStream = result.response.body.pipeThrough(
+        createOpenAIToAnthropicTransformStream(result.selectedModel)
+      );
+
+      return new Response(transformedStream, {
         status: 200,
         headers: {
           "Content-Type": "text/event-stream; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-transform",
           "Connection": "keep-alive",
           "Access-Control-Allow-Origin": "*",
           "x-szroute-provider": result.selectedProvider,
           "x-szroute-model": result.selectedModel,
+          "x-szroute-failover-attempts": String(result.failoverAttempts),
         },
       });
     }
 
     const responseJson: Record<string, unknown> = (await result.response.json()) as Record<string, unknown>;
 
-    // If upstream was OpenAI formatted, translate to Anthropic format if requested by standard client
     let finalContent = "";
     if (
       responseJson &&
@@ -116,6 +230,7 @@ export async function POST(req: NextRequest) {
         "Access-Control-Allow-Origin": "*",
         "x-szroute-provider": result.selectedProvider,
         "x-szroute-model": result.selectedModel,
+        "x-szroute-failover-attempts": String(result.failoverAttempts),
       },
     });
   } catch (err: unknown) {

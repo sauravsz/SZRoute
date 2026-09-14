@@ -108,7 +108,7 @@ export function resolveRouteTargets(
 }
 
 /**
- * Executes chat completion with multi-provider auto-failover & streaming support
+ * Executes chat completion with multi-provider auto-failover, default key fallback, & streaming validation
  */
 export async function executeGatewayChat(
   req: GatewayChatRequest,
@@ -139,9 +139,10 @@ export async function executeGatewayChat(
     attempts++;
     const { provider, upstreamModelId } = target;
 
-    // Get API Key: from client header map or server process.env
+    // Bug 2 Fix: Fallback to apiKeyMap["default"] if apiKeyMap[provider.id] is not explicitly specified
     const apiKey =
       apiKeyMap[provider.id] ||
+      apiKeyMap["default"] ||
       (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
       "";
 
@@ -155,6 +156,11 @@ export async function executeGatewayChat(
         headers["Authorization"] = provider.authPrefix ? `${provider.authPrefix} ${apiKey}` : apiKey;
       } else {
         headers[provider.authHeader] = apiKey;
+      }
+
+      // Bug 3 Fix: Google Gemini requires x-goog-api-key header on AI Studio keys
+      if (provider.id === "gemini") {
+        headers["x-goog-api-key"] = apiKey;
       }
     }
 
@@ -179,8 +185,22 @@ export async function executeGatewayChat(
         body: JSON.stringify(payload),
       });
 
-      // If success or valid response stream, return immediately
+      // Bug 5 Fix: In-stream / early error detection on HTTP 200 responses
       if (response.ok) {
+        const contentType = response.headers.get("content-type") || "";
+
+        // If streaming was requested but upstream returned application/json, check for error payload
+        if (req.stream && contentType.includes("application/json")) {
+          const cloned = response.clone();
+          const jsonBody = (await cloned.json().catch(() => null)) as Record<string, unknown> | null;
+          if (jsonBody && "error" in jsonBody) {
+            const errMsg = JSON.stringify(jsonBody.error);
+            console.warn(`[SZRoute Router] Provider ${provider.id} returned JSON error on stream request: ${errMsg}. Triggering failover...`);
+            lastError = new Error(`Provider ${provider.id} in-stream error: ${errMsg}`);
+            continue; // Failover to next provider
+          }
+        }
+
         return {
           response,
           selectedProvider: provider.id,

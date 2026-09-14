@@ -17,9 +17,15 @@ export interface CompressionResult {
   rulesApplied: string[];
 }
 
+export type ContentBlock =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string; detail?: string } }
+  | { type: "image"; source?: unknown }
+  | { type: string; [key: string]: unknown };
+
 export interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool" | "function";
-  content: string | any;
+  content: string | ContentBlock[];
   name?: string;
 }
 
@@ -37,7 +43,6 @@ export interface CompressedMessagesResult {
  */
 export function estimateTokenCount(text: string): number {
   if (!text || typeof text !== "string") return 0;
-  // Standard approximation: ~3.8-4 characters per token + punctuation weighting
   const words = text.trim().split(/\s+/).length;
   const chars = text.length;
   const estimated = Math.ceil((chars * 0.26) + (words * 0.2));
@@ -107,11 +112,8 @@ export function compressPrompt(
   // 1. RTK Markdown Spacing & Newline Normalization
   if (options.stripMarkdownSpacing !== false) {
     const beforeLength = processed.length;
-    // Collapse 3+ newlines to 2
     processed = processed.replace(/\n{3,}/g, "\n\n");
-    // Remove trailing spaces on lines
     processed = processed.replace(/[ \t]+$/gm, "");
-    // Collapse multiple horizontal spaces to single space
     processed = processed.replace(/[ \t]{2,}/g, " ");
     if (processed.length < beforeLength) {
       rulesApplied.push("rtk-whitespace-minification");
@@ -143,7 +145,6 @@ export function compressPrompt(
     }
 
     if (options.level === "aggressive") {
-      // Aggressive trimming of decorative punctuation
       processed = processed.replace(/(\!|\?){2,}/g, "$1");
       processed = processed.replace(/[-=]{4,}/g, "---");
       rulesApplied.push("caveman-aggressive-punctuation");
@@ -189,14 +190,15 @@ export function compressMessages(
 
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
+
+    // Case 1: Plain string content
     if (typeof msg.content === "string") {
-      // Deduplicate repeated identical system prompts in long conversations
       if (msg.role === "system" && options?.deduplicateContext !== false) {
         const trimmed = msg.content.trim();
         if (seenSystemPrompts.has(trimmed)) {
           allRules.add("rtk-system-prompt-deduplication");
           totalOriginalTokens += estimateTokenCount(msg.content);
-          continue; // Skip duplicate system prompt
+          continue;
         }
         seenSystemPrompts.add(trimmed);
       }
@@ -210,8 +212,37 @@ export function compressMessages(
         ...msg,
         content: result.compressedText,
       });
-    } else {
-      // Pass-through object/array contents (e.g. multimodal vision)
+    }
+    // Case 2: Multi-part vision / content block array
+    else if (Array.isArray(msg.content)) {
+      const newBlocks: ContentBlock[] = [];
+
+      for (const block of msg.content) {
+        if (typeof block === "object" && block !== null && block.type === "text" && typeof block.text === "string") {
+          const result = compressPrompt(block.text, options);
+          totalOriginalTokens += result.originalTokens;
+          totalCompressedTokens += result.compressedTokens;
+          result.rulesApplied.forEach((r) => allRules.add(r));
+          newBlocks.push({
+            ...block,
+            text: result.compressedText,
+          });
+        } else {
+          // Pass image/tool block through, calculate standard token weight
+          const tokenEst = estimateTokenCount(JSON.stringify(block));
+          totalOriginalTokens += tokenEst;
+          totalCompressedTokens += tokenEst;
+          newBlocks.push(block);
+        }
+      }
+
+      compressedMessages.push({
+        ...msg,
+        content: newBlocks,
+      });
+    }
+    // Case 3: Pass-through unknown object shape
+    else {
       const tokenEst = estimateTokenCount(JSON.stringify(msg.content));
       totalOriginalTokens += tokenEst;
       totalCompressedTokens += tokenEst;

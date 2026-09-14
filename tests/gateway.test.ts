@@ -1,7 +1,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { PROVIDER_CATALOG, DEFAULT_COMBOS } from "../src/lib/providers/catalog";
-import { compressPrompt, compressMessages, estimateTokenCount } from "../src/lib/compression/engine";
+import { compressPrompt, compressMessages, estimateTokenCount, ContentBlock } from "../src/lib/compression/engine";
 import { resolveRouteTargets } from "../src/lib/gateway/router";
 
 describe("SZRoute Provider Catalog & Virtual Combos", () => {
@@ -16,6 +16,11 @@ describe("SZRoute Provider Catalog & Virtual Combos", () => {
     assert.ok(cerebras && cerebras.freeTier.hasFree, "Cerebras should be in free tier");
     assert.ok(gemini && gemini.freeTier.hasFree, "Gemini should be in free tier");
     assert.ok(openrouter && openrouter.freeTier.hasFree, "OpenRouter should be in free tier");
+  });
+
+  test("gemini provider includes x-goog-api-client header", () => {
+    const gemini = PROVIDER_CATALOG.find((p) => p.id === "gemini");
+    assert.ok(gemini && gemini.customHeaders?.["x-goog-api-client"]);
   });
 
   test("default virtual combos are configured with priority failover", () => {
@@ -52,6 +57,33 @@ describe("RTK + Caveman Token Compression Engine", () => {
     assert.ok(!result.compressedText.includes("as an ai language model"), "Should purge AI boilerplate");
   });
 
+  test("compressMessages recursively compresses multimodal/vision content blocks", () => {
+    const messages = [
+      {
+        role: "user" as const,
+        content: [
+          {
+            type: "text" as const,
+            text: "Please note that as an AI language model, please explain this diagram.",
+          },
+          {
+            type: "image_url" as const,
+            image_url: { url: "https://example.com/diagram.png" },
+          },
+        ],
+      },
+    ];
+
+    const result = compressMessages(messages);
+    assert.equal(result.messages.length, 1);
+    assert.ok(Array.isArray(result.messages[0].content));
+    const blocks = result.messages[0].content as ContentBlock[];
+    const firstBlock = blocks[0];
+    assert.ok(firstBlock && "text" in firstBlock && typeof firstBlock.text === "string");
+    assert.ok(!firstBlock.text.includes("as an ai language model"), "Should compress inner text block of array");
+    assert.ok(result.tokensSaved > 0, "Should register saved tokens on multimodal block");
+  });
+
   test("compressPrompt minifies embedded JSON blocks", () => {
     const jsonPrompt = `Config:
 \`\`\`json
@@ -75,7 +107,7 @@ describe("RTK + Caveman Token Compression Engine", () => {
       { role: "system" as const, content: "You are an assistant." },
       { role: "user" as const, content: "Hello" },
       { role: "assistant" as const, content: "Hi" },
-      { role: "system" as const, content: "You are an assistant." }, // Duplicate
+      { role: "system" as const, content: "You are an assistant." },
       { role: "user" as const, content: "How are you?" },
     ];
 

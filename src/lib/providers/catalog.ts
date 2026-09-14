@@ -131,6 +131,9 @@ export const PROVIDER_CATALOG: ProviderDefinition[] = [
     authHeader: "Authorization",
     authPrefix: "Bearer",
     defaultKeyEnv: "GEMINI_API_KEY",
+    customHeaders: {
+      "x-goog-api-client": "szroute-edge-v4",
+    },
     freeTier: {
       hasFree: true,
       badgeText: "15 RPM Free Tier",
