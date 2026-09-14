@@ -36,6 +36,24 @@ export interface GatewayExecutionResult {
 }
 
 /**
+ * Auto-detect provider identity from API key prefix
+ */
+export function detectProviderFromKey(key: string): string | null {
+  if (!key || typeof key !== "string") return null;
+  const k = key.trim();
+
+  if (k.startsWith("gsk_")) return "groq";
+  if (k.startsWith("AIzaSy")) return "gemini";
+  if (k.startsWith("csk-") || k.startsWith("csk_")) return "cerebras";
+  if (k.startsWith("sk-ant-")) return "anthropic";
+  if (k.startsWith("sk-or-v1-") || k.startsWith("sk-or-")) return "openrouter";
+  if (k.startsWith("sk-proj-") || k.startsWith("sk-")) return "openai";
+  if (k.startsWith("together_")) return "together";
+
+  return null;
+}
+
+/**
  * Resolve target provider candidates for a given model or virtual combo name
  */
 export function resolveRouteTargets(
@@ -44,7 +62,7 @@ export function resolveRouteTargets(
 ): ResolvedRoute {
   const normalizedModel = (modelId || "free-auto").toLowerCase().trim();
 
-  // 1. Check if it matches a Virtual Combo (built-in or user-defined)
+  // 1. Check if it matches a Virtual Combo
   const allCombos = [...DEFAULT_COMBOS, ...customCombos];
   const matchedCombo = allCombos.find(
     (c) => c.id.toLowerCase() === normalizedModel || c.name.toLowerCase() === normalizedModel
@@ -108,7 +126,7 @@ export function resolveRouteTargets(
 }
 
 /**
- * Executes chat completion with multi-provider auto-failover, default key fallback, & streaming validation
+ * Executes chat completion with multi-provider auto-failover, key auto-detection & streaming validation
  */
 export async function executeGatewayChat(
   req: GatewayChatRequest,
@@ -135,30 +153,38 @@ export async function executeGatewayChat(
   let lastError: Error | null = null;
   let attempts = 0;
 
+  // Auto-detect provider if default token has known prefix
+  const defaultToken = apiKeyMap["default"] || "";
+  const detectedProvider = detectProviderFromKey(defaultToken);
+
   for (const target of resolved.targets) {
     attempts++;
     const { provider, upstreamModelId } = target;
 
-    // Bug 2 Fix: Fallback to apiKeyMap["default"] if apiKeyMap[provider.id] is not explicitly specified
-    const apiKey =
+    // Check key resolution: explicit provider key -> detected prefix key -> default token -> env var
+    let apiKey =
       apiKeyMap[provider.id] ||
-      apiKeyMap["default"] ||
+      (detectedProvider === provider.id ? defaultToken : "") ||
       (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
       "";
+
+    // If still no key and defaultToken doesn't have an opposing prefix, fallback to defaultToken
+    if (!apiKey && defaultToken && !detectedProvider) {
+      apiKey = defaultToken;
+    }
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(provider.customHeaders || {}),
     };
 
-    if (apiKey) {
+    if (apiKey && apiKey !== "szroute-free") {
       if (provider.authHeader === "Authorization") {
         headers["Authorization"] = provider.authPrefix ? `${provider.authPrefix} ${apiKey}` : apiKey;
       } else {
         headers[provider.authHeader] = apiKey;
       }
 
-      // Bug 3 Fix: Google Gemini requires x-goog-api-key header on AI Studio keys
       if (provider.id === "gemini") {
         headers["x-goog-api-key"] = apiKey;
       }
@@ -185,19 +211,18 @@ export async function executeGatewayChat(
         body: JSON.stringify(payload),
       });
 
-      // Bug 5 Fix: In-stream / early error detection on HTTP 200 responses
       if (response.ok) {
         const contentType = response.headers.get("content-type") || "";
 
-        // If streaming was requested but upstream returned application/json, check for error payload
+        // If streaming requested but upstream returned JSON, check for error payload
         if (req.stream && contentType.includes("application/json")) {
           const cloned = response.clone();
           const jsonBody = (await cloned.json().catch(() => null)) as Record<string, unknown> | null;
           if (jsonBody && "error" in jsonBody) {
             const errMsg = JSON.stringify(jsonBody.error);
-            console.warn(`[SZRoute Router] Provider ${provider.id} returned JSON error on stream request: ${errMsg}. Triggering failover...`);
+            console.warn(`[SZRoute Router] Provider ${provider.id} returned JSON error on stream: ${errMsg}. Failing over...`);
             lastError = new Error(`Provider ${provider.id} in-stream error: ${errMsg}`);
-            continue; // Failover to next provider
+            continue;
           }
         }
 
@@ -211,10 +236,9 @@ export async function executeGatewayChat(
         };
       }
 
-      // Check status code for failover triggers (Rate limit 429, Server error 5xx, or 401 unauthorized)
       const errorText = await response.text();
       console.warn(
-        `[SZRoute Router] Provider ${provider.id} failed with HTTP ${response.status}: ${errorText.slice(0, 200)}. Attempting failover...`
+        `[SZRoute Router] Provider ${provider.id} returned HTTP ${response.status}: ${errorText.slice(0, 150)}. Attempting failover...`
       );
 
       lastError = new Error(`Provider ${provider.id} error (${response.status}): ${errorText}`);
@@ -225,7 +249,6 @@ export async function executeGatewayChat(
     }
   }
 
-  // If all providers failed, throw or return descriptive error
   throw new Error(
     `All ${attempts} providers failed in route for model '${req.model}'. Last error: ${lastError?.message || "Unknown error"}`
   );

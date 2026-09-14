@@ -27,6 +27,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTab>("overview");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedProviderForModal, setSelectedProviderForModal] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(false);
 
   const {
     apiKeys,
@@ -41,6 +42,32 @@ export default function HomePage() {
     importBackup,
     stats,
   } = useSZRouteStore();
+
+  // Load theme preference on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("szroute_theme");
+      if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        setIsDark(true);
+        document.documentElement.classList.add("dark");
+      } else {
+        setIsDark(false);
+        document.documentElement.classList.remove("dark");
+      }
+    } catch {}
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("szroute_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("szroute_theme", "light");
+    }
+  };
 
   // Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
@@ -73,16 +100,18 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#e8ebe6] text-[#0e0f0c]">
-      {/* Universal Wise Top Navigation */}
+    <div className="min-h-screen flex flex-col bg-page text-ink transition-colors duration-200">
+      {/* Minimal Top Navigation */}
       <Navbar
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        isDark={isDark}
+        onToggleTheme={handleToggleTheme}
       />
 
-      {/* Main Content Area on Sage Canvas */}
-      <main className="flex-1 max-w-[1360px] w-full mx-auto px-4 sm:px-6 py-8">
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-[1320px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {activeTab === "overview" && (
           <OverviewView onNavigate={setActiveTab} stats={stats} />
         )}
@@ -135,7 +164,7 @@ export default function HomePage() {
         onOpenKeyModal={handleOpenKeyModal}
       />
 
-      {/* Universal Wise Dark Footer */}
+      {/* Footer */}
       <Footer />
     </div>
   );

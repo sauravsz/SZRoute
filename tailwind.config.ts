@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,22 +10,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        page: "var(--bg-page)",
+        card: "var(--bg-card)",
+        subtle: {
+          DEFAULT: "var(--bg-subtle)",
+          hover: "var(--bg-subtle-hover)",
+        },
+        ink: {
+          DEFAULT: "var(--text-ink)",
+          body: "var(--text-body)",
+          mute: "var(--text-mute)",
+        },
         primary: {
           DEFAULT: "#9fe870",
           active: "#cdffad",
           neutral: "#c5edab",
-          pale: "#e2f6d5",
+          pale: "var(--bg-pale-green)",
           on: "#0e0f0c",
         },
-        ink: {
-          DEFAULT: "#0e0f0c",
-          deep: "#163300",
-        },
-        body: "#454745",
-        mute: "#868685",
-        canvas: {
-          DEFAULT: "#ffffff",
-          soft: "#e8ebe6",
+        border: {
+          card: "var(--border-card)",
+          input: "var(--border-input)",
         },
         positive: {
           DEFAULT: "#2ead4b",
@@ -40,10 +46,6 @@ const config: Config = {
           deep: "#a72027",
           darkest: "#a7000d",
           bg: "#320707",
-        },
-        accent: {
-          orange: "#ffc091",
-          cyan: "#38c8ff",
         },
       },
       borderRadius: {
@@ -80,8 +82,8 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        "wise-card": "0 1px 3px rgba(14, 15, 12, 0.04), 0 6px 16px rgba(14, 15, 12, 0.04)",
-        "wise-elevated": "0 2px 6px rgba(14, 15, 12, 0.06), 0 12px 32px rgba(14, 15, 12, 0.08)",
+        "wise-card": "var(--shadow-card)",
+        "wise-elevated": "0 4px 12px rgba(14, 15, 12, 0.08), 0 16px 40px rgba(14, 15, 12, 0.12)",
       },
     },
   },

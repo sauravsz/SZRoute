@@ -5,12 +5,6 @@ import {
   Terminal,
   Copy,
   Check,
-  Code2,
-  Cpu,
-  Sparkles,
-  ExternalLink,
-  Layers,
-  Zap,
   Sliders,
 } from "lucide-react";
 import { DEFAULT_COMBOS, VirtualCombo } from "@/lib/providers/catalog";
@@ -41,7 +35,7 @@ export function SetupGuidesView({ customCombos = DEFAULT_COMBOS, apiKeys = {} }:
       id: "omp-coding-agent",
       title: "Oh My Pi (omp) Coding Agent",
       badge: "One-line setup",
-      description: "Connect the Oh My Pi (omp) coding agent to FREE frontier models via SZRoute with RTK token compression.",
+      description: "Connect the Oh My Pi (omp) coding agent to FREE frontier models with RTK token compression.",
       code: `export OPENAI_BASE_URL="${getBaseUrl()}"
 export ANTHROPIC_BASE_URL="${getBaseUrl()}"
 export OPENAI_API_KEY="szroute-free"
@@ -122,27 +116,27 @@ for chunk in response:
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Top Header & Dynamic Combo Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Header & Dynamic Combo Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-black text-[#0e0f0c] tracking-tight flex items-center gap-2.5">
-            <Terminal className="w-7 h-7 text-[#0e0f0c]" />
-            Client Integration & Setup Guides
+          <h2 className="text-2xl sm:text-3xl font-black text-ink tracking-tight flex items-center gap-2">
+            <Terminal className="w-6 h-6" />
+            Client Setup Guides
           </h2>
-          <p className="text-[15px] text-[#454745] font-medium mt-1">
-            Drop-in zero configuration integration snippets for Oh My Pi (omp) coding agent, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
+          <p className="text-[14px] text-ink-body font-medium mt-0.5">
+            Drop-in zero configuration integration snippets for Oh My Pi (omp), Cursor, Cline, and Codex
           </p>
         </div>
 
         {/* Dynamic Combo Selector */}
-        <div className="flex items-center gap-2 bg-[#ffffff] p-2 rounded-full border border-[#e8ebe6] shadow-xs">
-          <Sliders className="w-4 h-4 text-[#0e0f0c] ml-2" />
-          <span className="text-[13px] text-[#454745] font-bold">Model / Combo:</span>
+        <div className="flex items-center gap-2 bg-card p-1.5 rounded-full border border-border-subtle">
+          <Sliders className="w-3.5 h-3.5 text-ink ml-1.5" />
+          <span className="text-[12px] text-ink-mute font-bold">Model:</span>
           <select
             value={selectedCombo}
             onChange={(e) => setSelectedCombo(e.target.value)}
-            className="bg-[#e8ebe6] text-[#0e0f0c] rounded-full px-3 py-1 text-[13px] font-bold outline-none cursor-pointer"
+            className="bg-subtle text-ink rounded-full px-2.5 py-0.5 text-[12px] font-bold outline-none cursor-pointer"
           >
             {allCombos.map((c) => (
               <option key={c.id} value={c.id}>
@@ -153,43 +147,41 @@ for chunk in response:
         </div>
       </div>
 
-      {/* Guides Grid in Wise Card Style */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Guides Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {guides.map((guide) => (
-          <div key={guide.id} className="wise-card space-y-4 flex flex-col justify-between">
-            <div className="space-y-3">
+          <div key={guide.id} className="wise-card p-5 space-y-3 flex flex-col justify-between">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#9fe870] flex items-center justify-center font-bold text-[#0e0f0c]">
-                    <Terminal className="w-5 h-5 text-[#0e0f0c]" />
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center font-bold text-ink text-xs">
+                    <Terminal className="w-3.5 h-3.5" />
                   </div>
-                  <div>
-                    <h3 className="text-[17px] font-black text-[#0e0f0c]">{guide.title}</h3>
-                  </div>
+                  <h3 className="text-[15px] font-black text-ink">{guide.title}</h3>
                 </div>
-                <span className="px-3 py-1 text-[12px] font-bold bg-[#e2f6d5] text-[#054d28] rounded-full">
+                <span className="badge-positive text-[10px] py-0 px-2">
                   {guide.badge}
                 </span>
               </div>
 
-              <p className="text-[14px] text-[#454745] leading-relaxed font-medium">
+              <p className="text-[13px] text-ink-body leading-relaxed font-medium">
                 {guide.description}
               </p>
 
-              {/* Code Snippet Box in Dark Polarity Container */}
+              {/* Code Snippet Box */}
               <div className="relative group">
-                <pre className="bg-[#0e0f0c] rounded-[18px] p-4 text-[13px] font-mono text-[#e8ebe6] overflow-x-auto whitespace-pre leading-relaxed shadow-sm">
+                <pre className="bg-[#0e0f0c] text-[#e8ebe6] rounded-[16px] p-3.5 text-[12px] font-mono overflow-x-auto whitespace-pre leading-relaxed shadow-xs">
                   {guide.code}
                 </pre>
                 <button
                   onClick={() => copySnippet(guide.id, guide.code)}
-                  className="absolute top-3 right-3 p-2 bg-[#1a1c17] hover:bg-[#252822] text-[#9fe870] rounded-full transition-all"
+                  className="absolute top-2.5 right-2.5 p-1.5 bg-[#1a1c17] hover:bg-[#252822] text-primary rounded-full transition-all"
                   title="Copy code snippet"
                 >
                   {copiedId === guide.id ? (
-                    <Check className="w-4 h-4 text-[#9fe870]" />
+                    <Check className="w-3.5 h-3.5 text-primary" />
                   ) : (
-                    <Copy className="w-4 h-4 text-[#ffffff]" />
+                    <Copy className="w-3.5 h-3.5 text-white" />
                   )}
                 </button>
               </div>

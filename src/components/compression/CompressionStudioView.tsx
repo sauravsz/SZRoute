@@ -5,12 +5,8 @@ import {
   Flame,
   TrendingDown,
   Sparkles,
-  Sliders,
   Copy,
   Check,
-  Zap,
-  ShieldCheck,
-  RotateCcw,
 } from "lucide-react";
 import { compressPrompt, CompressionResult } from "@/lib/compression/engine";
 
@@ -34,7 +30,7 @@ Due to the fact that this code will run on Vercel Serverless, it is important to
 `,
   },
   {
-    title: "System Prompt with Redundant Formatting",
+    title: "System Prompt Formatting",
     text: `You are an elite software architect for Oh My Pi (omp).
 
 
@@ -42,12 +38,6 @@ Due to the fact that this code will run on Vercel Serverless, it is important to
 Please note that you must always write modular code.
 In order to guarantee optimal performance, kindly adhere to clean architecture principles.
 For the purpose of maintaining strict consistency, please format all outputs in pure Markdown.`,
-  },
-  {
-    title: "Long Multiline Function Prompt",
-    text: `Could you please implement a Dijkstra algorithm in TypeScript?
-Please note that it is important to note that the graph has weighted directed edges.
-In order to prevent infinite loops, kindly track visited nodes in a Set.`,
   },
 ];
 
@@ -81,101 +71,100 @@ export function CompressionStudioView() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-black text-[#0e0f0c] tracking-tight flex items-center gap-2.5">
-            <Flame className="w-7 h-7 text-[#d03238]" />
-            RTK + Caveman Token Compression Engine
+          <h2 className="text-2xl sm:text-3xl font-black text-ink tracking-tight flex items-center gap-2">
+            <Flame className="w-6 h-6 text-negative" />
+            RTK + Caveman Token Compression
           </h2>
-          <p className="text-[15px] text-[#454745] font-medium mt-1">
-            Stack algorithmic rules and natural language minification to strip 15%–95% input tokens without losing instructions.
+          <p className="text-[14px] text-ink-body font-medium mt-0.5">
+            Strip 15%–95% input tokens without losing semantic instructions
           </p>
         </div>
 
         {result && (
-          <div className="flex items-center gap-3">
-            <div className="px-4 py-2 rounded-full bg-[#e2f6d5] text-[#054d28] text-[14px] font-black flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="px-3 py-1 rounded-full bg-primary/20 text-primary-on text-[13px] font-black flex items-center gap-1.5">
               <TrendingDown className="w-4 h-4" />
-              <span>{result.percentSaved}% Tokens Saved</span>
+              <span>{result.percentSaved}% Saved</span>
             </div>
-            <button onClick={copyCompressed} className="btn-primary text-[14px] flex items-center gap-1.5">
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              {copied ? "Copied" : "Copy Output"}
+            <button onClick={copyCompressed} className="btn-primary text-[13px] h-8 px-3">
+              {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? "Copied" : "Copy Output"}</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* Preset Sample Buttons */}
+      {/* Preset Samples */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[13px] text-[#454745] font-bold mr-1">Sample Prompts:</span>
+        <span className="text-[12px] text-ink-mute font-bold">Samples:</span>
         {SAMPLE_PROMPTS.map((sample, idx) => (
           <button
             key={idx}
             onClick={() => setInputText(sample.text)}
-            className="px-3.5 py-1.5 bg-[#ffffff] hover:bg-[#e8ebe6] text-[#0e0f0c] font-semibold rounded-full text-[13px] border border-[#e8ebe6] transition-colors shadow-xs"
+            className="px-3 py-1 bg-card hover:bg-subtle text-ink font-semibold rounded-full text-[12px] border border-border-subtle transition-colors shadow-xs"
           >
             {sample.title}
           </button>
         ))}
       </div>
 
-      {/* Rules & Compression Controls */}
-      <div className="wise-card p-5 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-4 text-[14px] font-bold text-[#0e0f0c]">
-          <label className="flex items-center gap-2 cursor-pointer">
+      {/* Rules Controls */}
+      <div className="wise-card p-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-ink">
+          <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
               checked={enableRtk}
               onChange={(e) => setEnableRtk(e.target.checked)}
-              className="rounded accent-[#0e0f0c]"
+              className="rounded accent-primary"
             />
-            <span>RTK Structural Purge</span>
+            <span>RTK Structural</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
               checked={enableCaveman}
               onChange={(e) => setEnableCaveman(e.target.checked)}
-              className="rounded accent-[#0e0f0c]"
+              className="rounded accent-primary"
             />
-            <span>Caveman NLP Minification</span>
+            <span>Caveman NLP</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
               checked={compactJson}
               onChange={(e) => setCompactJson(e.target.checked)}
-              className="rounded accent-[#0e0f0c]"
+              className="rounded accent-primary"
             />
             <span>Minify JSON</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
               checked={stripMarkdown}
               onChange={(e) => setStripMarkdown(e.target.checked)}
-              className="rounded accent-[#0e0f0c]"
+              className="rounded accent-primary"
             />
-            <span>Normalize Spacing</span>
+            <span>Spacing</span>
           </label>
         </div>
 
-        {/* Compression Level Selector */}
-        <div className="flex items-center gap-1.5 bg-[#e8ebe6] p-1 rounded-full text-[12px] font-bold">
+        <div className="flex items-center gap-1 bg-subtle p-0.5 rounded-full text-[11px] font-bold">
           {(["gentle", "standard", "aggressive"] as const).map((lvl) => (
             <button
               key={lvl}
               onClick={() => setLevel(lvl)}
-              className={`px-3 py-1 rounded-full capitalize transition-all ${
+              className={`px-2.5 py-0.5 rounded-full capitalize transition-all ${
                 level === lvl
-                  ? "bg-[#0e0f0c] text-white shadow-xs"
-                  : "text-[#454745] hover:text-[#0e0f0c]"
+                  ? "bg-ink text-card"
+                  : "text-ink-body hover:text-ink"
               }`}
             >
               {lvl}
@@ -185,67 +174,58 @@ export function CompressionStudioView() {
       </div>
 
       {/* Side-by-Side Prompt Diff */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Original Input */}
-        <div className="wise-card space-y-4 flex flex-col justify-between">
-          <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Original */}
+        <div className="wise-card p-4 space-y-2 flex flex-col justify-between">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[15px] font-bold text-[#0e0f0c]">Original Prompt Context</span>
-              <span className="text-[12px] font-mono font-bold text-[#454745] bg-[#e8ebe6] px-3 py-1 rounded-full">
+              <span className="text-[13px] font-bold text-ink">Original Prompt</span>
+              <span className="text-[11px] font-mono font-bold text-ink-mute bg-subtle px-2 py-0.5 rounded-full">
                 {result?.originalTokens || 0} tokens
               </span>
             </div>
             <textarea
-              rows={12}
+              rows={10}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste any prompt or conversation history..."
-              className="w-full bg-[#e8ebe6] text-[#0e0f0c] rounded-[16px] p-4 text-[14px] font-mono outline-none resize-none focus:ring-2 focus:ring-[#9fe870]"
+              placeholder="Paste prompt..."
+              className="w-full bg-subtle text-ink rounded-xl p-3 text-[13px] font-mono outline-none resize-none"
             />
           </div>
-          <div className="text-[13px] text-[#868685] font-medium flex items-center justify-between">
+          <div className="text-[11px] text-ink-mute font-medium flex items-center justify-between">
             <span>{inputText.length} characters</span>
             <span>Raw context</span>
           </div>
         </div>
 
-        {/* Right: Compressed Output */}
-        <div className="wise-card space-y-4 flex flex-col justify-between border-2 border-[#9fe870]">
-          <div className="space-y-3">
+        {/* Compressed */}
+        <div className="wise-card p-4 space-y-2 flex flex-col justify-between border-2 border-primary">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[15px] font-bold text-[#054d28] flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#2ead4b]" /> Compressed Output (Dispatched)
+              <span className="text-[13px] font-bold text-positive flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5" /> Compressed Output
               </span>
-              <span className="text-[12px] font-mono font-bold text-[#054d28] bg-[#e2f6d5] px-3 py-1 rounded-full">
+              <span className="text-[11px] font-mono font-bold text-positive bg-primary/20 px-2 py-0.5 rounded-full">
                 {result?.compressedTokens || 0} tokens ({result?.tokensSaved || 0} saved)
               </span>
             </div>
             <textarea
-              rows={12}
+              rows={10}
               readOnly
               value={result?.compressedText || ""}
-              className="w-full bg-[#e8ebe6] text-[#0e0f0c] rounded-[16px] p-4 text-[14px] font-mono outline-none resize-none font-medium"
+              className="w-full bg-subtle text-ink rounded-xl p-3 text-[13px] font-mono outline-none resize-none font-medium"
             />
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-[#e8ebe6]">
-            <div className="text-[12px] uppercase tracking-wider text-[#868685] font-bold">
-              Applied Compression Rules ({result?.rulesApplied.length || 0})
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {result?.rulesApplied.length === 0 ? (
-                <span className="text-[13px] text-[#868685]">No rules needed (already optimal)</span>
-              ) : (
-                result?.rulesApplied.map((rule, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 text-[11px] font-bold bg-[#e2f6d5] text-[#054d28] rounded-full"
-                  >
-                    ✓ {rule}
-                  </span>
-                ))
-              )}
-            </div>
+          <div className="pt-2 border-t border-border-subtle flex flex-wrap gap-1">
+            {result?.rulesApplied.map((rule, i) => (
+              <span
+                key={i}
+                className="px-2 py-0.5 text-[10px] font-bold bg-primary/20 text-primary-on rounded-full"
+              >
+                ✓ {rule}
+              </span>
+            ))}
           </div>
         </div>
       </div>
