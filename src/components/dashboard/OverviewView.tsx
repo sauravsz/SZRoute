@@ -87,7 +87,7 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
           </h1>
 
           <p className="text-[15px] text-[#cdcdcd] leading-relaxed">
-            SZRoute is your high-performance serverless AI gateway. Plug <span className="text-white font-medium">Claude Code</span>, <span className="text-white font-medium">Cursor</span>, <span className="text-white font-medium">Cline</span>, and <span className="text-white font-medium">Codex</span> into free Claude 3.7, DeepSeek R1, GPT-4o, and Gemini with automated failovers and RTK prompt compression saving up to 95% tokens.
+            SZRoute is your high-performance serverless AI gateway. Plug <span className="text-white font-medium">Oh My Pi (omp) coding agent</span>, <span className="text-white font-medium">Cursor</span>, <span className="text-white font-medium">Cline</span>, and <span className="text-white font-medium">Codex</span> into free Claude 3.7, DeepSeek R1, GPT-4o, and Gemini with automated failovers and RTK prompt compression saving up to 95% tokens.
           </p>
 
           {/* Action Row */}
@@ -131,7 +131,7 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
         <button onClick={copyUrl} className="btn-tertiary text-[13px] flex items-center gap-2">
           {copiedEndpoint ? <Check className="w-3.5 h-3.5 text-[#59d499]" /> : <Copy className="w-3.5 h-3.5 text-[#cdcdcd]" />}
-          Copy for Claude Code / Cursor
+          Copy for omp Coding Agent / Cursor
         </button>
       </div>
 

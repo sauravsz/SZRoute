@@ -16,7 +16,7 @@ export function Footer() {
             </span>
           </div>
           <p className="text-[#9c9c9d] text-[13px] leading-relaxed max-w-sm">
-            The Free AI Gateway & Multi-Provider Router. Connect Claude Code, Cursor, Cline & Codex to 160+ providers with RTK token compression and automatic failover.
+            The Free AI Gateway & Multi-Provider Router. Connect Oh My Pi (omp) coding agent, Cursor, Cline & Codex to 160+ providers with RTK token compression and automatic failover.
           </p>
           <div className="flex items-center gap-3 pt-2 text-[#9c9c9d]">
             <a
@@ -36,8 +36,7 @@ export function Footer() {
         <div className="space-y-2.5">
           <h4 className="font-medium text-white text-[13px]">Integrations</h4>
           <ul className="space-y-2 text-[#9c9c9d]">
-            <li className="hover:text-white cursor-pointer transition-colors">Claude Code</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Cursor IDE</li>
+            <li className="hover:text-white cursor-pointer transition-colors">Oh My Pi (omp) Agent</li>
             <li className="hover:text-white cursor-pointer transition-colors">Cline & Roo Code</li>
             <li className="hover:text-white cursor-pointer transition-colors">Codex & Antigravity</li>
             <li className="hover:text-white cursor-pointer transition-colors">LiteLLM & OpenAI SDK</li>

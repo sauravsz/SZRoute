@@ -152,7 +152,7 @@ export function CommandPaletteModal({
       id: "nav-setup",
       category: "Navigation",
       title: "Client Setup Guides & Snippets",
-      subtitle: "Claude Code, Cursor, Cline, Codex, Antigravity, LiteLLM",
+      subtitle: "Oh My Pi (omp) coding agent, Cursor, Cline, Codex, Antigravity, LiteLLM",
       icon: <Terminal className="w-4 h-4 text-[#cdcdcd]" />,
       shortcut: "G T",
       action: () => {

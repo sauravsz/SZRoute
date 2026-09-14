@@ -10,6 +10,7 @@ import {
   Sparkles,
   ExternalLink,
   Layers,
+  Zap,
 } from "lucide-react";
 
 export function SetupGuidesView() {
@@ -27,13 +28,15 @@ export function SetupGuidesView() {
 
   const guides = [
     {
-      id: "claude-code",
-      title: "Claude Code CLI",
+      id: "omp-coding-agent",
+      title: "Oh My Pi (omp) Coding Agent",
       badge: "One-line setup",
-      description: "Connect Claude Code to FREE Claude 3.7 / Gemini / DeepSeek through SZRoute.",
-      code: `export ANTHROPIC_BASE_URL="${getBaseUrl()}"
+      description: "Connect the Oh My Pi (omp) coding agent to FREE frontier models via SZRoute with RTK token compression.",
+      code: `export OPENAI_BASE_URL="${getBaseUrl()}"
+export ANTHROPIC_BASE_URL="${getBaseUrl()}"
+export OPENAI_API_KEY="szroute-free"
 export ANTHROPIC_API_KEY="szroute-free"
-claude`,
+omp --model free-auto`,
     },
     {
       id: "cursor",
@@ -115,7 +118,7 @@ for chunk in response:
           Client Integration & Setup Guides
         </h2>
         <p className="text-[14px] text-[#9c9c9d] mt-1">
-          Drop-in zero configuration integration snippets for Claude Code, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
+          Drop-in zero configuration integration snippets for Oh My Pi (omp) coding agent, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
         </p>
       </div>
 

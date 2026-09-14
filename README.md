@@ -1,6 +1,6 @@
 # 🚀 SZRoute — The Free AI Gateway & Router
 
-SZRoute is an edge-native, multi-provider AI Gateway and intelligent proxy router. Connect **Claude Code, Cursor, Cline, Codex, Antigravity, and LiteLLM** to **160+ AI providers (50+ free tiers)** through a single OpenAI-compatible and Anthropic-compatible endpoint.
+SZRoute is an edge-native, multi-provider AI Gateway and intelligent proxy router. Connect the **Oh My Pi (omp) coding agent, Cursor, Cline, Codex, Antigravity, and LiteLLM** to **160+ AI providers (50+ free tiers)** through a single OpenAI-compatible and Anthropic-compatible endpoint.
 
 Styled with the **Raycast Developer Dark Design System** (pure near-black canvas `#07080a`, surface ladder, hairline borders, Inter `ss03` stylistic typography, and white CTA pills).
 
@@ -11,7 +11,7 @@ Styled with the **Raycast Developer Dark Design System** (pure near-black canvas
 - **Universal Multi-Provider Gateway**:
   - `POST /v1/chat/completions` — OpenAI-compatible streaming SSE & non-streaming router with tool/function calling.
   - `GET /v1/models` — Dynamic catalog aggregating 160+ providers and virtual combos.
-  - `POST /v1/messages` — Anthropic Claude-compatible messages proxy with bidirectional translation.
+  - `POST /v1/messages` — Anthropic Claude-compatible messages proxy with bidirectional translation and strict event streaming.
   - `POST /v1/compress` — Standalone RTK + Caveman prompt minification API.
   - `GET /v1/providers` — Real-time provider discovery and capability matrix.
   - `POST /v1/test-provider` — Latency ping and credential testing.
@@ -78,11 +78,16 @@ Or connect your GitHub repository to Vercel.
 
 ## 🔌 Client Integrations
 
-### Claude Code CLI
+### Oh My Pi (omp) Coding Agent
 ```bash
+# Connect Oh My Pi (omp) coding agent to SZRoute
+export OPENAI_BASE_URL="https://your-szroute.vercel.app/v1"
 export ANTHROPIC_BASE_URL="https://your-szroute.vercel.app/v1"
+export OPENAI_API_KEY="szroute-free"
 export ANTHROPIC_API_KEY="szroute-free"
-claude
+
+# Run omp with auto-free fallback combo
+omp --model free-auto
 ```
 
 ### Cursor IDE
@@ -115,4 +120,4 @@ for chunk in response:
 
 ## 📄 License
 
-MIT License. Designed for high-velocity AI workflows.
+MIT License. Designed for high-velocity autonomous AI workflows.
