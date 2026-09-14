@@ -43,11 +43,11 @@ export default function HomePage() {
     stats,
   } = useSZRouteStore();
 
-  // Load theme preference on mount
+  // Load theme preference on mount (Default to clean Wise Light Mode)
   useEffect(() => {
     try {
       const stored = localStorage.getItem("szroute_theme");
-      if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      if (stored === "dark") {
         setIsDark(true);
         document.documentElement.classList.add("dark");
       } else {

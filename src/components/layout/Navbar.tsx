@@ -47,13 +47,13 @@ export function Navbar({
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-card/85 backdrop-blur-md border-b border-border-subtle">
+    <header className="sticky top-0 z-40 w-full bg-card/90 backdrop-blur-md border-b border-border-subtle">
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Left: Minimal Wordmark with Lime Dot */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => onTabChange("overview")}
-            className="flex items-center gap-2 text-left group"
+            className="flex items-center gap-2 text-left group cursor-pointer"
           >
             <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center font-black text-ink text-xs shadow-xs group-hover:scale-105 transition-transform">
               SZ
@@ -72,7 +72,7 @@ export function Navbar({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`px-3.5 py-1 text-[13px] font-bold rounded-full transition-all ${
+                className={`px-3.5 py-1 text-[13px] font-bold rounded-full transition-all cursor-pointer ${
                   isActive
                     ? "bg-ink text-card shadow-xs"
                     : "text-ink-body hover:text-ink"
@@ -88,8 +88,10 @@ export function Navbar({
         <div className="flex items-center gap-2">
           {/* Theme Switcher Toggle */}
           <button
+            id="theme-toggle-btn"
             onClick={onToggleTheme}
-            className="p-2 rounded-full text-ink-body hover:text-ink hover:bg-subtle transition-colors"
+            aria-label="Toggle theme"
+            className="p-2 rounded-full text-ink-body hover:text-ink hover:bg-subtle transition-colors cursor-pointer"
             title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
             {isDark ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4 text-ink" />}
@@ -98,7 +100,7 @@ export function Navbar({
           {/* Command Palette Trigger */}
           <button
             onClick={onOpenCommandPalette}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-bold text-ink-body hover:text-ink bg-subtle rounded-full hover:bg-subtle-hover transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-bold text-ink-body hover:text-ink bg-subtle rounded-full hover:bg-subtle-hover transition-colors cursor-pointer"
             title="Open Commands (⌘K)"
           >
             <Command className="w-3.5 h-3.5" />
@@ -108,7 +110,7 @@ export function Navbar({
           {/* Copy Base Endpoint */}
           <button
             onClick={copyEndpointUrl}
-            className="btn-primary text-[13px] h-9 px-3.5"
+            className="btn-primary text-[13px] h-9 px-3.5 cursor-pointer"
             title="Copy /v1 Endpoint"
           >
             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
