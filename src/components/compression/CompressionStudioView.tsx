@@ -35,7 +35,7 @@ Due to the fact that this code will run on Vercel Serverless, it is important to
   },
   {
     title: "System Prompt with Redundant Formatting",
-    text: `You are an elite software architect.
+    text: `You are an elite software architect for Oh My Pi (omp).
 
 
 
@@ -85,22 +85,22 @@ export function CompressionStudioView() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-white tracking-tight flex items-center gap-2">
-            <Flame className="w-6 h-6 text-[#ff6161]" />
+          <h2 className="text-3xl font-black text-[#0e0f0c] tracking-tight flex items-center gap-2.5">
+            <Flame className="w-7 h-7 text-[#d03238]" />
             RTK + Caveman Token Compression Engine
           </h2>
-          <p className="text-[14px] text-[#9c9c9d] mt-1">
-            Stack algorithmic rules and natural language minification to strip 15%–95% input tokens without losing semantic instructions.
+          <p className="text-[15px] text-[#454745] font-medium mt-1">
+            Stack algorithmic rules and natural language minification to strip 15%–95% input tokens without losing instructions.
           </p>
         </div>
 
         {result && (
           <div className="flex items-center gap-3">
-            <div className="px-3.5 py-1.5 rounded-lg bg-[#ff6161]/10 border border-[#ff6161]/25 text-[#ff6161] text-[13px] font-semibold flex items-center gap-1.5">
+            <div className="px-4 py-2 rounded-full bg-[#e2f6d5] text-[#054d28] text-[14px] font-black flex items-center gap-2">
               <TrendingDown className="w-4 h-4" />
               <span>{result.percentSaved}% Tokens Saved</span>
             </div>
-            <button onClick={copyCompressed} className="btn-primary text-[13px] flex items-center gap-1.5">
+            <button onClick={copyCompressed} className="btn-primary text-[14px] flex items-center gap-1.5">
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? "Copied" : "Copy Output"}
             </button>
@@ -108,14 +108,14 @@ export function CompressionStudioView() {
         )}
       </div>
 
-      {/* Preset Buttons */}
+      {/* Preset Sample Buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[12px] text-[#9c9c9d] font-medium mr-1">Sample Prompts:</span>
+        <span className="text-[13px] text-[#454745] font-bold mr-1">Sample Prompts:</span>
         {SAMPLE_PROMPTS.map((sample, idx) => (
           <button
             key={idx}
             onClick={() => setInputText(sample.text)}
-            className="px-3 py-1 bg-[#101111] hover:bg-[#121212] text-[#cdcdcd] hover:text-white border border-[#242728] rounded-md text-[12px] transition-colors"
+            className="px-3.5 py-1.5 bg-[#ffffff] hover:bg-[#e8ebe6] text-[#0e0f0c] font-semibold rounded-full text-[13px] border border-[#e8ebe6] transition-colors shadow-xs"
           >
             {sample.title}
           </button>
@@ -123,59 +123,59 @@ export function CompressionStudioView() {
       </div>
 
       {/* Rules & Compression Controls */}
-      <div className="raycast-card p-4 bg-[#0d0d0d] flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3 text-[13px]">
-          <label className="flex items-center gap-2 cursor-pointer text-[#cdcdcd] hover:text-white">
+      <div className="wise-card p-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4 text-[14px] font-bold text-[#0e0f0c]">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={enableRtk}
               onChange={(e) => setEnableRtk(e.target.checked)}
-              className="rounded bg-[#101111] border-[#242728] text-[#ff6161]"
+              className="rounded accent-[#0e0f0c]"
             />
             <span>RTK Structural Purge</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer text-[#cdcdcd] hover:text-white">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={enableCaveman}
               onChange={(e) => setEnableCaveman(e.target.checked)}
-              className="rounded bg-[#101111] border-[#242728] text-[#ff6161]"
+              className="rounded accent-[#0e0f0c]"
             />
             <span>Caveman NLP Minification</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer text-[#cdcdcd] hover:text-white">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={compactJson}
               onChange={(e) => setCompactJson(e.target.checked)}
-              className="rounded bg-[#101111] border-[#242728] text-[#ff6161]"
+              className="rounded accent-[#0e0f0c]"
             />
             <span>Minify JSON</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer text-[#cdcdcd] hover:text-white">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={stripMarkdown}
               onChange={(e) => setStripMarkdown(e.target.checked)}
-              className="rounded bg-[#101111] border-[#242728] text-[#ff6161]"
+              className="rounded accent-[#0e0f0c]"
             />
             <span>Normalize Spacing</span>
           </label>
         </div>
 
         {/* Compression Level Selector */}
-        <div className="flex items-center gap-1.5 bg-[#101111] p-1 border border-[#242728] rounded-lg text-[12px]">
+        <div className="flex items-center gap-1.5 bg-[#e8ebe6] p-1 rounded-full text-[12px] font-bold">
           {(["gentle", "standard", "aggressive"] as const).map((lvl) => (
             <button
               key={lvl}
               onClick={() => setLevel(lvl)}
-              className={`px-2.5 py-0.5 rounded font-medium capitalize transition-colors ${
+              className={`px-3 py-1 rounded-full capitalize transition-all ${
                 level === lvl
-                  ? "bg-[#121212] text-white border border-[#242728]"
-                  : "text-[#9c9c9d] hover:text-white"
+                  ? "bg-[#0e0f0c] text-white shadow-xs"
+                  : "text-[#454745] hover:text-[#0e0f0c]"
               }`}
             >
               {lvl}
@@ -187,11 +187,11 @@ export function CompressionStudioView() {
       {/* Side-by-Side Prompt Diff */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Original Input */}
-        <div className="raycast-card p-5 space-y-3 flex flex-col justify-between">
-          <div className="space-y-2">
+        <div className="wise-card space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-medium text-white">Original Input Prompt</span>
-              <span className="text-[12px] font-mono text-[#9c9c9d] bg-[#101111] px-2 py-0.5 rounded border border-[#242728]">
+              <span className="text-[15px] font-bold text-[#0e0f0c]">Original Prompt Context</span>
+              <span className="text-[12px] font-mono font-bold text-[#454745] bg-[#e8ebe6] px-3 py-1 rounded-full">
                 {result?.originalTokens || 0} tokens
               </span>
             </div>
@@ -200,23 +200,23 @@ export function CompressionStudioView() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Paste any prompt or conversation history..."
-              className="w-full bg-[#101111] text-white border border-[#242728] rounded-lg p-3 text-[13px] font-mono outline-none resize-none focus:border-[#434345]"
+              className="w-full bg-[#e8ebe6] text-[#0e0f0c] rounded-[16px] p-4 text-[14px] font-mono outline-none resize-none focus:ring-2 focus:ring-[#9fe870]"
             />
           </div>
-          <div className="text-[12px] text-[#6a6b6c] flex items-center justify-between">
+          <div className="text-[13px] text-[#868685] font-medium flex items-center justify-between">
             <span>{inputText.length} characters</span>
             <span>Raw context</span>
           </div>
         </div>
 
         {/* Right: Compressed Output */}
-        <div className="raycast-card p-5 space-y-3 flex flex-col justify-between">
-          <div className="space-y-2">
+        <div className="wise-card space-y-4 flex flex-col justify-between border-2 border-[#9fe870]">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-medium text-[#59d499] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Compressed Output (Dispatched to Model)
+              <span className="text-[15px] font-bold text-[#054d28] flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-[#2ead4b]" /> Compressed Output (Dispatched)
               </span>
-              <span className="text-[12px] font-mono text-[#59d499] bg-[#59d499]/10 px-2 py-0.5 rounded border border-[#59d499]/20">
+              <span className="text-[12px] font-mono font-bold text-[#054d28] bg-[#e2f6d5] px-3 py-1 rounded-full">
                 {result?.compressedTokens || 0} tokens ({result?.tokensSaved || 0} saved)
               </span>
             </div>
@@ -224,22 +224,22 @@ export function CompressionStudioView() {
               rows={12}
               readOnly
               value={result?.compressedText || ""}
-              className="w-full bg-[#101111] text-[#cdcdcd] border border-[#242728] rounded-lg p-3 text-[13px] font-mono outline-none resize-none"
+              className="w-full bg-[#e8ebe6] text-[#0e0f0c] rounded-[16px] p-4 text-[14px] font-mono outline-none resize-none font-medium"
             />
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-[#242728]">
-            <div className="text-[11px] uppercase tracking-wider text-[#6a6b6c] font-medium">
+          <div className="space-y-2 pt-2 border-t border-[#e8ebe6]">
+            <div className="text-[12px] uppercase tracking-wider text-[#868685] font-bold">
               Applied Compression Rules ({result?.rulesApplied.length || 0})
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {result?.rulesApplied.length === 0 ? (
-                <span className="text-[12px] text-[#9c9c9d]">No rules needed (already optimal)</span>
+                <span className="text-[13px] text-[#868685]">No rules needed (already optimal)</span>
               ) : (
                 result?.rulesApplied.map((rule, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 text-[11px] bg-[#121212] text-[#ff6161] border border-[#242728] rounded"
+                    className="px-2.5 py-1 text-[11px] font-bold bg-[#e2f6d5] text-[#054d28] rounded-full"
                   >
                     ✓ {rule}
                   </span>

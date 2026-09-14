@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,49 +9,62 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#07080a",
-        surface: {
-          DEFAULT: "#0d0d0d",
-          elevated: "#101111",
-          card: "#121212",
-          button: "#18191a",
+        primary: {
+          DEFAULT: "#9fe870",
+          active: "#cdffad",
+          neutral: "#c5edab",
+          pale: "#e2f6d5",
+          on: "#0e0f0c",
         },
-        hairline: {
-          DEFAULT: "#242728",
-          soft: "rgba(255, 255, 255, 0.08)",
-          strong: "rgba(255, 255, 255, 0.16)",
+        ink: {
+          DEFAULT: "#0e0f0c",
+          deep: "#163300",
         },
-        ink: "#f4f4f6",
-        body: "#cdcdcd",
-        charcoal: "#d3d3d4",
-        mute: "#9c9c9d",
-        ash: "#6a6b6c",
-        stone: "#434345",
+        body: "#454745",
+        mute: "#868685",
+        canvas: {
+          DEFAULT: "#ffffff",
+          soft: "#e8ebe6",
+        },
+        positive: {
+          DEFAULT: "#2ead4b",
+          deep: "#054d28",
+        },
+        warning: {
+          DEFAULT: "#ffd11a",
+          deep: "#b86700",
+          content: "#4a3b1c",
+        },
+        negative: {
+          DEFAULT: "#d03238",
+          deep: "#a72027",
+          darkest: "#a7000d",
+          bg: "#320707",
+        },
         accent: {
-          blue: "#57c1ff",
-          "blue-soft": "rgba(87, 193, 255, 0.15)",
-          red: "#ff6161",
-          "red-soft": "rgba(255, 97, 97, 0.15)",
-          green: "#59d499",
-          "green-soft": "rgba(89, 212, 153, 0.15)",
-          yellow: "#ffc533",
-          "yellow-soft": "rgba(255, 197, 51, 0.15)",
-        },
-        hero: {
-          start: "#ff5757",
-          end: "#a1131a",
+          orange: "#ffc091",
+          cyan: "#38c8ff",
         },
       },
       borderRadius: {
-        xs: "4px",
-        sm: "6px",
-        md: "8px",
-        lg: "10px",
-        xl: "16px",
+        none: "0px",
+        sm: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "24px",
+        pill: "9999px",
+        full: "9999px",
       },
       fontFamily: {
+        display: [
+          '"Inter"',
+          '"Wise Sans"',
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
         sans: [
-          "Inter",
+          '"Inter"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"Segoe UI"',
@@ -64,14 +76,12 @@ const config: Config = {
           '"Geist Mono"',
           "ui-monospace",
           "SFMono-Regular",
-          "Menlo",
-          "Monaco",
           "monospace",
         ],
       },
-      backgroundImage: {
-        "key-gradient": "linear-gradient(180deg, #121212 0%, #0d0d0d 100%)",
-        "hero-stripe": "linear-gradient(135deg, #ff5757 0%, #a1131a 100%)",
+      boxShadow: {
+        "wise-card": "0 1px 3px rgba(14, 15, 12, 0.04), 0 6px 16px rgba(14, 15, 12, 0.04)",
+        "wise-elevated": "0 2px 6px rgba(14, 15, 12, 0.06), 0 12px 32px rgba(14, 15, 12, 0.08)",
       },
     },
   },

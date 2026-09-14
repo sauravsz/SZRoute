@@ -15,6 +15,8 @@ import {
   Play,
   Terminal,
   Server,
+  ArrowDown,
+  RefreshCw,
 } from "lucide-react";
 import { PROVIDER_CATALOG, DEFAULT_COMBOS } from "@/lib/providers/catalog";
 import { NavTab } from "../layout/Navbar";
@@ -35,8 +37,12 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
   const [providerPingResults, setProviderPingResults] = useState<Record<string, { status: "ok" | "error"; latencyMs: number }>>({});
 
+  // Wise Signature Converter State (Token & Cost Calculator)
+  const [calcTokens, setCalcTokens] = useState<number>(100000);
+  const [calcSelectedModel, setCalcSelectedModel] = useState<string>("free-auto");
+
   const copyUrl = () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://szroute.online";
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://szroute.vercel.app";
     navigator.clipboard.writeText(`${origin}/v1`);
     setCopiedEndpoint(true);
     setTimeout(() => setCopiedEndpoint(false), 2000);
@@ -70,177 +76,272 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
   const freeProviders = PROVIDER_CATALOG.filter((p) => p.freeTier.hasFree);
 
-  return (
-    <div className="space-y-10 animate-in fade-in duration-200">
-      {/* Signature Raycast Hero Banner with Red Diagonal Stripe Accent */}
-      <div className="relative overflow-hidden rounded-xl border border-[#242728] bg-[#0d0d0d] p-8 sm:p-10">
-        <div className="absolute top-0 right-0 w-[450px] h-[180px] bg-gradient-to-bl from-[#ff5757]/20 via-[#a1131a]/10 to-transparent pointer-events-none transform -skew-x-12" />
+  // Commercial standard cost benchmark ($3.00 / 1M tokens)
+  const standardCost = ((calcTokens * 3.0) / 1000000).toFixed(2);
+  const rtkSavingsTokens = Math.round(calcTokens * 0.42);
+  const rtkSavingsPercent = 42;
 
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#101111] border border-[#242728] text-[12px] font-medium text-[#cdcdcd]">
-            <span className="w-2 h-2 rounded-full bg-[#59d499]" />
-            160+ Providers Unified • 50+ Free Tiers • Vercel Edge Serverless
+  return (
+    <div className="space-y-12 animate-in fade-in duration-200">
+      {/* Wise Hero Band: Split Layout with Heavy Display Sans & Signature Converter Card */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4 sm:pt-8">
+        {/* Left Column: Heavy 900 Display Headline & Primary Lime CTA */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#e2f6d5] text-[#054d28] text-[13px] font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#2ead4b] animate-pulse" />
+            Zero-Cost AI Gateway for Oh My Pi (omp)
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight leading-tight">
-            Never stop coding. Connect every AI tool to FREE frontier models.
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-[#0e0f0c] tracking-tight leading-[1.05]">
+            Never stop coding. Free AI gateway for omp<span className="text-[#2ead4b]">.</span>
           </h1>
 
-          <p className="text-[15px] text-[#cdcdcd] leading-relaxed">
-            SZRoute is your high-performance serverless AI gateway. Plug <span className="text-white font-medium">Oh My Pi (omp) coding agent</span>, <span className="text-white font-medium">Cursor</span>, <span className="text-white font-medium">Cline</span>, and <span className="text-white font-medium">Codex</span> into free Claude 3.7, DeepSeek R1, GPT-4o, and Gemini with automated failovers and RTK prompt compression saving up to 95% tokens.
+          <p className="text-[17px] sm:text-[19px] text-[#454745] leading-relaxed max-w-xl font-normal">
+            Connect the <strong className="text-[#0e0f0c] font-bold">Oh My Pi (omp)</strong> coding agent, Cursor, Cline, and Codex to 160+ providers (50+ free tiers). Save 15%–95% tokens with stacked RTK compression and zero-latency failovers.
           </p>
 
-          {/* Action Row */}
-          <div className="pt-3 flex flex-wrap items-center gap-3">
-            <button onClick={() => onNavigate("studio")} className="btn-primary flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-black" />
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              onClick={() => onNavigate("studio")}
+              className="btn-primary flex items-center gap-2 text-[15px]"
+            >
+              <Sparkles className="w-4 h-4" />
               Launch AI Studio
             </button>
 
-            <button onClick={() => onNavigate("setup")} className="btn-tertiary flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-[#cdcdcd]" />
-              Client Setup Guides
+            <button
+              onClick={() => onNavigate("setup")}
+              className="btn-secondary flex items-center gap-2 text-[15px]"
+            >
+              <Terminal className="w-4 h-4" />
+              omp Setup Guides
             </button>
 
-            <button onClick={copyUrl} className="btn-secondary flex items-center gap-2">
-              {copiedEndpoint ? <Check className="w-4 h-4 text-[#59d499]" /> : <Copy className="w-4 h-4 text-[#cdcdcd]" />}
+            <button
+              onClick={copyUrl}
+              className="btn-tertiary flex items-center gap-2 text-[15px]"
+            >
+              {copiedEndpoint ? <Check className="w-4 h-4 text-[#2ead4b]" /> : <Copy className="w-4 h-4 text-[#0e0f0c]" />}
               <span>{copiedEndpoint ? "Endpoint Copied" : "Copy Gateway URL"}</span>
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Gateway Endpoint Connectivity Card */}
-      <div className="raycast-card p-5 bg-[#0d0d0d] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-lg bg-[#121212] border border-[#242728] flex items-center justify-center">
-            <Server className="w-5 h-5 text-[#57c1ff]" />
+        {/* Right Column: Wise Signature Interactive Gateway Converter Card */}
+        <div className="lg:col-span-5">
+          <div className="wise-card border-2 border-[#0e0f0c] p-6 sm:p-7 space-y-5 relative">
+            <div className="flex items-center justify-between pb-1">
+              <span className="text-[13px] uppercase tracking-wider font-bold text-[#454745]">
+                AI Cost & Token Calculator
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#9fe870] text-[#0e0f0c] text-[11px] font-black">
+                100% FREE TIER
+              </span>
+            </div>
+
+            {/* From Box: Tokens Sent */}
+            <div className="p-4 bg-[#e8ebe6] rounded-[16px] space-y-2">
+              <div className="flex items-center justify-between text-[13px] text-[#454745] font-semibold">
+                <span>Input Prompt Tokens</span>
+                <span>Standard Commercial: ${standardCost}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <input
+                  type="number"
+                  value={calcTokens}
+                  onChange={(e) => setCalcTokens(Math.max(1000, parseInt(e.target.value) || 0))}
+                  step={10000}
+                  className="bg-transparent text-2xl sm:text-3xl font-black text-[#0e0f0c] outline-none w-full"
+                />
+                <span className="text-sm font-bold text-[#0e0f0c] bg-[#ffffff] px-3 py-1.5 rounded-full shadow-xs">
+                  Tokens
+                </span>
+              </div>
+            </div>
+
+            {/* Arrow Divider */}
+            <div className="flex items-center justify-center -my-2 relative z-10">
+              <div className="w-9 h-9 rounded-full bg-[#0e0f0c] text-[#9fe870] flex items-center justify-center shadow-md">
+                <ArrowDown className="w-4 h-4" />
+              </div>
+            </div>
+
+            {/* To Box: SZRoute Free Routing & RTK Compression */}
+            <div className="p-4 bg-[#e2f6d5] border border-[#c5edab] rounded-[16px] space-y-2">
+              <div className="flex items-center justify-between text-[13px] text-[#054d28] font-bold">
+                <span>SZRoute Gateway + RTK</span>
+                <span>You Pay: $0.00</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#054d28]">
+                    {calcTokens - rtkSavingsTokens} <span className="text-sm font-semibold text-[#054d28]">tokens</span>
+                  </div>
+                  <div className="text-[12px] font-bold text-[#2ead4b]">
+                    🔥 -{rtkSavingsPercent}% tokens compressed via RTK
+                  </div>
+                </div>
+
+                <select
+                  value={calcSelectedModel}
+                  onChange={(e) => setCalcSelectedModel(e.target.value)}
+                  className="bg-[#ffffff] text-[#0e0f0c] text-[13px] font-bold px-3 py-1.5 rounded-full border border-[#c5edab] outline-none"
+                >
+                  <option value="free-auto">free-auto (Groq/Cerebras)</option>
+                  <option value="code-expert">code-expert (Claude 3.7)</option>
+                  <option value="fast-reasoning">fast-reasoning (R1)</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onNavigate("setup")}
+              className="w-full btn-primary font-bold text-[15px] h-12 shadow-sm"
+            >
+              Route Oh My Pi (omp) for Free →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Gateway Endpoint Connectivity Banner */}
+      <div className="wise-card p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[#e8ebe6] flex items-center justify-center">
+            <Server className="w-6 h-6 text-[#0e0f0c]" />
           </div>
           <div>
-            <div className="text-[14px] font-medium text-white flex items-center gap-2">
-              Universal OpenAI-Compatible Base URL
-              <span className="px-1.5 py-0.5 text-[10px] bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/20 rounded">
+            <div className="text-[16px] font-bold text-[#0e0f0c] flex items-center gap-2">
+              Universal OpenAI / Anthropic Base URL
+              <span className="badge-positive text-[11px] py-0.5">
                 Edge Active
               </span>
             </div>
-            <div className="text-[12px] font-mono text-[#9c9c9d] mt-0.5">
-              {typeof window !== "undefined" ? window.location.origin : "https://szroute.online"}/v1
+            <div className="text-[13px] font-mono text-[#454745] mt-0.5 font-semibold">
+              {typeof window !== "undefined" ? window.location.origin : "https://szroute.vercel.app"}/v1
             </div>
           </div>
         </div>
 
-        <button onClick={copyUrl} className="btn-tertiary text-[13px] flex items-center gap-2">
-          {copiedEndpoint ? <Check className="w-3.5 h-3.5 text-[#59d499]" /> : <Copy className="w-3.5 h-3.5 text-[#cdcdcd]" />}
-          Copy for omp Coding Agent / Cursor
+        <button onClick={copyUrl} className="btn-secondary text-[14px] flex items-center gap-2">
+          {copiedEndpoint ? <Check className="w-4 h-4 text-[#2ead4b]" /> : <Copy className="w-4 h-4 text-[#0e0f0c]" />}
+          Copy for omp Agent / Cursor
         </button>
       </div>
 
-      {/* Telemetry Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Telemetry Stat Cards in Wise Scandinavian Card Style */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Stat 1: Total Requests */}
-        <div className="raycast-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[#9c9c9d] text-[13px]">
+        <div className="wise-card space-y-3">
+          <div className="flex items-center justify-between text-[#454745] text-[13px] font-bold">
             <span>Total Requests</span>
-            <Activity className="w-4 h-4 text-[#57c1ff]" />
+            <Activity className="w-4 h-4 text-[#0e0f0c]" />
           </div>
-          <div className="text-2xl font-semibold text-white tracking-tight">
+          <div className="text-3xl sm:text-4xl font-black text-[#0e0f0c] tracking-tight">
             {stats.totalRequests.toLocaleString()}
           </div>
-          <div className="text-[12px] text-[#59d499] flex items-center gap-1">
-            <span>0% dropped (100% failover coverage)</span>
+          <div className="text-[12px] text-[#2ead4b] font-bold flex items-center gap-1">
+            <span>0% dropped • 100% failover coverage</span>
           </div>
         </div>
 
         {/* Stat 2: Tokens Saved */}
-        <div className="raycast-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[#9c9c9d] text-[13px]">
+        <div className="wise-card space-y-3">
+          <div className="flex items-center justify-between text-[#454745] text-[13px] font-bold">
             <span>Tokens Saved (RTK)</span>
-            <Flame className="w-4 h-4 text-[#ff6161]" />
+            <Flame className="w-4 h-4 text-[#d03238]" />
           </div>
-          <div className="text-2xl font-semibold text-white tracking-tight">
+          <div className="text-3xl sm:text-4xl font-black text-[#0e0f0c] tracking-tight">
             {stats.totalTokensSaved.toLocaleString()}
           </div>
-          <div className="text-[12px] text-[#ff6161] flex items-center gap-1">
+          <div className="text-[12px] text-[#d03238] font-bold flex items-center gap-1">
             <TrendingDown className="w-3.5 h-3.5" />
             <span>15%–95% input token reduction</span>
           </div>
         </div>
 
         {/* Stat 3: Avg Latency */}
-        <div className="raycast-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[#9c9c9d] text-[13px]">
+        <div className="wise-card space-y-3">
+          <div className="flex items-center justify-between text-[#454745] text-[13px] font-bold">
             <span>Average Latency</span>
-            <Zap className="w-4 h-4 text-[#ffc533]" />
+            <Zap className="w-4 h-4 text-[#ffd11a]" />
           </div>
-          <div className="text-2xl font-semibold text-white tracking-tight">
+          <div className="text-3xl sm:text-4xl font-black text-[#0e0f0c] tracking-tight">
             {stats.avgLatencyMs > 0 ? `${stats.avgLatencyMs} ms` : "120 ms"}
           </div>
-          <div className="text-[12px] text-[#9c9c9d]">
+          <div className="text-[12px] text-[#454745] font-semibold">
             Cerebras & Groq fast tier
           </div>
         </div>
 
         {/* Stat 4: Est Dollar Savings */}
-        <div className="raycast-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[#9c9c9d] text-[13px]">
+        <div className="wise-card space-y-3">
+          <div className="flex items-center justify-between text-[#454745] text-[13px] font-bold">
             <span>Est. API Cost Saved</span>
-            <ShieldCheck className="w-4 h-4 text-[#59d499]" />
+            <ShieldCheck className="w-4 h-4 text-[#2ead4b]" />
           </div>
-          <div className="text-2xl font-semibold text-white tracking-tight">
+          <div className="text-3xl sm:text-4xl font-black text-[#0e0f0c] tracking-tight">
             ${stats.estimatedDollarsSaved}
           </div>
-          <div className="text-[12px] text-[#59d499]">
+          <div className="text-[12px] text-[#054d28] font-bold">
             Aggregated free inference
           </div>
         </div>
       </div>
 
-      {/* Featured Virtual Combos */}
-      <div className="space-y-4">
+      {/* Featured Virtual Combos Section */}
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-white tracking-tight">
-              Active Virtual Combos
+            <h3 className="text-2xl sm:text-3xl font-black text-[#0e0f0c] tracking-tight">
+              Virtual Combos & Smart Routing
             </h3>
-            <p className="text-[13px] text-[#9c9c9d]">
-              Zero-configuration smart multi-provider routing chains
+            <p className="text-[15px] text-[#454745] font-medium mt-1">
+              Zero-configuration multi-provider fallback chains for the Oh My Pi (omp) coding agent.
             </p>
           </div>
-          <button onClick={() => onNavigate("combos")} className="btn-secondary text-[13px] flex items-center gap-1">
+          <button
+            onClick={() => onNavigate("combos")}
+            className="btn-secondary text-[14px] flex items-center gap-1.5"
+          >
             <span>Manage Combos</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-[#cdcdcd]" />
+            <ArrowUpRight className="w-4 h-4 text-[#0e0f0c]" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {DEFAULT_COMBOS.map((combo) => (
-            <div key={combo.id} className="raycast-card p-5 space-y-3 hover:border-[#434345] transition-colors">
+            <div
+              key={combo.id}
+              className="wise-card space-y-4 hover:shadow-wise-elevated transition-shadow"
+            >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-md bg-[#121212] border border-[#242728] flex items-center justify-center">
-                    <Layers className="w-4 h-4 text-[#59d499]" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#9fe870] flex items-center justify-center font-bold text-[#0e0f0c]">
+                    <Layers className="w-5 h-5 text-[#0e0f0c]" />
                   </div>
                   <div>
-                    <h4 className="text-[14px] font-medium text-white">{combo.name}</h4>
-                    <span className="text-[11px] font-mono text-[#9c9c9d]">{combo.id}</span>
+                    <h4 className="text-[16px] font-black text-[#0e0f0c]">{combo.name}</h4>
+                    <span className="text-[12px] font-mono font-bold text-[#454745]">model: &quot;{combo.id}&quot;</span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[11px] font-medium bg-[#101111] text-[#57c1ff] border border-[#242728] rounded">
-                  {combo.strategy.toUpperCase()}
+
+                <span className="px-3 py-1 text-[12px] font-bold bg-[#e8ebe6] text-[#0e0f0c] rounded-full uppercase">
+                  {combo.strategy}
                 </span>
               </div>
 
-              <p className="text-[13px] text-[#cdcdcd] leading-relaxed">
+              <p className="text-[14px] text-[#454745] leading-relaxed">
                 {combo.description}
               </p>
 
-              <div className="flex flex-wrap gap-1.5 pt-1">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {combo.targets.map((t, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 text-[11px] bg-[#121212] text-[#cdcdcd] border border-[#242728] rounded flex items-center gap-1"
+                    className="px-3 py-1 text-[12px] font-semibold bg-[#e8ebe6] text-[#0e0f0c] rounded-full flex items-center gap-1.5"
                   >
-                    <span className="text-[#9c9c9d]">{i + 1}.</span> {t.providerId}
+                    <span className="text-[#868685] font-bold">{i + 1}.</span> {t.providerId}
                   </span>
                 ))}
               </div>
@@ -249,68 +350,68 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
         </div>
       </div>
 
-      {/* Top Free Tier Providers Health Grid */}
-      <div className="space-y-4">
+      {/* Free Tier Providers Health Grid */}
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-white tracking-tight">
-              Free Tier Provider Health Matrix
+            <h3 className="text-2xl sm:text-3xl font-black text-[#0e0f0c] tracking-tight">
+              Free Tier Provider Matrix
             </h3>
-            <p className="text-[13px] text-[#9c9c9d]">
-              Aggregating ~1.9B free tokens/month across leading providers
+            <p className="text-[15px] text-[#454745] font-medium mt-1">
+              Aggregating ~1.9B free tokens/month across leading frontier providers.
             </p>
           </div>
-          <button onClick={() => onNavigate("providers")} className="btn-secondary text-[13px] flex items-center gap-1">
+          <button
+            onClick={() => onNavigate("providers")}
+            className="btn-secondary text-[14px] flex items-center gap-1.5"
+          >
             <span>View All 160+ Providers</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-[#cdcdcd]" />
+            <ArrowUpRight className="w-4 h-4 text-[#0e0f0c]" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {freeProviders.slice(0, 6).map((provider) => {
             const pingResult = providerPingResults[provider.id];
             const isTesting = testingProvider === provider.id;
 
             return (
-              <div key={provider.id} className="raycast-card p-4 space-y-3 flex flex-col justify-between">
-                <div className="space-y-2">
+              <div key={provider.id} className="wise-card space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="w-8 h-8 rounded-md bg-[#121212] border border-[#242728] flex items-center justify-center font-bold text-xs"
-                        style={{ color: provider.accentColor }}
-                      >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#e8ebe6] flex items-center justify-center font-black text-[#0e0f0c] text-sm">
                         {provider.name.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <h4 className="text-[14px] font-medium text-white">{provider.name}</h4>
-                        <span className="text-[11px] text-[#59d499]">{provider.freeTier.badgeText}</span>
+                        <h4 className="text-[16px] font-bold text-[#0e0f0c]">{provider.name}</h4>
+                        <span className="text-[12px] text-[#2ead4b] font-bold">{provider.freeTier.badgeText}</span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-[12px] text-[#9c9c9d] line-clamp-2">
+                  <p className="text-[13px] text-[#454745] line-clamp-2">
                     {provider.description}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-[#242728] flex items-center justify-between text-[12px]">
-                  <div className="text-[#9c9c9d] truncate max-w-[140px]">
+                <div className="pt-3 border-t border-[#e8ebe6] flex items-center justify-between text-[13px]">
+                  <div className="text-[#454745] font-medium truncate max-w-[140px]">
                     {provider.freeTier.monthlyFreeTokensEstimate || "Free quota"}
                   </div>
                   <button
                     onClick={() => testProviderPing(provider.id)}
                     disabled={isTesting}
-                    className="px-2 py-1 bg-[#101111] hover:bg-[#121212] text-[#cdcdcd] hover:text-white border border-[#242728] rounded text-[11px] flex items-center gap-1 transition-colors"
+                    className="px-3 py-1.5 bg-[#e8ebe6] hover:bg-[#dbe0d7] text-[#0e0f0c] rounded-full text-[12px] font-bold flex items-center gap-1.5 transition-colors"
                   >
                     {isTesting ? (
                       <span>Pinging...</span>
                     ) : pingResult ? (
-                      <span className={pingResult.status === "ok" ? "text-[#59d499]" : "text-[#ff6161]"}>
+                      <span className={pingResult.status === "ok" ? "text-[#2ead4b]" : "text-[#d03238]"}>
                         {pingResult.latencyMs}ms
                       </span>
                     ) : (
                       <>
-                        <Play className="w-2.5 h-2.5" /> Ping Test
+                        <Play className="w-3 h-3" /> Ping Test
                       </>
                     )}
                   </button>

@@ -2,19 +2,19 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SZRoute — The Free AI Gateway & Multi-Provider Router",
+  title: "SZRoute — Universal AI Gateway for Oh My Pi (omp)",
   description:
-    "Unified AI router with 160+ providers, 50+ free tiers, RTK+Caveman token compression, auto-fallback, and Raycast developer UI. Deployable to Vercel.",
+    "Free AI Gateway & Router. Connect Oh My Pi (omp), Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers) with 15%–95% RTK token compression and auto-failover.",
   keywords: [
-    "ai router",
-    "free ai gateway",
-    "openai proxy",
-    "claude code proxy",
+    "ai gateway",
+    "free ai router",
+    "omp coding agent",
+    "oh my pi gateway",
     "token compression",
     "rtk compression",
-    "gemini free tier",
     "groq api",
-    "cerebras fast inference",
+    "cerebras wafer scale",
+    "gemini free tier",
   ],
 };
 
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#07080a] text-[#cdcdcd] antialiased min-h-screen selection:bg-white/20 selection:text-white">
+    <html lang="en">
+      <body className="bg-[#e8ebe6] text-[#0e0f0c] antialiased min-h-screen selection:bg-[#9fe870] selection:text-[#0e0f0c]">
         {children}
       </body>
     </html>

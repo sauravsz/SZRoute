@@ -23,7 +23,6 @@ interface ComboBuilderViewProps {
 
 export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderViewProps) {
   const [combos, setCombos] = useState<VirtualCombo[]>(customCombos);
-  const [editingCombo, setEditingCombo] = useState<VirtualCombo | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
 
   // New combo state
@@ -81,19 +80,19 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-white tracking-tight">
+          <h2 className="text-3xl font-black text-[#0e0f0c] tracking-tight">
             Combos & Auto-Fallback Chains
           </h2>
-          <p className="text-[14px] text-[#9c9c9d] mt-1">
-            Build multi-tiered virtual model aliases with priority auto-failover, round-robin, or lowest latency routing.
+          <p className="text-[15px] text-[#454745] font-medium mt-1">
+            Build multi-tiered virtual model aliases with priority auto-failover and latency routing for Oh My Pi (omp).
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button onClick={handleResetToDefaults} className="btn-secondary text-[13px]">
+        <div className="flex items-center gap-3">
+          <button onClick={handleResetToDefaults} className="btn-secondary text-[14px]">
             Reset to Defaults
           </button>
-          <button onClick={handleOpenCreateModal} className="btn-primary text-[13px] flex items-center gap-1.5">
+          <button onClick={handleOpenCreateModal} className="btn-primary text-[14px] flex items-center gap-1.5">
             <Plus className="w-4 h-4" />
             Create Custom Combo
           </button>
@@ -103,28 +102,28 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
       {/* Combos Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {combos.map((combo) => (
-          <div key={combo.id} className="raycast-card p-6 space-y-5 flex flex-col justify-between">
+          <div key={combo.id} className="wise-card space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#121212] border border-[#242728] flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-[#59d499]" />
+                  <div className="w-11 h-11 rounded-full bg-[#9fe870] flex items-center justify-center font-bold text-[#0e0f0c]">
+                    <Layers className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-medium text-white">{combo.name}</h3>
-                    <code className="text-[12px] text-[#57c1ff] font-mono">model: &quot;{combo.id}&quot;</code>
+                    <h3 className="text-[17px] font-black text-[#0e0f0c]">{combo.name}</h3>
+                    <code className="text-[13px] text-[#054d28] font-mono font-bold">model: &quot;{combo.id}&quot;</code>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 text-[11px] font-medium bg-[#101111] text-[#cdcdcd] border border-[#242728] rounded uppercase">
+                  <span className="px-3 py-1 text-[11px] font-bold bg-[#e8ebe6] text-[#0e0f0c] rounded-full uppercase">
                     {combo.strategy}
                   </span>
                   {!DEFAULT_COMBOS.some((d) => d.id === combo.id) && (
                     <button
                       onClick={() => handleDeleteCombo(combo.id)}
-                      className="p-1.5 text-[#6a6b6c] hover:text-[#ff6161] hover:bg-[#ff6161]/10 rounded"
+                      className="p-2 text-[#868685] hover:text-[#d03238] hover:bg-[#320707]/10 rounded-full transition-colors"
                       title="Delete combo"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -133,37 +132,37 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                 </div>
               </div>
 
-              <p className="text-[13px] text-[#cdcdcd] leading-relaxed">
+              <p className="text-[14px] text-[#454745] leading-relaxed">
                 {combo.description}
               </p>
 
               {/* Targets Fallback Ladder */}
               <div className="space-y-2 pt-2">
-                <div className="text-[11px] uppercase tracking-wider text-[#6a6b6c] font-medium">
+                <div className="text-[12px] uppercase tracking-wider text-[#868685] font-bold">
                   Failover Execution Ladder
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {combo.targets.map((t, index) => {
                     const provider = PROVIDER_CATALOG.find((p) => p.id === t.providerId);
                     return (
                       <div
                         key={index}
-                        className="flex items-center justify-between px-3 py-2 bg-[#101111] border border-[#242728] rounded-lg text-[13px]"
+                        className="flex items-center justify-between px-4 py-2.5 bg-[#e8ebe6] rounded-[16px] text-[14px]"
                       >
-                        <div className="flex items-center gap-2.5">
-                          <span className="w-5 h-5 rounded-full bg-[#121212] border border-[#242728] flex items-center justify-center text-[11px] text-[#9c9c9d] font-mono">
+                        <div className="flex items-center gap-3">
+                          <span className="w-6 h-6 rounded-full bg-[#ffffff] font-bold text-[12px] text-[#0e0f0c] flex items-center justify-center shadow-xs">
                             {index + 1}
                           </span>
-                          <span className="font-medium text-white">
+                          <span className="font-bold text-[#0e0f0c]">
                             {provider?.name || t.providerId}
                           </span>
-                          <span className="text-[#6a6b6c]">/</span>
-                          <span className="font-mono text-[12px] text-[#cdcdcd]">
+                          <span className="text-[#868685]">/</span>
+                          <span className="font-mono text-[13px] text-[#454745] font-semibold">
                             {t.modelId}
                           </span>
                         </div>
 
-                        <span className="text-[11px] text-[#59d499] font-mono">
+                        <span className="text-[12px] text-[#054d28] font-bold font-mono">
                           {index === 0 ? "Primary Target" : `Tier ${index + 1} Fallback`}
                         </span>
                       </div>
@@ -174,82 +173,82 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
             </div>
 
             {/* Quick Test Hint */}
-            <div className="pt-3 border-t border-[#242728] flex items-center justify-between text-[12px] text-[#9c9c9d]">
-              <span>Try in API: <code className="font-mono text-white">model: &quot;{combo.id}&quot;</code></span>
-              <span className="text-[#59d499] flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" /> 100% Failover
+            <div className="pt-3 border-t border-[#e8ebe6] flex items-center justify-between text-[13px] text-[#454745]">
+              <span>In API: <code className="font-mono font-bold text-[#0e0f0c]">model: &quot;{combo.id}&quot;</code></span>
+              <span className="text-[#2ead4b] font-bold flex items-center gap-1">
+                <ShieldCheck className="w-4 h-4" /> 100% Failover
               </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Create Custom Combo Modal */}
+      {/* Create Custom Combo Modal in Wise Style */}
       {isCreatingNew && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0e0f0c]/60 backdrop-blur-sm animate-in fade-in duration-100">
           <div
-            className="w-full max-w-2xl bg-[#0d0d0d] border border-[#242728] rounded-xl shadow-2xl p-6 space-y-5"
+            className="w-full max-w-2xl bg-[#ffffff] rounded-[24px] shadow-2xl p-6 sm:p-8 space-y-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#242728] pb-4">
+            <div className="flex items-center justify-between border-b border-[#e8ebe6] pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#121212] border border-[#242728] flex items-center justify-center">
-                  <Plus className="w-5 h-5 text-[#59d499]" />
+                <div className="w-10 h-10 rounded-full bg-[#9fe870] flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-[#0e0f0c]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-medium text-white">Create Virtual Combo</h3>
-                  <p className="text-[12px] text-[#9c9c9d]">
+                  <h3 className="text-xl font-black text-[#0e0f0c]">Create Virtual Combo</h3>
+                  <p className="text-[13px] text-[#454745] font-medium">
                     Combine multiple providers into a resilient virtual model endpoint
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsCreatingNew(false)}
-                className="p-1 text-[#6a6b6c] hover:text-white rounded hover:bg-[#121212]"
+                className="p-1.5 text-[#868685] hover:text-[#0e0f0c] rounded-full hover:bg-[#e8ebe6]"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-[#cdcdcd]">Combo ID / Slug</label>
+                <label className="text-[13px] font-bold text-[#0e0f0c]">Combo ID / Slug</label>
                 <input
                   type="text"
                   value={newId}
                   onChange={(e) => setNewId(e.target.value)}
                   placeholder="e.g. my-coding-chain"
-                  className="w-full bg-[#101111] text-white border border-[#242728] rounded-lg px-3 py-2 text-[13px] outline-none font-mono"
+                  className="wise-input w-full font-mono text-[14px]"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-[#cdcdcd]">Display Name</label>
+                <label className="text-[13px] font-bold text-[#0e0f0c]">Display Name</label>
                 <input
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="e.g. My Fast Coding Chain"
-                  className="w-full bg-[#101111] text-white border border-[#242728] rounded-lg px-3 py-2 text-[13px] outline-none"
+                  className="wise-input w-full text-[14px]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[13px] font-medium text-[#cdcdcd]">Description</label>
+              <label className="text-[13px] font-bold text-[#0e0f0c]">Description</label>
               <input
                 type="text"
                 value={newDesc}
                 onChange={(e) => setNewDesc(e.target.value)}
                 placeholder="Short description of this routing combo..."
-                className="w-full bg-[#101111] text-white border border-[#242728] rounded-lg px-3 py-2 text-[13px] outline-none"
+                className="wise-input w-full text-[14px]"
               />
             </div>
 
             {/* Targets Builder */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-[13px] font-medium text-[#cdcdcd]">
+                <label className="text-[13px] font-bold text-[#0e0f0c]">
                   Fallback Order ({newTargets.length} targets)
                 </label>
                 <button
@@ -260,9 +259,9 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                       { providerId: "gemini", modelId: "gemini-2.5-flash", priority: newTargets.length + 1 },
                     ]);
                   }}
-                  className="text-[12px] text-[#57c1ff] hover:underline flex items-center gap-1"
+                  className="text-[13px] text-[#054d28] font-bold hover:underline flex items-center gap-1"
                 >
-                  <Plus className="w-3.5 h-3.5" /> Add Target Tier
+                  <Plus className="w-4 h-4" /> Add Target Tier
                 </button>
               </div>
 
@@ -270,9 +269,9 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                 {newTargets.map((target, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 p-2 bg-[#101111] border border-[#242728] rounded-lg text-[13px]"
+                    className="flex items-center gap-2.5 p-3 bg-[#e8ebe6] rounded-[16px] text-[13px]"
                   >
-                    <span className="w-6 text-center text-[#9c9c9d] font-mono text-[11px]">
+                    <span className="w-6 text-center text-[#0e0f0c] font-black text-[13px]">
                       #{idx + 1}
                     </span>
 
@@ -289,7 +288,7 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                         };
                         setNewTargets(updated);
                       }}
-                      className="bg-[#121212] text-white border border-[#242728] rounded px-2 py-1 text-[12px] outline-none"
+                      className="bg-[#ffffff] text-[#0e0f0c] font-bold border border-[#c5edab] rounded-xl px-3 py-1.5 text-[13px] outline-none"
                     >
                       {PROVIDER_CATALOG.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -307,7 +306,7 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                         setNewTargets(updated);
                       }}
                       placeholder="Model ID"
-                      className="flex-1 bg-[#121212] text-white border border-[#242728] rounded px-2 py-1 text-[12px] font-mono outline-none"
+                      className="flex-1 bg-[#ffffff] text-[#0e0f0c] border border-[#c5edab] rounded-xl px-3 py-1.5 text-[13px] font-mono outline-none"
                     />
 
                     {newTargets.length > 1 && (
@@ -316,9 +315,9 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
                         onClick={() => {
                           setNewTargets(newTargets.filter((_, i) => i !== idx));
                         }}
-                        className="p-1 text-[#6a6b6c] hover:text-[#ff6161]"
+                        className="p-1.5 text-[#868685] hover:text-[#d03238]"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     )}
                   </div>
@@ -327,16 +326,16 @@ export function ComboBuilderView({ customCombos, onSaveCombos }: ComboBuilderVie
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#242728]">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e8ebe6]">
               <button
                 onClick={() => setIsCreatingNew(false)}
-                className="btn-secondary text-[13px]"
+                className="btn-secondary text-[14px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveNewCombo}
-                className="btn-primary text-[13px] px-4"
+                className="btn-primary text-[14px] px-6"
               >
                 Save Virtual Combo
               </button>
