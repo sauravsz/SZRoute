@@ -2,8 +2,8 @@ export interface CompressionOptions {
   enableRtk?: boolean;
   enableCaveman?: boolean;
   stripMarkdownSpacing?: boolean;
-  deduplicateContext?: boolean;
   compactJson?: boolean;
+  deduplicateContext?: boolean;
   level?: "gentle" | "standard" | "aggressive";
 }
 
@@ -17,86 +17,68 @@ export interface CompressionResult {
   rulesApplied: string[];
 }
 
-export type ContentBlock =
-  | { type: "text"; text: string }
-  | { type: "image_url"; image_url: { url: string; detail?: string } }
-  | { type: "image"; source?: unknown }
-  | { type: string; [key: string]: unknown };
-
-export interface ChatMessage {
-  role: "system" | "user" | "assistant" | "tool" | "function";
-  content: string | ContentBlock[];
-  name?: string;
+export interface ContentBlockText {
+  type: "text";
+  text: string;
 }
 
-export interface CompressedMessagesResult {
-  messages: ChatMessage[];
-  originalTokens: number;
-  compressedTokens: number;
-  tokensSaved: number;
-  percentSaved: number;
-  rulesApplied: string[];
+export interface ContentBlockImage {
+  type: "image_url" | "image";
+  image_url?: { url: string };
+  source?: { type: string; media_type: string; data: string };
+}
+
+export type ContentBlock = ContentBlockText | ContentBlockImage | Record<string, unknown>;
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant" | "tool";
+  content: string | ContentBlock[];
+}
+
+// Pre-compiled regex patterns (Cut #2: Single-pass compiled regex execution)
+const RE_EXCESS_BLANK_LINES = /\n{3,}/g;
+const RE_EXCESS_HORIZONTAL_SPACES = /[ \t]{2,}/g;
+const RE_TRAILING_SPACES = /[ \t]+$/gm;
+const RE_JSON_BLOCKS = /```(?:json)?\s*([\s\S]*?)\s*```/gi;
+
+const RE_AI_BOILERPLATES = [
+  /please note that as an ai language model,?\s*/gi,
+  /as an ai,? (?:i can|i am able to|i will)\s*/gi,
+  /i am just an ai language model,?\s*/gi,
+  /in order to accomplish this task,?\s*/gi,
+  /for the purpose of (?:maintaining|ensuring),?\s*/gi,
+  /due to the fact that\s*/gi,
+  /it is important to note that\s*/gi,
+];
+
+const RE_FILLER_PHRASES = [
+  /\bkindly\b\s*/gi,
+  /\bplease make sure to\b\s*/gi,
+  /\bwould you be so kind as to\b\s*/gi,
+  /\bcould you please\b\s*/gi,
+  /\bi would like you to\b\s*/gi,
+  /\bfor your information,?\b\s*/gi,
+];
+
+/**
+ * Heuristic fast token count estimation (~4 chars/token in English, ~1.5 chars/token for code/JSON)
+ */
+export function estimateTokenCount(text: string): number {
+  if (!text) return 0;
+  return Math.max(1, Math.ceil(text.length / 3.8));
 }
 
 /**
- * Fast and accurate token count estimation (GPT/Claude/Gemini compatible heuristic)
+ * Compresses an input prompt string using stacked RTK + Caveman compression
  */
-export function estimateTokenCount(text: string): number {
-  if (!text || typeof text !== "string") return 0;
-  const words = text.trim().split(/\s+/).length;
-  const chars = text.length;
-  const estimated = Math.ceil((chars * 0.26) + (words * 0.2));
-  return Math.max(1, estimated);
-}
-
-const COMMON_FILLER_PATTERNS: Array<{ regex: RegExp; replacement: string; rule: string }> = [
-  {
-    regex: /\b(please note that|it is important to note that|it should be noted that)\b/gi,
-    replacement: "Note:",
-    rule: "caveman-filler-removal",
-  },
-  {
-    regex: /\b(in order to|with the aim of)\b/gi,
-    replacement: "to",
-    rule: "caveman-phrase-simplifier",
-  },
-  {
-    regex: /\b(as an ai language model|as a large language model|i am an ai)\b/gi,
-    replacement: "",
-    rule: "rtk-ai-boilerplate-purge",
-  },
-  {
-    regex: /\b(could you please|would you please|can you please|please kindly|kindly)\b/gi,
-    replacement: "",
-    rule: "caveman-politeness-trim",
-  },
-  {
-    regex: /\b(for the purpose of|with reference to|in regard to)\b/gi,
-    replacement: "for",
-    rule: "caveman-preamble-trim",
-  },
-  {
-    regex: /\b(due to the fact that|owing to the fact that)\b/gi,
-    replacement: "because",
-    rule: "caveman-conjunction-compact",
-  },
-];
-
 export function compressPrompt(
-  text: string,
-  options: CompressionOptions = {
-    enableRtk: true,
-    enableCaveman: true,
-    stripMarkdownSpacing: true,
-    deduplicateContext: true,
-    compactJson: true,
-    level: "standard",
-  }
+  prompt: string,
+  options: CompressionOptions = {}
 ): CompressionResult {
-  if (!text || typeof text !== "string") {
+  if (!prompt || typeof prompt !== "string") {
     return {
-      originalText: text || "",
-      compressedText: text || "",
+      originalText: prompt || "",
+      compressedText: prompt || "",
       originalTokens: 0,
       compressedTokens: 0,
       tokensSaved: 0,
@@ -105,158 +87,156 @@ export function compressPrompt(
     };
   }
 
-  const originalTokens = estimateTokenCount(text);
-  let processed = text;
-  const rulesApplied: string[] = [];
+  const {
+    enableRtk = true,
+    enableCaveman = true,
+    stripMarkdownSpacing = true,
+    compactJson = true,
+    level = "standard",
+  } = options;
 
-  // 1. RTK Markdown Spacing & Newline Normalization
-  if (options.stripMarkdownSpacing !== false) {
-    const beforeLength = processed.length;
-    processed = processed.replace(/\n{3,}/g, "\n\n");
-    processed = processed.replace(/[ \t]+$/gm, "");
-    processed = processed.replace(/[ \t]{2,}/g, " ");
-    if (processed.length < beforeLength) {
-      rulesApplied.push("rtk-whitespace-minification");
-    }
+  let current = prompt;
+  const applied: string[] = [];
+  const originalTokens = estimateTokenCount(prompt);
+
+  // 1. RTK: Structural Markdown & Whitespace Normalization
+  if (stripMarkdownSpacing) {
+    const before = current;
+    current = current
+      .replace(RE_EXCESS_BLANK_LINES, "\n\n")
+      .replace(RE_EXCESS_HORIZONTAL_SPACES, " ")
+      .replace(RE_TRAILING_SPACES, "");
+    if (current !== before) applied.push("rtk-whitespace-minification");
   }
 
-  // 2. Compact JSON blocks if present
-  if (options.compactJson !== false) {
-    processed = processed.replace(/```json\s*([\s\S]*?)\s*```/g, (match, jsonStr) => {
+  // 2. RTK: JSON Payload Compaction
+  if (compactJson) {
+    const before = current;
+    current = current.replace(RE_JSON_BLOCKS, (match, jsonContent) => {
       try {
-        const parsed = JSON.parse(jsonStr);
-        rulesApplied.push("rtk-json-compaction");
+        const parsed = JSON.parse(jsonContent);
         return "```json\n" + JSON.stringify(parsed) + "\n```";
       } catch {
         return match;
       }
     });
+    if (current !== before) applied.push("rtk-json-compaction");
   }
 
-  // 3. Caveman NLP Minification
-  if (options.enableCaveman !== false) {
-    for (const { regex, replacement, rule } of COMMON_FILLER_PATTERNS) {
-      if (regex.test(processed)) {
-        processed = processed.replace(regex, replacement);
-        if (!rulesApplied.includes(rule)) {
-          rulesApplied.push(rule);
-        }
-      }
+  // 3. Caveman: NLP Filler & Conversational Fluff Removal
+  if (enableCaveman) {
+    const before = current;
+    for (const pat of RE_FILLER_PHRASES) {
+      current = current.replace(pat, "");
     }
-
-    if (options.level === "aggressive") {
-      processed = processed.replace(/(\!|\?){2,}/g, "$1");
-      processed = processed.replace(/[-=]{4,}/g, "---");
-      rulesApplied.push("caveman-aggressive-punctuation");
-    }
+    if (current !== before) applied.push("caveman-filler-removal");
   }
 
-  const compressedTokens = estimateTokenCount(processed);
+  // 4. RTK: AI Boilerplate & Metacognitive Noise Purge
+  if (enableRtk) {
+    const before = current;
+    for (const pat of RE_AI_BOILERPLATES) {
+      current = current.replace(pat, "");
+    }
+    if (level === "aggressive") {
+      current = current.replace(/^(?:sure|certainly|of course|here is|here are)[\s,:!.-]*/gim, "");
+    }
+    if (current !== before) applied.push("rtk-ai-boilerplate-purge");
+  }
+
+  current = current.trim();
+
+  const compressedTokens = estimateTokenCount(current);
   const tokensSaved = Math.max(0, originalTokens - compressedTokens);
-  const percentSaved = originalTokens > 0 ? Math.round((tokensSaved / originalTokens) * 100) : 0;
+  const percentSaved =
+    originalTokens > 0 ? Math.round((tokensSaved / originalTokens) * 100) : 0;
 
   return {
-    originalText: text,
-    compressedText: processed,
+    originalText: prompt,
+    compressedText: current,
     originalTokens,
     compressedTokens,
     tokensSaved,
     percentSaved,
-    rulesApplied,
+    rulesApplied: applied,
   };
 }
 
+/**
+ * Compresses an array of ChatMessages for multi-turn conversations and multimodal vision blocks
+ */
 export function compressMessages(
   messages: ChatMessage[],
-  options?: CompressionOptions
-): CompressedMessagesResult {
-  if (!messages || !Array.isArray(messages)) {
-    return {
-      messages: [],
-      originalTokens: 0,
-      compressedTokens: 0,
-      tokensSaved: 0,
-      percentSaved: 0,
-      rulesApplied: [],
-    };
-  }
+  options: CompressionOptions = {}
+): {
+  messages: ChatMessage[];
+  tokensSaved: number;
+  percentSaved: number;
+  rulesApplied: string[];
+} {
+  const { deduplicateContext = true } = options;
+  let totalOriginal = 0;
+  let totalCompressed = 0;
+  const allRules = new Set<string>();
 
-  let totalOriginalTokens = 0;
-  let totalCompressedTokens = 0;
-  const allRules: Set<string> = new Set();
-  const seenSystemPrompts = new Set<string>();
+  let working = [...messages];
 
-  const compressedMessages: ChatMessage[] = [];
-
-  for (let i = 0; i < messages.length; i++) {
-    const msg = messages[i];
-
-    // Case 1: Plain string content
-    if (typeof msg.content === "string") {
-      if (msg.role === "system" && options?.deduplicateContext !== false) {
-        const trimmed = msg.content.trim();
-        if (seenSystemPrompts.has(trimmed)) {
+  // System Prompt Deduplication
+  if (deduplicateContext) {
+    const seenSystemPrompts = new Set<string>();
+    working = working.filter((m) => {
+      if (m.role === "system") {
+        const str = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+        if (seenSystemPrompts.has(str)) {
           allRules.add("rtk-system-prompt-deduplication");
-          totalOriginalTokens += estimateTokenCount(msg.content);
-          continue;
+          return false;
         }
-        seenSystemPrompts.add(trimmed);
+        seenSystemPrompts.add(str);
       }
-
-      const result = compressPrompt(msg.content, options);
-      totalOriginalTokens += result.originalTokens;
-      totalCompressedTokens += result.compressedTokens;
-      result.rulesApplied.forEach((r) => allRules.add(r));
-
-      compressedMessages.push({
-        ...msg,
-        content: result.compressedText,
-      });
-    }
-    // Case 2: Multi-part vision / content block array
-    else if (Array.isArray(msg.content)) {
-      const newBlocks: ContentBlock[] = [];
-
-      for (const block of msg.content) {
-        if (typeof block === "object" && block !== null && block.type === "text" && typeof block.text === "string") {
-          const result = compressPrompt(block.text, options);
-          totalOriginalTokens += result.originalTokens;
-          totalCompressedTokens += result.compressedTokens;
-          result.rulesApplied.forEach((r) => allRules.add(r));
-          newBlocks.push({
-            ...block,
-            text: result.compressedText,
-          });
-        } else {
-          // Pass image/tool block through, calculate standard token weight
-          const tokenEst = estimateTokenCount(JSON.stringify(block));
-          totalOriginalTokens += tokenEst;
-          totalCompressedTokens += tokenEst;
-          newBlocks.push(block);
-        }
-      }
-
-      compressedMessages.push({
-        ...msg,
-        content: newBlocks,
-      });
-    }
-    // Case 3: Pass-through unknown object shape
-    else {
-      const tokenEst = estimateTokenCount(JSON.stringify(msg.content));
-      totalOriginalTokens += tokenEst;
-      totalCompressedTokens += tokenEst;
-      compressedMessages.push(msg);
-    }
+      return true;
+    });
   }
 
-  const tokensSaved = Math.max(0, totalOriginalTokens - totalCompressedTokens);
-  const percentSaved = totalOriginalTokens > 0 ? Math.round((tokensSaved / totalOriginalTokens) * 100) : 0;
+  const processedMessages: ChatMessage[] = working.map((msg) => {
+    // 1. Text-only content
+    if (typeof msg.content === "string") {
+      const res = compressPrompt(msg.content, options);
+      totalOriginal += res.originalTokens;
+      totalCompressed += res.compressedTokens;
+      res.rulesApplied.forEach((r) => allRules.add(r));
+      return { role: msg.role, content: res.compressedText };
+    }
+
+    // 2. Multimodal / Vision Array Content Blocks
+    if (Array.isArray(msg.content)) {
+      const processedBlocks: ContentBlock[] = msg.content.map((block) => {
+        if (block && typeof block === "object" && "type" in block && block.type === "text" && "text" in block && typeof block.text === "string") {
+          const res = compressPrompt(block.text, options);
+          totalOriginal += res.originalTokens;
+          totalCompressed += res.compressedTokens;
+          res.rulesApplied.forEach((r) => allRules.add(r));
+          return { type: "text", text: res.compressedText };
+        }
+        // Preserve image and other blocks as-is
+        const blockStr = JSON.stringify(block);
+        const tok = estimateTokenCount(blockStr);
+        totalOriginal += tok;
+        totalCompressed += tok;
+        return block;
+      });
+
+      return { role: msg.role, content: processedBlocks };
+    }
+
+    return msg;
+  });
+
+  const tokensSaved = Math.max(0, totalOriginal - totalCompressed);
+  const percentSaved =
+    totalOriginal > 0 ? Math.round((tokensSaved / totalOriginal) * 100) : 0;
 
   return {
-    messages: compressedMessages,
-    originalTokens: totalOriginalTokens,
-    compressedTokens: totalCompressedTokens,
+    messages: processedMessages,
     tokensSaved,
     percentSaved,
     rulesApplied: Array.from(allRules),

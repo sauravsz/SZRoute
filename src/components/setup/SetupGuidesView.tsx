@@ -11,10 +11,18 @@ import {
   ExternalLink,
   Layers,
   Zap,
+  Sliders,
 } from "lucide-react";
+import { DEFAULT_COMBOS, VirtualCombo } from "@/lib/providers/catalog";
 
-export function SetupGuidesView() {
+interface SetupGuidesViewProps {
+  customCombos?: VirtualCombo[];
+  apiKeys?: Record<string, string>;
+}
+
+export function SetupGuidesView({ customCombos = DEFAULT_COMBOS, apiKeys = {} }: SetupGuidesViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedCombo, setSelectedCombo] = useState<string>("free-auto");
 
   const getBaseUrl = () => {
     return typeof window !== "undefined" ? `${window.location.origin}/v1` : "https://szroute.online/v1";
@@ -26,6 +34,8 @@ export function SetupGuidesView() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const allCombos = customCombos.length > 0 ? customCombos : DEFAULT_COMBOS;
+
   const guides = [
     {
       id: "omp-coding-agent",
@@ -36,7 +46,9 @@ export function SetupGuidesView() {
 export ANTHROPIC_BASE_URL="${getBaseUrl()}"
 export OPENAI_API_KEY="szroute-free"
 export ANTHROPIC_API_KEY="szroute-free"
-omp --model free-auto`,
+
+# Run omp with your selected virtual combo
+omp --model ${selectedCombo}`,
     },
     {
       id: "cursor",
@@ -46,8 +58,8 @@ omp --model free-auto`,
       code: `// In Cursor Settings -> Models:
 1. Turn ON "Override OpenAI Base URL"
 2. Base URL: ${getBaseUrl()}
-3. API Key: szroute-free (or your custom keys)
-4. Add Model Name: free-auto, code-expert, or llama-3.3-70b-versatile`,
+3. API Key: szroute-free
+4. Add Model Name: ${selectedCombo}`,
     },
     {
       id: "cline",
@@ -57,7 +69,7 @@ omp --model free-auto`,
       code: `API Provider: OpenAI Compatible
 Base URL: ${getBaseUrl()}
 API Key: szroute-free
-Model ID: free-auto (or code-expert)`,
+Model ID: ${selectedCombo}`,
     },
     {
       id: "python-sdk",
@@ -68,12 +80,12 @@ Model ID: free-auto (or code-expert)`,
 
 client = OpenAI(
     base_url="${getBaseUrl()}",
-    api_key="szroute-free" # or your keys
+    api_key="szroute-free"
 )
 
 response = client.chat.completions.create(
-    model="free-auto", # or "code-expert", "claude-3-7-sonnet"
-    messages=[{"role": "user", "content": "Hello via SZRoute!"}],
+    model="${selectedCombo}",
+    messages=[{"role": "user", "content": "Explain Dijkstra algorithm simply."}],
     stream=True
 )
 
@@ -90,7 +102,7 @@ for chunk in response:
   -H "Authorization: Bearer szroute-free" \\
   -H "x-szroute-compress: true" \\
   -d '{
-    "model": "free-auto",
+    "model": "${selectedCombo}",
     "messages": [{"role": "user", "content": "Explain quantum computing simply."}],
     "stream": true
   }'`,
@@ -101,9 +113,9 @@ for chunk in response:
       badge: "Gateway Proxy",
       description: "Route LiteLLM traffic directly through SZRoute.",
       code: `model_list:
-  - model_name: szroute-auto
+  - model_name: szroute-${selectedCombo}
     litellm_params:
-      model: openai/free-auto
+      model: openai/${selectedCombo}
       api_base: "${getBaseUrl()}"
       api_key: "szroute-free"`,
     },
@@ -111,15 +123,34 @@ for chunk in response:
 
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Top Header */}
-      <div>
-        <h2 className="text-2xl font-semibold text-white tracking-tight flex items-center gap-2">
-          <Terminal className="w-6 h-6 text-[#cdcdcd]" />
-          Client Integration & Setup Guides
-        </h2>
-        <p className="text-[14px] text-[#9c9c9d] mt-1">
-          Drop-in zero configuration integration snippets for Oh My Pi (omp) coding agent, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
-        </p>
+      {/* Top Header & Dynamic Combo Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold text-white tracking-tight flex items-center gap-2">
+            <Terminal className="w-6 h-6 text-[#cdcdcd]" />
+            Client Integration & Setup Guides
+          </h2>
+          <p className="text-[14px] text-[#9c9c9d] mt-1">
+            Drop-in zero configuration integration snippets for Oh My Pi (omp) coding agent, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
+          </p>
+        </div>
+
+        {/* QoL 2: Live Dynamic Combo Selector */}
+        <div className="flex items-center gap-2 bg-[#101111] p-1.5 border border-[#242728] rounded-lg">
+          <Sliders className="w-4 h-4 text-[#57c1ff]" />
+          <span className="text-[12px] text-[#9c9c9d] font-medium">Model / Combo:</span>
+          <select
+            value={selectedCombo}
+            onChange={(e) => setSelectedCombo(e.target.value)}
+            className="bg-[#121212] text-white border border-[#242728] rounded px-2 py-1 text-[12px] font-mono outline-none"
+          >
+            {allCombos.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} ({c.id})
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Guides Grid */}

@@ -24,6 +24,14 @@ export interface CompressionSettings {
   deduplicate: boolean;
 }
 
+export interface ExportBackupData {
+  version: "szroute-v4";
+  exportedAt: string;
+  apiKeys: Record<string, string>;
+  customCombos: VirtualCombo[];
+  compressionSettings: CompressionSettings;
+}
+
 const STORAGE_KEY_API_KEYS = "szroute_api_keys_v4";
 const STORAGE_KEY_COMBOS = "szroute_combos_v4";
 const STORAGE_KEY_SETTINGS = "szroute_compression_settings_v4";
@@ -42,7 +50,7 @@ export function useSZRouteStore() {
   const [requestLogs, setRequestLogs] = useState<RequestLogEntry[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount (Cut #1: genuine empty state, no hardcoded seed logs)
   useEffect(() => {
     try {
       const storedKeys = localStorage.getItem(STORAGE_KEY_API_KEYS);
@@ -55,38 +63,7 @@ export function useSZRouteStore() {
       if (storedSettings) setCompressionSettings(JSON.parse(storedSettings));
 
       const storedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
-      if (storedLogs) {
-        setRequestLogs(JSON.parse(storedLogs));
-      } else {
-        // Seed some initial telemetry for demo
-        const initialLogs: RequestLogEntry[] = [
-          {
-            id: "req_demo_1",
-            timestamp: new Date(Date.now() - 1000 * 60 * 2).toLocaleTimeString(),
-            model: "free-auto",
-            provider: "groq",
-            latencyMs: 142,
-            status: 200,
-            tokensProcessed: 1450,
-            tokensSaved: 480,
-            failoverAttempts: 0,
-            promptSnippet: "Explain Dijkstra's shortest path algorithm in TypeScript",
-          },
-          {
-            id: "req_demo_2",
-            timestamp: new Date(Date.now() - 1000 * 60 * 12).toLocaleTimeString(),
-            model: "code-expert",
-            provider: "cerebras",
-            latencyMs: 98,
-            status: 200,
-            tokensProcessed: 3200,
-            tokensSaved: 1100,
-            failoverAttempts: 0,
-            promptSnippet: "Refactor Next.js Edge route handler for SSE streaming",
-          },
-        ];
-        setRequestLogs(initialLogs);
-      }
+      if (storedLogs) setRequestLogs(JSON.parse(storedLogs));
     } catch {
       // ignore parse errors
     } finally {
@@ -131,7 +108,7 @@ export function useSZRouteStore() {
       id: `req_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       timestamp: new Date().toLocaleTimeString(),
     };
-    const updated = [newEntry, ...requestLogs].slice(0, 100);
+    const updated = [newEntry, ...requestLogs].slice(0, 200);
     setRequestLogs(updated);
     try {
       localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(updated));
@@ -145,7 +122,44 @@ export function useSZRouteStore() {
     } catch {}
   };
 
-  // Aggregated Telemetry Stats
+  // QoL 1: Export backup data as encrypted/portable JSON
+  const exportBackup = (): string => {
+    const data: ExportBackupData = {
+      version: "szroute-v4",
+      exportedAt: new Date().toISOString(),
+      apiKeys,
+      customCombos,
+      compressionSettings,
+    };
+    return JSON.stringify(data, null, 2);
+  };
+
+  // QoL 1: Import backup data
+  const importBackup = (jsonString: string): boolean => {
+    try {
+      const parsed = JSON.parse(jsonString) as ExportBackupData;
+      if (parsed.version === "szroute-v4") {
+        if (parsed.apiKeys) {
+          setApiKeys(parsed.apiKeys);
+          localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(parsed.apiKeys));
+        }
+        if (parsed.customCombos) {
+          setCustomCombos(parsed.customCombos);
+          localStorage.setItem(STORAGE_KEY_COMBOS, JSON.stringify(parsed.customCombos));
+        }
+        if (parsed.compressionSettings) {
+          setCompressionSettings(parsed.compressionSettings);
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(parsed.compressionSettings));
+        }
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  // Aggregated Telemetry Stats & Financial Calculations (QoL 5: $3.00/1M token benchmark savings)
   const totalRequests = requestLogs.length;
   const totalTokensSaved = requestLogs.reduce((acc, l) => acc + (l.tokensSaved || 0), 0);
   const totalTokensProcessed = requestLogs.reduce((acc, l) => acc + (l.tokensProcessed || 0), 0);
@@ -153,6 +167,9 @@ export function useSZRouteStore() {
     totalRequests > 0
       ? Math.round(requestLogs.reduce((acc, l) => acc + (l.latencyMs || 0), 0) / totalRequests)
       : 0;
+
+  // Commercial frontier benchmark pricing: $3.00 per 1M tokens ($0.000003 per token)
+  const dollarSavings = ((totalTokensSaved + totalTokensProcessed) * 0.000003).toFixed(4);
 
   return {
     isLoaded,
@@ -166,12 +183,14 @@ export function useSZRouteStore() {
     requestLogs,
     addRequestLog,
     clearLogs,
+    exportBackup,
+    importBackup,
     stats: {
       totalRequests,
       totalTokensSaved,
       totalTokensProcessed,
       avgLatencyMs,
-      estimatedDollarsSaved: (totalTokensSaved * 0.000004).toFixed(4),
+      estimatedDollarsSaved: dollarSavings,
     },
   };
 }

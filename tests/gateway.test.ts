@@ -31,13 +31,13 @@ describe("SZRoute Provider Catalog & Virtual Combos", () => {
   });
 });
 
-describe("RTK + Caveman Token Compression Engine", () => {
+describe("RTK + Caveman Token Compression Engine (Optimized Single-Pass)", () => {
   test("estimateTokenCount computes accurate heuristics", () => {
     const tokens = estimateTokenCount("Hello world, this is a test prompt for token estimation.");
     assert.ok(tokens > 5 && tokens < 20, "Token count heuristic within reasonable range");
   });
 
-  test("compressPrompt strips AI boilerplates and whitespace", () => {
+  test("compressPrompt strips AI boilerplates and whitespace in single pass", () => {
     const rawPrompt = `
     Please note that as an AI language model, I would like you to write a clean function.
 
@@ -57,7 +57,7 @@ describe("RTK + Caveman Token Compression Engine", () => {
     assert.ok(!result.compressedText.includes("as an ai language model"), "Should purge AI boilerplate");
   });
 
-  test("compressMessages recursively compresses multimodal/vision content blocks", () => {
+  test("compressMessages recursively compresses multimodal/vision content blocks for omp agent", () => {
     const messages = [
       {
         role: "user" as const,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, NavTab } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CommandPaletteModal } from "@/components/command-palette/CommandPaletteModal";
@@ -12,6 +12,16 @@ import { CompressionStudioView } from "@/components/compression/CompressionStudi
 import { TrafficInspectorView } from "@/components/inspector/TrafficInspectorView";
 import { SetupGuidesView } from "@/components/setup/SetupGuidesView";
 import { useSZRouteStore } from "@/lib/store/useSZRouteStore";
+
+const TAB_INDEX_MAP: NavTab[] = [
+  "overview",
+  "providers",
+  "combos",
+  "studio",
+  "compression",
+  "inspector",
+  "setup",
+];
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTab>("overview");
@@ -27,8 +37,36 @@ export default function HomePage() {
     requestLogs,
     addRequestLog,
     clearLogs,
+    exportBackup,
+    importBackup,
     stats,
   } = useSZRouteStore();
+
+  // QoL 4: Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
+  useEffect(() => {
+    const handleGlobalKeys = (e: KeyboardEvent) => {
+      // If typing in an input/textarea, skip number shortcuts
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+
+      if (!isInput && !commandPaletteOpen) {
+        if (e.key >= "1" && e.key <= "7") {
+          const idx = parseInt(e.key, 10) - 1;
+          if (TAB_INDEX_MAP[idx]) {
+            e.preventDefault();
+            setActiveTab(TAB_INDEX_MAP[idx]);
+          }
+        } else if (e.key === "/") {
+          e.preventDefault();
+          const searchInput = document.querySelector<HTMLInputElement>("input[type='text']");
+          searchInput?.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeys);
+    return () => window.removeEventListener("keydown", handleGlobalKeys);
+  }, [commandPaletteOpen]);
 
   const handleOpenKeyModal = (providerId: string) => {
     setSelectedProviderForModal(providerId);
@@ -55,6 +93,8 @@ export default function HomePage() {
             apiKeys={apiKeys}
             onSaveKey={saveApiKey}
             onRemoveKey={removeApiKey}
+            onExportBackup={exportBackup}
+            onImportBackup={importBackup}
             selectedProviderForModal={selectedProviderForModal}
           />
         )}
@@ -83,7 +123,9 @@ export default function HomePage() {
           />
         )}
 
-        {activeTab === "setup" && <SetupGuidesView />}
+        {activeTab === "setup" && (
+          <SetupGuidesView customCombos={customCombos} apiKeys={apiKeys} />
+        )}
       </main>
 
       {/* Global Command Palette (⌘K) */}
