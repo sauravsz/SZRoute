@@ -25,7 +25,7 @@ export function SetupGuidesView({ customCombos = DEFAULT_COMBOS, apiKeys = {} }:
   const [selectedCombo, setSelectedCombo] = useState<string>("free-auto");
 
   const getBaseUrl = () => {
-    return typeof window !== "undefined" ? `${window.location.origin}/v1` : "https://szroute.online/v1";
+    return typeof window !== "undefined" ? `${window.location.origin}/v1` : "https://szroute.vercel.app/v1";
   };
 
   const copySnippet = (id: string, code: string) => {
@@ -126,23 +126,23 @@ for chunk in response:
       {/* Top Header & Dynamic Combo Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-white tracking-tight flex items-center gap-2">
-            <Terminal className="w-6 h-6 text-[#cdcdcd]" />
+          <h2 className="text-3xl font-black text-[#0e0f0c] tracking-tight flex items-center gap-2.5">
+            <Terminal className="w-7 h-7 text-[#0e0f0c]" />
             Client Integration & Setup Guides
           </h2>
-          <p className="text-[14px] text-[#9c9c9d] mt-1">
+          <p className="text-[15px] text-[#454745] font-medium mt-1">
             Drop-in zero configuration integration snippets for Oh My Pi (omp) coding agent, Cursor, Cline, Codex, LiteLLM, Python, and cURL.
           </p>
         </div>
 
-        {/* QoL 2: Live Dynamic Combo Selector */}
-        <div className="flex items-center gap-2 bg-[#101111] p-1.5 border border-[#242728] rounded-lg">
-          <Sliders className="w-4 h-4 text-[#57c1ff]" />
-          <span className="text-[12px] text-[#9c9c9d] font-medium">Model / Combo:</span>
+        {/* Dynamic Combo Selector */}
+        <div className="flex items-center gap-2 bg-[#ffffff] p-2 rounded-full border border-[#e8ebe6] shadow-xs">
+          <Sliders className="w-4 h-4 text-[#0e0f0c] ml-2" />
+          <span className="text-[13px] text-[#454745] font-bold">Model / Combo:</span>
           <select
             value={selectedCombo}
             onChange={(e) => setSelectedCombo(e.target.value)}
-            className="bg-[#121212] text-white border border-[#242728] rounded px-2 py-1 text-[12px] font-mono outline-none"
+            className="bg-[#e8ebe6] text-[#0e0f0c] rounded-full px-3 py-1 text-[13px] font-bold outline-none cursor-pointer"
           >
             {allCombos.map((c) => (
               <option key={c.id} value={c.id}>
@@ -153,43 +153,43 @@ for chunk in response:
         </div>
       </div>
 
-      {/* Guides Grid */}
+      {/* Guides Grid in Wise Card Style */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {guides.map((guide) => (
-          <div key={guide.id} className="raycast-card p-6 space-y-4 flex flex-col justify-between">
+          <div key={guide.id} className="wise-card space-y-4 flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-md bg-[#121212] border border-[#242728] flex items-center justify-center">
-                    <Terminal className="w-4 h-4 text-[#57c1ff]" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#9fe870] flex items-center justify-center font-bold text-[#0e0f0c]">
+                    <Terminal className="w-5 h-5 text-[#0e0f0c]" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-medium text-white">{guide.title}</h3>
+                    <h3 className="text-[17px] font-black text-[#0e0f0c]">{guide.title}</h3>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[11px] font-medium bg-[#101111] text-[#59d499] border border-[#242728] rounded">
+                <span className="px-3 py-1 text-[12px] font-bold bg-[#e2f6d5] text-[#054d28] rounded-full">
                   {guide.badge}
                 </span>
               </div>
 
-              <p className="text-[13px] text-[#cdcdcd] leading-relaxed">
+              <p className="text-[14px] text-[#454745] leading-relaxed font-medium">
                 {guide.description}
               </p>
 
-              {/* Code Snippet Box */}
+              {/* Code Snippet Box in Dark Polarity Container */}
               <div className="relative group">
-                <pre className="bg-[#101111] border border-[#242728] rounded-lg p-3.5 text-[12px] font-mono text-[#cdcdcd] overflow-x-auto whitespace-pre">
+                <pre className="bg-[#0e0f0c] rounded-[18px] p-4 text-[13px] font-mono text-[#e8ebe6] overflow-x-auto whitespace-pre leading-relaxed shadow-sm">
                   {guide.code}
                 </pre>
                 <button
                   onClick={() => copySnippet(guide.id, guide.code)}
-                  className="absolute top-2.5 right-2.5 p-1.5 bg-[#121212] hover:bg-[#18191a] text-[#cdcdcd] hover:text-white border border-[#242728] rounded-md transition-colors"
+                  className="absolute top-3 right-3 p-2 bg-[#1a1c17] hover:bg-[#252822] text-[#9fe870] rounded-full transition-all"
                   title="Copy code snippet"
                 >
                   {copiedId === guide.id ? (
-                    <Check className="w-3.5 h-3.5 text-[#59d499]" />
+                    <Check className="w-4 h-4 text-[#9fe870]" />
                   ) : (
-                    <Copy className="w-3.5 h-3.5" />
+                    <Copy className="w-4 h-4 text-[#ffffff]" />
                   )}
                 </button>
               </div>

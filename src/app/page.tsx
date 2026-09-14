@@ -42,10 +42,9 @@ export default function HomePage() {
     stats,
   } = useSZRouteStore();
 
-  // QoL 4: Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
+  // Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
-      // If typing in an input/textarea, skip number shortcuts
       const target = e.target as HTMLElement;
       const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
 
@@ -74,15 +73,15 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#07080a]">
-      {/* Universal Raycast Top Navigation */}
+    <div className="min-h-screen flex flex-col bg-[#e8ebe6] text-[#0e0f0c]">
+      {/* Universal Wise Top Navigation */}
       <Navbar
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area on Sage Canvas */}
       <main className="flex-1 max-w-[1360px] w-full mx-auto px-4 sm:px-6 py-8">
         {activeTab === "overview" && (
           <OverviewView onNavigate={setActiveTab} stats={stats} />
@@ -136,7 +135,7 @@ export default function HomePage() {
         onOpenKeyModal={handleOpenKeyModal}
       />
 
-      {/* Universal Dark Footer */}
+      {/* Universal Wise Dark Footer */}
       <Footer />
     </div>
   );
