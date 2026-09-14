@@ -353,52 +353,6 @@ export const PROVIDER_CATALOG: ProviderDefinition[] = [
     ],
   },
   {
-    id: "openai",
-    name: "OpenAI",
-    description: "Industry-standard GPT-4o, o1, o3-mini models.",
-    category: "commercial",
-    baseUrl: "https://api.openai.com/v1",
-    authHeader: "Authorization",
-    authPrefix: "Bearer",
-    defaultKeyEnv: "OPENAI_API_KEY",
-    freeTier: {
-      hasFree: false,
-      badgeText: "Paid API",
-      details: "Industry standard endpoint",
-    },
-    accentColor: "#59d499",
-    models: [
-      {
-        id: "gpt-4o",
-        name: "GPT-4o (Omni)",
-        contextWindow: 128000,
-        maxOutput: 16384,
-        capabilities: { toolCall: true, vision: true, streaming: true },
-      },
-      {
-        id: "gpt-4o-mini",
-        name: "GPT-4o Mini",
-        contextWindow: 128000,
-        maxOutput: 16384,
-        capabilities: { toolCall: true, vision: true, streaming: true },
-      },
-      {
-        id: "o3-mini",
-        name: "o3-mini (High Reasoning)",
-        contextWindow: 200000,
-        maxOutput: 100000,
-        capabilities: { toolCall: true, streaming: true, reasoning: true },
-      },
-      {
-        id: "o1",
-        name: "o1 Reasoning",
-        contextWindow: 200000,
-        maxOutput: 100000,
-        capabilities: { vision: true, streaming: true, reasoning: true },
-      },
-    ],
-  },
-  {
     id: "together",
     name: "Together AI",
     description: "High-performance open-source cloud with $5 initial credits.",
@@ -576,13 +530,13 @@ export const DEFAULT_COMBOS: VirtualCombo[] = [
   {
     id: "code-expert",
     name: "SZRoute Code Expert",
-    description: "Premier coding combo: Claude 3.7 Sonnet -> DeepSeek R1 -> Qwen 2.5 Coder -> OpenAI o3-mini.",
+    description: "Premier coding combo: Claude 3.7 Sonnet -> DeepSeek R1 -> Codestral -> Qwen 2.5 Coder.",
     strategy: "priority",
     targets: [
       { providerId: "anthropic", modelId: "claude-3-7-sonnet-20250219", priority: 1 },
       { providerId: "deepseek", modelId: "deepseek-reasoner", priority: 2 },
       { providerId: "mistral", modelId: "codestral-latest", priority: 3 },
-      { providerId: "openai", modelId: "o3-mini", priority: 4 },
+      { providerId: "openrouter", modelId: "qwen/qwen-2.5-coder-32b-instruct:free", priority: 4 },
     ],
   },
   {
@@ -599,12 +553,13 @@ export const DEFAULT_COMBOS: VirtualCombo[] = [
   {
     id: "balanced-pro",
     name: "SZRoute Pro Balanced",
-    description: "Production tier failover: GPT-4o -> Claude 3.5 Sonnet -> Gemini 2.5 Pro.",
+    description: "Production tier failover: Claude 3.7 Sonnet -> Gemini 2.5 Pro -> DeepSeek R1 -> Mistral Large.",
     strategy: "priority",
     targets: [
-      { providerId: "openai", modelId: "gpt-4o", priority: 1 },
-      { providerId: "anthropic", modelId: "claude-3-5-sonnet-20241022", priority: 2 },
-      { providerId: "gemini", modelId: "gemini-2.5-pro", priority: 3 },
+      { providerId: "anthropic", modelId: "claude-3-7-sonnet-20250219", priority: 1 },
+      { providerId: "gemini", modelId: "gemini-2.5-pro", priority: 2 },
+      { providerId: "deepseek", modelId: "deepseek-reasoner", priority: 3 },
+      { providerId: "mistral", modelId: "mistral-large-latest", priority: 4 },
     ],
   },
 ];

@@ -5,7 +5,7 @@ export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { input, model = "text-embedding-3-small" } = body;
+    const { input, model = "togethercomputer/m2-bert-80M-8k-retrieval" } = body;
 
     if (!input) {
       return NextResponse.json(
@@ -14,19 +14,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Default to Together AI / OpenAI / Cloudflare embeddings
     const apiKey =
-      process.env.OPENAI_API_KEY ||
       process.env.TOGETHER_API_KEY ||
       req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ||
       "";
 
-    const isTogether = Boolean(process.env.TOGETHER_API_KEY && !process.env.OPENAI_API_KEY);
-    const upstreamUrl = isTogether
-      ? "https://api.together.xyz/v1/embeddings"
-      : "https://api.openai.com/v1/embeddings";
-
-    const upstreamModel = isTogether ? "togethercomputer/m2-bert-80M-8k-retrieval" : model;
+    const upstreamUrl = "https://api.together.xyz/v1/embeddings";
 
     const res = await fetch(upstreamUrl, {
       method: "POST",
@@ -36,7 +29,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         input,
-        model: upstreamModel,
+        model,
       }),
     });
 
@@ -44,7 +37,7 @@ export async function POST(req: NextRequest) {
       const data = await res.json();
       return NextResponse.json(data, {
         status: 200,
-        headers: { "Access-Control-Allow-Origin": "*", "x-szroute-provider": isTogether ? "together" : "openai" },
+        headers: { "Access-Control-Allow-Origin": "*", "x-szroute-provider": "together" },
       });
     }
 

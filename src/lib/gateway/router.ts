@@ -47,7 +47,6 @@ export function detectProviderFromKey(key: string): string | null {
   if (k.startsWith("csk-") || k.startsWith("csk_")) return "cerebras";
   if (k.startsWith("sk-ant-")) return "anthropic";
   if (k.startsWith("sk-or-v1-") || k.startsWith("sk-or-")) return "openrouter";
-  if (k.startsWith("sk-proj-") || k.startsWith("sk-")) return "openai";
   if (k.startsWith("together_")) return "together";
 
   return null;
@@ -168,7 +167,6 @@ export async function executeGatewayChat(
       (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
       "";
 
-    // If still no key and defaultToken doesn't have an opposing prefix, fallback to defaultToken
     if (!apiKey && defaultToken && !detectedProvider) {
       apiKey = defaultToken;
     }
@@ -214,7 +212,6 @@ export async function executeGatewayChat(
       if (response.ok) {
         const contentType = response.headers.get("content-type") || "";
 
-        // If streaming requested but upstream returned JSON, check for error payload
         if (req.stream && contentType.includes("application/json")) {
           const cloned = response.clone();
           const jsonBody = (await cloned.json().catch(() => null)) as Record<string, unknown> | null;
