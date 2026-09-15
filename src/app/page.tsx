@@ -33,6 +33,9 @@ export default function HomePage() {
     apiKeys,
     saveApiKey,
     removeApiKey,
+    oauthTokens,
+    saveOAuthToken,
+    removeOAuthToken,
     customCombos,
     saveCombos,
     requestLogs,
@@ -43,7 +46,6 @@ export default function HomePage() {
     stats,
   } = useSZRouteStore();
 
-  // Load theme preference on mount (Default to clean Wise Light Mode)
   useEffect(() => {
     try {
       const stored = localStorage.getItem("szroute_theme");
@@ -69,7 +71,6 @@ export default function HomePage() {
     }
   };
 
-  // Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -121,6 +122,9 @@ export default function HomePage() {
             apiKeys={apiKeys}
             onSaveKey={saveApiKey}
             onRemoveKey={removeApiKey}
+            oauthTokens={oauthTokens}
+            onSaveOAuthToken={saveOAuthToken}
+            onRemoveOAuthToken={removeOAuthToken}
             onExportBackup={exportBackup}
             onImportBackup={importBackup}
             selectedProviderForModal={selectedProviderForModal}

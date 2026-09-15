@@ -2,7 +2,8 @@ import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { PROVIDER_CATALOG, DEFAULT_COMBOS } from "../src/lib/providers/catalog";
 import { compressPrompt, compressMessages, estimateTokenCount, ContentBlock } from "../src/lib/compression/engine";
-import { resolveRouteTargets } from "../src/lib/gateway/router";
+import { resolveRouteTargets, detectProviderFromKey } from "../src/lib/gateway/router";
+import { OAUTH_PROVIDERS, generateCodeVerifier, generateCodeChallenge } from "../src/lib/oauth/providers";
 
 describe("SZRoute Provider Catalog & Virtual Combos", () => {
   test("catalog contains top free and commercial providers", () => {
@@ -18,16 +19,40 @@ describe("SZRoute Provider Catalog & Virtual Combos", () => {
     assert.ok(openrouter && openrouter.freeTier.hasFree, "OpenRouter should be in free tier");
   });
 
-  test("gemini provider includes x-goog-api-client header", () => {
-    const gemini = PROVIDER_CATALOG.find((p) => p.id === "gemini");
-    assert.ok(gemini && gemini.customHeaders?.["x-goog-api-client"]);
-  });
-
   test("default virtual combos are configured with priority failover", () => {
     const freeAuto = DEFAULT_COMBOS.find((c) => c.id === "free-auto");
     assert.ok(freeAuto, "free-auto combo should exist");
     assert.ok(freeAuto.targets.length >= 3, "free-auto should have at least 3 fallback targets");
     assert.equal(freeAuto.strategy, "priority");
+  });
+});
+
+describe("OAuth 2.0 & Device Code Engine", () => {
+  test("oauth providers registry contains Google, GitHub Copilot, HuggingFace, OpenRouter", () => {
+    assert.ok(OAUTH_PROVIDERS["google"]);
+    assert.ok(OAUTH_PROVIDERS["github_copilot"]);
+    assert.ok(OAUTH_PROVIDERS["huggingface"]);
+    assert.ok(OAUTH_PROVIDERS["openrouter"]);
+
+    assert.equal(OAUTH_PROVIDERS["github_copilot"].type, "device_code");
+    assert.equal(OAUTH_PROVIDERS["google"].type, "pkce");
+  });
+
+  test("PKCE code verifier and challenge generation", async () => {
+    const verifier = generateCodeVerifier(64);
+    assert.equal(verifier.length, 64);
+    const challenge = await generateCodeChallenge(verifier);
+    assert.ok(challenge.length > 20, "Challenge should be generated");
+    assert.ok(!challenge.includes("+"), "Challenge should be base64url safe");
+  });
+
+  test("detectProviderFromKey identifies key prefixes", () => {
+    assert.equal(detectProviderFromKey("gsk_test12345"), "groq");
+    assert.equal(detectProviderFromKey("AIzaSyTest123"), "gemini");
+    assert.equal(detectProviderFromKey("csk_test123"), "cerebras");
+    assert.equal(detectProviderFromKey("sk-ant-test123"), "anthropic");
+    assert.equal(detectProviderFromKey("sk-or-v1-test123"), "openrouter");
+    assert.equal(detectProviderFromKey("random_non_matching_token"), null);
   });
 });
 

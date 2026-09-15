@@ -12,14 +12,21 @@ import {
   Download,
   Upload,
   ArrowUpDown,
-  AlertCircle,
+  ExternalLink,
+  ShieldCheck,
+  Sparkles,
+  Github,
 } from "lucide-react";
 import { PROVIDER_CATALOG, ProviderDefinition } from "@/lib/providers/catalog";
+import { OAUTH_PROVIDERS, OAuthTokenData } from "@/lib/oauth/providers";
 
 interface ProvidersViewProps {
   apiKeys: Record<string, string>;
   onSaveKey: (providerId: string, key: string) => void;
   onRemoveKey: (providerId: string) => void;
+  oauthTokens?: Record<string, OAuthTokenData>;
+  onSaveOAuthToken?: (providerId: string, data: OAuthTokenData) => void;
+  onRemoveOAuthToken?: (providerId: string) => void;
   onExportBackup?: () => string;
   onImportBackup?: (json: string) => boolean;
   selectedProviderForModal?: string | null;
@@ -29,6 +36,9 @@ export function ProvidersView({
   apiKeys,
   onSaveKey,
   onRemoveKey,
+  oauthTokens = {},
+  onSaveOAuthToken,
+  onRemoveOAuthToken,
   onExportBackup,
   onImportBackup,
   selectedProviderForModal = null,
@@ -46,6 +56,18 @@ export function ProvidersView({
   const [isBenchmarking, setIsBenchmarking] = useState(false);
   const [pingLatencies, setPingLatencies] = useState<Record<string, number>>({});
   const [sortByLatency, setSortByLatency] = useState(false);
+
+  // Device Code Flow State (for GitHub Copilot / CLI agents)
+  const [deviceFlow, setDeviceFlow] = useState<{
+    isOpen: boolean;
+    providerId: string;
+    userCode: string;
+    verificationUri: string;
+    deviceCode: string;
+    isPolling: boolean;
+    status: "idle" | "polling" | "success" | "error";
+    errorMsg?: string;
+  } | null>(null);
 
   React.useEffect(() => {
     if (selectedProviderForModal) {
@@ -104,6 +126,83 @@ export function ProvidersView({
       const msg = err instanceof Error ? err.message : String(err);
       setTestResult({ status: "error", message: msg });
     }
+  };
+
+  // OAuth Redirect Handlers (Google, OpenRouter, HuggingFace)
+  const handleStartOAuthRedirect = async (providerId: string) => {
+    try {
+      const res = await fetch(`/api/oauth/authorize?provider=${providerId}`);
+      const data = await res.json();
+      if (data.authUrl) {
+        // Open OAuth popup window
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+        window.open(
+          data.authUrl,
+          `szroute_oauth_${providerId}`,
+          `width=${width},height=${height},top=${top},left=${left}`
+        );
+      }
+    } catch (err) {
+      console.error("OAuth init error:", err);
+    }
+  };
+
+  // Device Code Flow Handlers (GitHub Copilot)
+  const handleStartDeviceFlow = async (providerId = "github_copilot") => {
+    try {
+      const res = await fetch("/api/oauth/device/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ providerId }),
+      });
+      const data = await res.json();
+      if (data.userCode && data.verificationUri) {
+        setDeviceFlow({
+          isOpen: true,
+          providerId,
+          userCode: data.userCode,
+          verificationUri: data.verificationUri,
+          deviceCode: data.deviceCode,
+          isPolling: true,
+          status: "polling",
+        });
+        // Start polling
+        pollDeviceToken(data.deviceCode, providerId, data.interval || 5);
+      }
+    } catch (err) {
+      console.error("Device flow error:", err);
+    }
+  };
+
+  const pollDeviceToken = async (deviceCode: string, providerId: string, intervalSec = 5) => {
+    const pollTimer = setInterval(async () => {
+      try {
+        const res = await fetch("/api/oauth/device/poll", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deviceCode, providerId }),
+        });
+        const data = await res.json();
+        if (data.status === "success" && data.tokenData) {
+          clearInterval(pollTimer);
+          if (onSaveOAuthToken) {
+            onSaveOAuthToken(providerId, data.tokenData);
+          }
+          setDeviceFlow((prev) => (prev ? { ...prev, isPolling: false, status: "success" } : null));
+          setTimeout(() => setDeviceFlow(null), 2000);
+        } else if (data.status === "error") {
+          clearInterval(pollTimer);
+          setDeviceFlow((prev) =>
+            prev ? { ...prev, isPolling: false, status: "error", errorMsg: data.error } : null
+          );
+        }
+      } catch {
+        clearInterval(pollTimer);
+      }
+    }, intervalSec * 1000);
   };
 
   const handleBenchmarkAll = async () => {
@@ -185,21 +284,30 @@ export function ProvidersView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-black text-ink tracking-tight">
-            160+ Providers & Credentials
+            Providers, API Keys & OAuth
           </h2>
           <p className="text-[14px] text-ink-body font-medium mt-1">
-            Configure upstream API keys or route through zero-config free tiers. Keys stay in your browser.
+            Connect via zero-config OAuth 2.0 PKCE, Device code, or standard API keys.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* GitHub Copilot Device Code Trigger */}
+          <button
+            onClick={() => handleStartDeviceFlow("github_copilot")}
+            className="btn-secondary text-[12px] h-9 px-3 flex items-center gap-1.5"
+          >
+            <Github className="w-3.5 h-3.5" />
+            <span>Copilot Device Auth</span>
+          </button>
+
           <button
             onClick={handleBenchmarkAll}
             disabled={isBenchmarking}
             className="btn-secondary text-[12px] h-9 px-3"
           >
             <Zap className={`w-3.5 h-3.5 ${isBenchmarking ? "animate-spin text-primary" : ""}`} />
-            <span>{isBenchmarking ? "Benchmarking..." : "Benchmark Latency"}</span>
+            <span>{isBenchmarking ? "Benchmarking..." : "Benchmark Speed"}</span>
           </button>
 
           <button
@@ -210,7 +318,7 @@ export function ProvidersView({
             <span>Backup / Sync</span>
           </button>
 
-          <div className="relative w-full sm:w-56">
+          <div className="relative w-full sm:w-52">
             <Search className="w-4 h-4 text-ink-mute absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -257,6 +365,8 @@ export function ProvidersView({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredProviders.map((provider) => {
           const hasKey = Boolean(apiKeys[provider.id]);
+          const hasOAuth = Boolean(oauthTokens[provider.id]);
+          const oauthConfig = OAUTH_PROVIDERS[provider.id];
           const latency = pingLatencies[provider.id];
 
           return (
@@ -279,7 +389,11 @@ export function ProvidersView({
                   </div>
 
                   <div className="flex flex-col items-end gap-1">
-                    {provider.freeTier.hasFree ? (
+                    {hasOAuth ? (
+                      <span className="badge-positive text-[10px] py-0.5 px-2">
+                        OAuth Connected
+                      </span>
+                    ) : provider.freeTier.hasFree ? (
                       <span className="badge-positive text-[10px] py-0.5 px-2">
                         Free
                       </span>
@@ -315,28 +429,104 @@ export function ProvidersView({
               </div>
 
               <div className="pt-3 border-t border-border-subtle flex items-center justify-between text-[12px]">
-                <span className="font-semibold text-ink-body">
-                  {hasKey ? (
+                <div className="font-semibold text-ink-body">
+                  {hasOAuth ? (
+                    <span className="text-positive flex items-center gap-1 font-bold">
+                      <Check className="w-3 h-3" /> OAuth Active
+                    </span>
+                  ) : hasKey ? (
                     <span className="text-positive flex items-center gap-1 font-bold">
                       <Check className="w-3 h-3" /> Key Saved
                     </span>
                   ) : (
-                    provider.freeTier.monthlyFreeTokensEstimate || "Free access ready"
+                    <span className="text-ink-mute">{provider.freeTier.monthlyFreeTokensEstimate || "Free ready"}</span>
                   )}
-                </span>
+                </div>
 
-                <button
-                  onClick={() => handleOpenKeyModal(provider)}
-                  className="btn-secondary text-[12px] h-7 px-2.5"
-                >
-                  <Key className="w-3 h-3" />
-                  <span>{hasKey ? "Edit" : "Key"}</span>
-                </button>
+                <div className="flex items-center gap-1.5">
+                  {/* OAuth button if provider supports OAuth */}
+                  {oauthConfig && !hasOAuth && (
+                    <button
+                      onClick={() => handleStartOAuthRedirect(provider.id)}
+                      className="btn-primary text-[11px] h-7 px-2.5 font-bold"
+                      title="Login via OAuth PKCE"
+                    >
+                      <span>OAuth</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleOpenKeyModal(provider)}
+                    className="btn-secondary text-[11px] h-7 px-2.5"
+                  >
+                    <Key className="w-3 h-3" />
+                    <span>{hasKey || hasOAuth ? "Edit" : "Key"}</span>
+                  </button>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* GitHub Copilot Device Flow Modal */}
+      {deviceFlow && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div
+            className="w-full max-w-md bg-card rounded-[24px] shadow-2xl p-6 space-y-4 border border-border-subtle text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mx-auto text-ink">
+              <Github className="w-6 h-6" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-black text-ink">GitHub Copilot Device Login</h3>
+              <p className="text-[13px] text-ink-body font-medium mt-1">
+                Enter this 8-digit one-time code on GitHub to authorize SZRoute:
+              </p>
+            </div>
+
+            {/* Code Box */}
+            <div className="p-4 bg-subtle rounded-2xl border border-border-subtle">
+              <div className="text-3xl font-mono font-black text-ink tracking-widest select-all">
+                {deviceFlow.userCode}
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <a
+                href={deviceFlow.verificationUri}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary w-full h-11 text-[14px] flex items-center justify-center gap-2"
+              >
+                <span>Open GitHub to Authorize</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+
+              <div className="text-[12px] text-ink-mute flex items-center justify-center gap-1.5 pt-2">
+                {deviceFlow.status === "polling" && (
+                  <>
+                    <Zap className="w-3.5 h-3.5 animate-spin text-primary" />
+                    <span>Listening for authorization approval...</span>
+                  </>
+                )}
+                {deviceFlow.status === "success" && (
+                  <span className="text-positive font-bold">✓ Authorization approved! Connected.</span>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setDeviceFlow(null)}
+              className="text-[12px] text-ink-mute hover:text-ink font-bold pt-2 block mx-auto"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Backup & Restore Modal */}
       {backupModalOpen && (
@@ -406,7 +596,7 @@ export function ProvidersView({
                 <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center font-bold text-xs text-ink">
                   {editingProvider.name.slice(0, 2).toUpperCase()}
                 </div>
-                <h3 className="text-base font-bold text-ink">{editingProvider.name} API Key</h3>
+                <h3 className="text-base font-bold text-ink">{editingProvider.name} Credentials</h3>
               </div>
               <button
                 onClick={() => setEditingProvider(null)}
@@ -417,7 +607,7 @@ export function ProvidersView({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[12px] font-bold text-ink">API Key</label>
+              <label className="text-[12px] font-bold text-ink">API Key / Token</label>
               <input
                 type="password"
                 value={keyInput}
@@ -457,9 +647,11 @@ export function ProvidersView({
                   <button
                     onClick={() => {
                       onRemoveKey(editingProvider.id);
+                      if (onRemoveOAuthToken) onRemoveOAuthToken(editingProvider.id);
                       setEditingProvider(null);
                     }}
                     className="p-1.5 text-negative hover:bg-negative/10 rounded-full"
+                    title="Remove saved credential"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

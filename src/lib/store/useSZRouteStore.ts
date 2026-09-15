@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DEFAULT_COMBOS, VirtualCombo } from "@/lib/providers/catalog";
+import { OAuthTokenData } from "@/lib/oauth/providers";
 
 export interface RequestLogEntry {
   id: string;
@@ -28,17 +29,20 @@ export interface ExportBackupData {
   version: "szroute-v4";
   exportedAt: string;
   apiKeys: Record<string, string>;
+  oauthTokens?: Record<string, OAuthTokenData>;
   customCombos: VirtualCombo[];
   compressionSettings: CompressionSettings;
 }
 
 const STORAGE_KEY_API_KEYS = "szroute_api_keys_v4";
+const STORAGE_KEY_OAUTH = "szroute_oauth_tokens_v4";
 const STORAGE_KEY_COMBOS = "szroute_combos_v4";
 const STORAGE_KEY_SETTINGS = "szroute_compression_settings_v4";
 const STORAGE_KEY_LOGS = "szroute_request_logs_v4";
 
 export function useSZRouteStore() {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+  const [oauthTokens, setOauthTokens] = useState<Record<string, OAuthTokenData>>({});
   const [customCombos, setCustomCombos] = useState<VirtualCombo[]>(DEFAULT_COMBOS);
   const [compressionSettings, setCompressionSettings] = useState<CompressionSettings>({
     enabled: true,
@@ -50,11 +54,14 @@ export function useSZRouteStore() {
   const [requestLogs, setRequestLogs] = useState<RequestLogEntry[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount (Cut #1: genuine empty state, no hardcoded seed logs)
+  // Load from localStorage on mount
   useEffect(() => {
     try {
       const storedKeys = localStorage.getItem(STORAGE_KEY_API_KEYS);
       if (storedKeys) setApiKeys(JSON.parse(storedKeys));
+
+      const storedOauth = localStorage.getItem(STORAGE_KEY_OAUTH);
+      if (storedOauth) setOauthTokens(JSON.parse(storedOauth));
 
       const storedCombos = localStorage.getItem(STORAGE_KEY_COMBOS);
       if (storedCombos) setCustomCombos(JSON.parse(storedCombos));
@@ -71,6 +78,18 @@ export function useSZRouteStore() {
     }
   }, []);
 
+  // Listen for OAuth postMessage events from popups
+  useEffect(() => {
+    const handleOAuthMessage = (event: MessageEvent) => {
+      if (event.data?.type === "szroute_oauth_success" && event.data?.data) {
+        const tokenData = event.data.data as OAuthTokenData;
+        saveOAuthToken(tokenData.providerId, tokenData);
+      }
+    };
+    window.addEventListener("message", handleOAuthMessage);
+    return () => window.removeEventListener("message", handleOAuthMessage);
+  }, [oauthTokens, apiKeys]);
+
   const saveApiKey = (providerId: string, key: string) => {
     const updated = { ...apiKeys, [providerId]: key };
     setApiKeys(updated);
@@ -85,6 +104,31 @@ export function useSZRouteStore() {
     setApiKeys(updated);
     try {
       localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(updated));
+    } catch {}
+  };
+
+  const saveOAuthToken = (providerId: string, tokenData: OAuthTokenData) => {
+    const updated = { ...oauthTokens, [providerId]: tokenData };
+    setOauthTokens(updated);
+    // Also save access token to apiKeys map for instant transparent gateway routing
+    const updatedKeys = { ...apiKeys, [providerId]: tokenData.accessToken };
+    setApiKeys(updatedKeys);
+    try {
+      localStorage.setItem(STORAGE_KEY_OAUTH, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(updatedKeys));
+    } catch {}
+  };
+
+  const removeOAuthToken = (providerId: string) => {
+    const updated = { ...oauthTokens };
+    delete updated[providerId];
+    setOauthTokens(updated);
+    const updatedKeys = { ...apiKeys };
+    delete updatedKeys[providerId];
+    setApiKeys(updatedKeys);
+    try {
+      localStorage.setItem(STORAGE_KEY_OAUTH, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(updatedKeys));
     } catch {}
   };
 
@@ -122,19 +166,18 @@ export function useSZRouteStore() {
     } catch {}
   };
 
-  // QoL 1: Export backup data as encrypted/portable JSON
   const exportBackup = (): string => {
     const data: ExportBackupData = {
       version: "szroute-v4",
       exportedAt: new Date().toISOString(),
       apiKeys,
+      oauthTokens,
       customCombos,
       compressionSettings,
     };
     return JSON.stringify(data, null, 2);
   };
 
-  // QoL 1: Import backup data
   const importBackup = (jsonString: string): boolean => {
     try {
       const parsed = JSON.parse(jsonString) as ExportBackupData;
@@ -142,6 +185,10 @@ export function useSZRouteStore() {
         if (parsed.apiKeys) {
           setApiKeys(parsed.apiKeys);
           localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(parsed.apiKeys));
+        }
+        if (parsed.oauthTokens) {
+          setOauthTokens(parsed.oauthTokens);
+          localStorage.setItem(STORAGE_KEY_OAUTH, JSON.stringify(parsed.oauthTokens));
         }
         if (parsed.customCombos) {
           setCustomCombos(parsed.customCombos);
@@ -159,7 +206,6 @@ export function useSZRouteStore() {
     }
   };
 
-  // Aggregated Telemetry Stats & Financial Calculations (QoL 5: $3.00/1M token benchmark savings)
   const totalRequests = requestLogs.length;
   const totalTokensSaved = requestLogs.reduce((acc, l) => acc + (l.tokensSaved || 0), 0);
   const totalTokensProcessed = requestLogs.reduce((acc, l) => acc + (l.tokensProcessed || 0), 0);
@@ -168,7 +214,6 @@ export function useSZRouteStore() {
       ? Math.round(requestLogs.reduce((acc, l) => acc + (l.latencyMs || 0), 0) / totalRequests)
       : 0;
 
-  // Commercial frontier benchmark pricing: $3.00 per 1M tokens ($0.000003 per token)
   const dollarSavings = ((totalTokensSaved + totalTokensProcessed) * 0.000003).toFixed(4);
 
   return {
@@ -176,6 +221,9 @@ export function useSZRouteStore() {
     apiKeys,
     saveApiKey,
     removeApiKey,
+    oauthTokens,
+    saveOAuthToken,
+    removeOAuthToken,
     customCombos,
     saveCombos,
     compressionSettings,
