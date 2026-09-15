@@ -15,6 +15,8 @@ import {
   Sun,
   Moon,
   Zap,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 
 export type NavTab =
@@ -32,6 +34,7 @@ interface SidebarProps {
   onOpenCommandPalette: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
+  onToggleSidebar?: () => void;
 }
 
 export function Sidebar({
@@ -40,6 +43,7 @@ export function Sidebar({
   onOpenCommandPalette,
   isDark,
   onToggleTheme,
+  onToggleSidebar,
 }: SidebarProps) {
   const [copied, setCopied] = useState(false);
 
@@ -54,123 +58,121 @@ export function Sidebar({
     id: NavTab;
     label: string;
     icon: React.ReactNode;
-    color: string;
     badge?: string;
   }> = [
     {
       id: "overview",
       label: "Overview",
       icon: <Activity className="w-4 h-4" />,
-      color: "from-[#007AFF] to-[#32ADE6]",
     },
     {
       id: "providers",
       label: "Providers & Keys",
       icon: <Key className="w-4 h-4" />,
-      color: "from-[#FF9500] to-[#FFCC00]",
       badge: "160+",
     },
     {
       id: "combos",
       label: "Virtual Combos",
       icon: <Layers className="w-4 h-4" />,
-      color: "from-[#34C759] to-[#30D158]",
       badge: "Auto",
     },
     {
       id: "studio",
-      label: "AI Chat Studio",
+      label: "AI Studio",
       icon: <Sparkles className="w-4 h-4" />,
-      color: "from-[#AF52DE] to-[#5856D6]",
     },
     {
       id: "compression",
       label: "RTK Compression",
-      icon: <Flame className="w-4 h-4" />,
-      color: "from-[#FF3B30] to-[#FF2D55]",
+      icon: <Flame className="w-4 h-4 text-[var(--system-red)]" />,
       badge: "-95%",
     },
     {
       id: "inspector",
       label: "Telemetry Logs",
       icon: <FileText className="w-4 h-4" />,
-      color: "from-[#5AC8FA] to-[#007AFF]",
     },
     {
       id: "setup",
       label: "omp Integration",
       icon: <Terminal className="w-4 h-4" />,
-      color: "from-[#5856D6] to-[#AF52DE]",
     },
   ];
 
   return (
-    <aside className="w-64 liquid-glass flex flex-col justify-between h-[calc(100vh-2rem)] sticky top-4 my-4 ml-4 flex-shrink-0 z-30 select-none shadow-liquid-glass">
-      {/* Top App Identity */}
+    <aside className="w-64 bg-[var(--glass-surface)] backdrop-blur-xl border-r border-[var(--glass-border)] flex flex-col justify-between h-screen sticky top-0 flex-shrink-0 z-30 select-none transition-all duration-300">
+      {/* Top App Identity & Collapse Trigger */}
       <div>
-        <div className="p-4 border-b border-[var(--glass-border-subtle)] flex items-center justify-between">
+        <div className="p-3.5 border-b border-[var(--glass-border)] flex items-center justify-between">
           <button
             onClick={() => onTabChange("overview")}
-            className="flex items-center gap-3 text-left group cursor-pointer active:scale-95 transition-transform"
+            className="flex items-center gap-2.5 text-left group cursor-pointer active:scale-95 transition-transform"
           >
-            {/* Liquid Glass Orb Logo */}
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#007AFF] via-[#5856D6] to-[#AF52DE] flex items-center justify-center p-0.5 shadow-lg border border-white/40 group-hover:scale-105 transition-transform">
-              <Zap className="w-5 h-5 text-white fill-white drop-shadow-xs" />
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#3B82F6] to-[#6366F1] flex items-center justify-center p-0.5 shadow-xs">
+              <Zap className="w-4 h-4 text-white fill-white" />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-extrabold text-[15px] tracking-tight text-[var(--text-primary)]">
+              <span className="font-bold text-[14px] tracking-tight text-[var(--text-primary)]">
                 SZRoute
               </span>
-              <span className="text-[11px] font-medium text-[var(--text-secondary)]">
-                Liquid AI Gateway
+              <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+                Gateway for omp
               </span>
             </div>
           </button>
 
-          {/* Theme Switcher Capsule */}
-          <button
-            onClick={onToggleTheme}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--glass-surface-subtle)] hover:bg-[var(--glass-surface-elevated)] border border-[var(--glass-border-subtle)] active:scale-90 transition-all text-[var(--text-primary)] shadow-xs"
-            title={isDark ? "Switch to Light Glass" : "Switch to Dark Glass"}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-[#FFD60A]" /> : <Moon className="w-4 h-4 text-[#007AFF]" />}
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Collapse Sidebar Button (⌘B) */}
+            {onToggleSidebar && (
+              <button
+                onClick={onToggleSidebar}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all"
+                title="Toggle Sidebar (⌘B)"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Theme Switcher Toggle */}
+            <button
+              onClick={onToggleTheme}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all"
+              title={isDark ? "Light Mode" : "Dark Mode"}
+            >
+              {isDark ? <Sun className="w-3.5 h-3.5 text-[#F59E0B]" /> : <Moon className="w-3.5 h-3.5 text-[#2563EB]" />}
+            </button>
+          </div>
         </div>
 
-        {/* Liquid Navigation List */}
-        <nav className="p-3 space-y-1.5">
+        {/* Navigation List */}
+        <nav className="p-2 space-y-0.5">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-[13px] font-semibold transition-all duration-200 cursor-pointer text-left active:scale-[0.97] ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer text-left active:scale-[0.98] ${
                   isActive
-                    ? "bg-gradient-to-r from-[#007AFF] to-[#5856D6] text-white shadow-md shadow-blue-500/25 border border-white/30"
-                    : "text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] hover:border-[var(--glass-border-subtle)] border border-transparent"
+                    ? "bg-[var(--text-primary)] text-[var(--bg-card)] shadow-xs font-semibold"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)]"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs shadow-xs transition-transform ${
-                      isActive
-                        ? "bg-white/25 text-white"
-                        : `bg-gradient-to-tr ${item.color} text-white`
-                    }`}
-                  >
+                <div className="flex items-center gap-2.5">
+                  <span className={isActive ? "text-[var(--bg-card)]" : "text-[var(--text-tertiary)]"}>
                     {item.icon}
-                  </div>
+                  </span>
                   <span>{item.label}</span>
                 </div>
 
                 {item.badge && (
                   <span
-                    className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold transition-colors ${
+                    className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full font-semibold transition-colors ${
                       isActive
-                        ? "bg-white/25 text-white border border-white/30"
-                        : "bg-[var(--glass-surface-subtle)] text-[var(--text-secondary)] border border-[var(--glass-border-subtle)]"
+                        ? "bg-white/20 text-white"
+                        : "bg-[var(--glass-surface-subtle)] text-[var(--text-tertiary)]"
                     }`}
                   >
                     {item.badge}
@@ -182,36 +184,36 @@ export function Sidebar({
         </nav>
       </div>
 
-      {/* Bottom Actions & Glass Status */}
-      <div className="p-3.5 border-t border-[var(--glass-border-subtle)] space-y-2.5 bg-[var(--glass-surface-subtle)]/40 rounded-b-[28px]">
-        {/* Spotlight Command Search Trigger */}
+      {/* Bottom Actions & Status */}
+      <div className="p-3 border-t border-[var(--glass-border)] space-y-2 bg-[var(--glass-surface-subtle)]/40 rounded-b-2xl">
+        {/* Command Palette Trigger Button */}
         <button
           onClick={onOpenCommandPalette}
-          className="w-full flex items-center justify-between px-3.5 py-2 text-[12px] font-semibold text-[var(--text-primary)] bg-[var(--glass-surface)] rounded-2xl border border-[var(--glass-border)] hover:border-[#007AFF]/50 active:scale-[0.97] transition-all cursor-pointer shadow-xs"
+          className="w-full flex items-center justify-between px-3 py-1.5 text-[12px] font-medium text-[var(--text-primary)] bg-[var(--glass-surface)] rounded-xl border border-[var(--glass-border)] hover:border-[var(--accent)] active:scale-[0.98] transition-all cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <Command className="w-3.5 h-3.5 text-[#007AFF]" />
-            <span>Spotlight Search</span>
+            <Command className="w-3.5 h-3.5 text-[var(--accent)]" />
+            <span>Search</span>
           </div>
-          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-lg bg-[var(--glass-surface-subtle)] text-[var(--text-secondary)] border border-[var(--glass-border-subtle)]">⌘K</span>
+          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-md bg-[var(--glass-surface-subtle)] text-[var(--text-tertiary)]">⌘K</span>
         </button>
 
-        {/* Liquid Primary Copy Endpoint Button */}
+        {/* Copy Gateway Endpoint Capsule Button */}
         <button
           onClick={copyEndpointUrl}
-          className="w-full btn-liquid-primary text-[13px] h-10 cursor-pointer shadow-md"
+          className="w-full btn-liquid-primary text-[12px] h-9 cursor-pointer"
         >
-          {copied ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4 text-white" />}
-          <span>{copied ? "Endpoint Copied!" : "Copy /v1 Endpoint"}</span>
+          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          <span>{copied ? "Copied!" : "Copy /v1 Endpoint"}</span>
         </button>
 
-        {/* Real-time Edge Status Pill */}
-        <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] px-1 pt-0.5">
-          <span className="flex items-center gap-1.5 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse shadow-xs" />
+        {/* Live Status Pill */}
+        <div className="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] px-1 pt-0.5">
+          <span className="flex items-center gap-1.5 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--system-green)] animate-pulse" />
             <span>160+ Online</span>
           </span>
-          <span className="font-mono text-[10px] font-bold">Edge Liquid v4</span>
+          <span className="font-mono text-[10px] text-[var(--text-tertiary)]">⌘B toggle</span>
         </div>
       </div>
     </aside>

@@ -12,7 +12,7 @@ import { CompressionStudioView } from "@/components/compression/CompressionStudi
 import { TrafficInspectorView } from "@/components/inspector/TrafficInspectorView";
 import { SetupGuidesView } from "@/components/setup/SetupGuidesView";
 import { useSZRouteStore } from "@/lib/store/useSZRouteStore";
-import { Menu, X, Command, Sun, Moon } from "lucide-react";
+import { Menu, X, Command, Sun, Moon, PanelLeftOpen } from "lucide-react";
 
 const TAB_INDEX_MAP: NavTab[] = [
   "overview",
@@ -29,6 +29,7 @@ export default function HomePage() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedProviderForModal, setSelectedProviderForModal] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDark, setIsDark] = useState<boolean>(false);
 
   const {
@@ -73,8 +74,20 @@ export default function HomePage() {
     }
   };
 
+  const handleToggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+  // Global keyboard shortcuts (⌘B to toggle sidebar, 1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
+      // ⌘B or Ctrl+B to toggle sidebar
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setSidebarOpen((prev) => !prev);
+        return;
+      }
+
       const target = e.target as HTMLElement;
       const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
 
@@ -103,39 +116,23 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] flex flex-col md:flex-row relative overflow-x-hidden antialiased selection:bg-[#007AFF]/30 transition-colors duration-300">
-      {/* ─── Ambient Atmospheric Fluid Mesh Layer (Refracted by Liquid Glass) ─── */}
+    <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)] flex flex-col md:flex-row relative overflow-x-hidden antialiased selection:bg-[#3B82F6]/20 transition-colors duration-200">
+      {/* ─── Gentle Atmospheric Ambient Glow (6-8% Subtle Opacity, Zero Glare) ─── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Fluid Blob 1 (Cyan / Blue) */}
-        <div className="absolute -top-32 -left-32 w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-[#007AFF]/30 to-[#32ADE6]/25 blur-[120px] animate-ambient-1" />
-        
-        {/* Fluid Blob 2 (Purple / Indigo) */}
-        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-[#AF52DE]/25 via-[#5856D6]/20 to-[#FF2D55]/15 blur-[140px] animate-ambient-2" />
-
-        {/* Fluid Blob 3 (Emerald / Mint Green) */}
-        <div className="absolute -bottom-40 left-1/4 w-[650px] h-[650px] rounded-full bg-gradient-to-tr from-[#34C759]/20 via-[#30D158]/15 to-[#32ADE6]/20 blur-[130px] animate-ambient-3" />
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#3B82F6]/10 to-[#6366F1]/08 blur-[140px] animate-ambient-1" />
+        <div className="absolute top-1/3 -right-40 w-[550px] h-[550px] rounded-full bg-gradient-to-bl from-[#8B5CF6]/08 via-[#3B82F6]/06 to-transparent blur-[160px] animate-ambient-2" />
       </div>
 
-      {/* SVG Optical Refraction Shader Filters */}
-      <svg className="hidden" aria-hidden="true">
-        <defs>
-          <filter id="liquid-refraction" x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Mobile Top Glass Bar */}
-      <header className="md:hidden sticky top-0 z-40 liquid-glass rounded-none border-x-0 border-t-0 px-4 h-14 flex items-center justify-between">
+      <header className="md:hidden sticky top-0 z-40 bg-[var(--glass-surface)] backdrop-blur-md border-b border-[var(--glass-border)] px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-2xl text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-transform"
+            className="p-1.5 rounded-xl text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-transform"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <span className="font-extrabold text-[16px] tracking-tight text-[var(--text-primary)]">SZRoute Liquid</span>
+          <span className="font-bold text-[15px] tracking-tight text-[var(--text-primary)]">SZRoute</span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -143,7 +140,7 @@ export default function HomePage() {
             onClick={handleToggleTheme}
             className="p-2 rounded-full text-[var(--text-secondary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-transform"
           >
-            {isDark ? <Sun className="w-4 h-4 text-[#FFD60A]" /> : <Moon className="w-4 h-4 text-[#007AFF]" />}
+            {isDark ? <Sun className="w-4 h-4 text-[#F59E0B]" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
           </button>
 
           <button
@@ -155,16 +152,32 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Desktop Left Floating Glass Sidebar */}
-      <div className="hidden md:block z-20">
+      {/* Desktop Left Glass Sidebar (Collapsible with ⌘B) */}
+      <div
+        className={`hidden md:block z-20 transition-all duration-300 ease-in-out ${
+          sidebarOpen ? "w-64 opacity-100" : "w-0 opacity-0 overflow-hidden pointer-events-none"
+        }`}
+      >
         <Sidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
           isDark={isDark}
           onToggleTheme={handleToggleTheme}
+          onToggleSidebar={handleToggleSidebar}
         />
       </div>
+
+      {/* Floating Re-Open Sidebar Button when Collapsed */}
+      {!sidebarOpen && (
+        <button
+          onClick={handleToggleSidebar}
+          className="hidden md:flex fixed top-4 left-4 z-30 p-2.5 rounded-xl bg-[var(--glass-surface)] hover:bg-[var(--glass-surface-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--glass-border)] shadow-md active:scale-90 transition-all cursor-pointer animate-spring-pop"
+          title="Open Sidebar (⌘B)"
+        >
+          <PanelLeftOpen className="w-4 h-4 text-[var(--accent)]" />
+        </button>
+      )}
 
       {/* Mobile Glass Drawer */}
       {mobileMenuOpen && (
