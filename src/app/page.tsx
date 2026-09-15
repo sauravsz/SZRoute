@@ -27,7 +27,6 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTab>("overview");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedProviderForModal, setSelectedProviderForModal] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(false);
 
   const {
     apiKeys,
@@ -46,31 +45,7 @@ export default function HomePage() {
     stats,
   } = useSZRouteStore();
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("szroute_theme");
-      if (stored === "dark") {
-        setIsDark(true);
-        document.documentElement.classList.add("dark");
-      } else {
-        setIsDark(false);
-        document.documentElement.classList.remove("dark");
-      }
-    } catch {}
-  }, []);
-
-  const handleToggleTheme = () => {
-    const nextDark = !isDark;
-    setIsDark(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("szroute_theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("szroute_theme", "light");
-    }
-  };
-
+  // Keyboard navigation (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -101,18 +76,16 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-page text-ink transition-colors duration-200">
-      {/* Minimal Top Navigation */}
+    <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#262626]">
+      {/* Top Corporate Navigation */}
       <Navbar
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        isDark={isDark}
-        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1320px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 lg:px-12 py-8 sm:py-12">
         {activeTab === "overview" && (
           <OverviewView onNavigate={setActiveTab} stats={stats} />
         )}
@@ -160,7 +133,7 @@ export default function HomePage() {
         )}
       </main>
 
-      {/* Global Command Palette (⌘K) */}
+      {/* Command Center Palette (⌘K) */}
       <CommandPaletteModal
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
@@ -168,7 +141,7 @@ export default function HomePage() {
         onOpenKeyModal={handleOpenKeyModal}
       />
 
-      {/* Footer */}
+      {/* Corporate Footer with M-Tricolor Stripe */}
       <Footer />
     </div>
   );

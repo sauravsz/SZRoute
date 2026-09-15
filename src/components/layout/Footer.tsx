@@ -1,80 +1,91 @@
 import React from "react";
-import { Zap, Github, Terminal, ArrowUpRight, Heart } from "lucide-react";
+import { Github, ArrowUpRight, ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#0e0f0c] text-[#e8ebe6] mt-24 py-16 px-4 sm:px-6">
-      <div className="max-w-[1360px] mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 text-[14px]">
-        {/* Brand Column */}
-        <div className="col-span-2 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#9fe870] flex items-center justify-center font-black text-[#0e0f0c] text-sm">
-              SZ
+    <footer className="w-full bg-[#f7f7f7] text-[#262626] mt-24 border-t border-[#e6e6e6]">
+      {/* BMW M-Tricolor Stripe Accent Divider */}
+      <div className="m-stripe-divider" />
+
+      <div className="max-w-[1440px] mx-auto py-16 px-6 lg:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-[14px]">
+          {/* Brand Column */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full border-2 border-[#1c69d4] bg-[#ffffff] grid grid-cols-2 grid-rows-2 overflow-hidden">
+                <div className="bg-[#1c69d4]" />
+                <div className="bg-[#ffffff]" />
+                <div className="bg-[#ffffff]" />
+                <div className="bg-[#1c69d4]" />
+              </div>
+              <span className="font-bold text-[#262626] text-[16px] tracking-tight">
+                SZRoute Corporate
+              </span>
             </div>
-            <span className="font-black text-white tracking-tight text-[18px]">
-              SZRoute<span className="text-[#9fe870]">.</span>
+            <p className="text-[#3c3c3c] font-light text-[14px] leading-relaxed">
+              Enterprise AI Gateway & Multi-Provider Router for the <strong className="font-bold text-[#262626]">Oh My Pi (omp)</strong> coding harness. Engineered for wafer-scale inference and zero-latency failover.
+            </p>
+            <div className="pt-2">
+              <a
+                href="https://github.com/sauravsz/SZRoute"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-text-link text-[12px]"
+              >
+                GITHUB REPOSITORY <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Column 1: Models & Combos */}
+          <div className="space-y-3">
+            <h4 className="text-[13px] font-bold uppercase tracking-[1.5px] text-[#262626]">
+              Combos & Models
+            </h4>
+            <ul className="space-y-2 text-[#3c3c3c] font-light text-[14px]">
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">free-auto (Groq + Cerebras)</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">code-expert (Claude 3.7 + R1)</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">fast-reasoning (LPU 2000 tps)</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">balanced-pro (Gemini 2.5 Pro)</span></li>
+            </ul>
+          </div>
+
+          {/* Column 2: Architecture */}
+          <div className="space-y-3">
+            <h4 className="text-[13px] font-bold uppercase tracking-[1.5px] text-[#262626]">
+              Architecture
+            </h4>
+            <ul className="space-y-2 text-[#3c3c3c] font-light text-[14px]">
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Vercel Serverless & Edge</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">RTK + Caveman Compression</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Model Context Protocol (MCP)</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">OAuth 2.0 PKCE & Device Auth</span></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Integrations */}
+          <div className="space-y-3">
+            <h4 className="text-[13px] font-bold uppercase tracking-[1.5px] text-[#262626]">
+              Integrations
+            </h4>
+            <ul className="space-y-2 text-[#3c3c3c] font-light text-[14px]">
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Oh My Pi (omp) Coding Agent</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Cursor IDE</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Cline & Roo Code</span></li>
+              <li><span className="hover:text-[#1c69d4] cursor-pointer">Codex & Antigravity</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-14 pt-8 border-t border-[#e6e6e6] flex flex-col sm:flex-row items-center justify-between text-[#6b6b6b] text-[13px] font-light gap-4">
+          <div>
+            © {new Date().getFullYear()} SZRoute. Engineered for European precision and autonomous agent workflows.
+          </div>
+          <div className="flex items-center gap-6">
+            <span className="text-[#262626] font-bold text-[12px] uppercase tracking-[1px]">
+              BMW Type Automotive Dialect
             </span>
           </div>
-          <p className="text-[#868685] text-[14px] leading-relaxed max-w-sm">
-            The Free AI Gateway & Multi-Provider Router for the <strong className="text-[#9fe870]">Oh My Pi (omp)</strong> coding agent. 160+ providers, 50+ free tiers, RTK token compression, and zero-latency failover.
-          </p>
-          <div className="flex items-center gap-4 pt-2 text-[#868685]">
-            <a
-              href="https://github.com/sauravsz/SZRoute"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-[#9fe870] flex items-center gap-1.5 transition-colors font-medium text-[13px]"
-            >
-              <Github className="w-4 h-4" /> GitHub Repository <ArrowUpRight className="w-3.5 h-3.5" />
-            </a>
-            <span>•</span>
-            <span className="text-[#9fe870] font-semibold text-[13px]">Vercel Edge Ready</span>
-          </div>
-        </div>
-
-        {/* Column 1: Integrations */}
-        <div className="space-y-3">
-          <h4 className="font-bold text-white text-[14px]">Integrations</h4>
-          <ul className="space-y-2 text-[#868685]">
-            <li className="hover:text-white cursor-pointer transition-colors">Oh My Pi (omp) Agent</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Cursor IDE</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Cline & Roo Code</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Codex & Antigravity</li>
-            <li className="hover:text-white cursor-pointer transition-colors">LiteLLM & OpenAI SDK</li>
-          </ul>
-        </div>
-
-        {/* Column 2: Free Tiers */}
-        <div className="space-y-3">
-          <h4 className="font-bold text-white text-[14px]">Free Tiers</h4>
-          <ul className="space-y-2 text-[#868685]">
-            <li className="hover:text-white cursor-pointer transition-colors">Groq LPU (150M tokens/mo)</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Cerebras (2,000+ tok/s)</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Google Gemini AI Studio</li>
-            <li className="hover:text-white cursor-pointer transition-colors">OpenRouter :free Tiers</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Cloudflare Workers AI</li>
-          </ul>
-        </div>
-
-        {/* Column 3: Capabilities */}
-        <div className="space-y-3">
-          <h4 className="font-bold text-white text-[14px]">Capabilities</h4>
-          <ul className="space-y-2 text-[#868685]">
-            <li className="hover:text-white cursor-pointer transition-colors">RTK + Caveman Compression</li>
-            <li className="hover:text-white cursor-pointer transition-colors">MCP Server Protocol</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Fast Code Reranker</li>
-            <li className="hover:text-white cursor-pointer transition-colors">Audio Whisper Transcription</li>
-            <li className="hover:text-white cursor-pointer transition-colors">FLUX.1 Image Generation</li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="max-w-[1360px] mx-auto mt-14 pt-6 border-t border-[#1a1c17] flex flex-col sm:flex-row items-center justify-between text-[#868685] text-[13px] gap-4">
-        <div>
-          © {new Date().getFullYear()} SZRoute. MIT Licensed. Open-source Scandinavian fintech aesthetic.
-        </div>
-        <div className="flex items-center gap-1.5 text-[#e8ebe6]">
-          Engineered for <span className="text-[#9fe870] font-bold">Oh My Pi (omp)</span> coding harness
         </div>
       </div>
     </footer>

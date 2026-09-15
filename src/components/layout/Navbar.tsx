@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check, Sun, Moon, Command } from "lucide-react";
+import { Copy, Check, Command, ShieldCheck } from "lucide-react";
 
 export type NavTab =
   | "overview"
@@ -16,17 +16,9 @@ interface NavbarProps {
   activeTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   onOpenCommandPalette: () => void;
-  isDark: boolean;
-  onToggleTheme: () => void;
 }
 
-export function Navbar({
-  activeTab,
-  onTabChange,
-  onOpenCommandPalette,
-  isDark,
-  onToggleTheme,
-}: NavbarProps) {
+export function Navbar({ activeTab, onTabChange, onOpenCommandPalette }: NavbarProps) {
   const [copied, setCopied] = useState(false);
 
   const copyEndpointUrl = () => {
@@ -37,84 +29,87 @@ export function Navbar({
   };
 
   const tabs: Array<{ id: NavTab; label: string }> = [
-    { id: "overview", label: "Overview" },
-    { id: "providers", label: "Providers" },
-    { id: "combos", label: "Combos" },
-    { id: "studio", label: "Studio" },
-    { id: "compression", label: "RTK" },
-    { id: "inspector", label: "Logs" },
-    { id: "setup", label: "Setup" },
+    { id: "overview", label: "OVERVIEW" },
+    { id: "providers", label: "PROVIDERS" },
+    { id: "combos", label: "COMBOS" },
+    { id: "studio", label: "AI STUDIO" },
+    { id: "compression", label: "RTK COMPRESSION" },
+    { id: "inspector", label: "TELEMETRY" },
+    { id: "setup", label: "INTEGRATION" },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-card/90 backdrop-blur-md border-b border-border-subtle">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Left: Minimal Wordmark with Lime Dot */}
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-40 w-full bg-[#ffffff] border-b border-[#e6e6e6]">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
+        {/* Left: Brand Circular Badge + Wordmark */}
+        <div className="flex items-center gap-4">
           <button
             onClick={() => onTabChange("overview")}
-            className="flex items-center gap-2 text-left group cursor-pointer"
+            className="flex items-center gap-3 text-left group cursor-pointer"
           >
-            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center font-black text-ink text-xs shadow-xs group-hover:scale-105 transition-transform">
-              SZ
+            {/* BMW-inspired Bavarian Circular Emblem */}
+            <div className="w-8 h-8 rounded-full border-2 border-[#1c69d4] bg-[#ffffff] flex items-center justify-center p-0.5 shadow-xs">
+              <div className="w-full h-full rounded-full grid grid-cols-2 grid-rows-2 overflow-hidden">
+                <div className="bg-[#1c69d4]" />
+                <div className="bg-[#ffffff]" />
+                <div className="bg-[#ffffff]" />
+                <div className="bg-[#1c69d4]" />
+              </div>
             </div>
-            <span className="font-black text-ink tracking-tight text-[17px]">
-              SZRoute<span className="text-primary font-black">.</span>
-            </span>
+
+            <div className="flex flex-col">
+              <span className="font-bold text-[#262626] tracking-tight text-[17px] leading-tight">
+                SZRoute
+              </span>
+              <span className="text-[10px] uppercase font-bold tracking-[1.5px] text-[#6b6b6b]">
+                Edge Gateway
+              </span>
+            </div>
           </button>
         </div>
 
-        {/* Center: Minimal Segmented Nav Pills */}
-        <nav className="hidden md:flex items-center gap-1 bg-subtle p-1 rounded-full border border-border-subtle">
+        {/* Center: Category Tabs with 2px Underline Active Indicator */}
+        <nav className="hidden lg:flex items-center gap-6">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`px-3.5 py-1 text-[13px] font-bold rounded-full transition-all cursor-pointer ${
+                className={`py-5 text-[12px] font-bold tracking-[1.5px] uppercase transition-colors relative cursor-pointer ${
                   isActive
-                    ? "bg-ink text-card shadow-xs"
-                    : "text-ink-body hover:text-ink"
+                    ? "text-[#1c69d4]"
+                    : "text-[#6b6b6b] hover:text-[#262626]"
                 }`}
               >
                 {tab.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1c69d4]" />
+                )}
               </button>
             );
           })}
         </nav>
 
-        {/* Right: Theme Toggle + Commands + Copy Endpoint CTA */}
-        <div className="flex items-center gap-2">
-          {/* Theme Switcher Toggle */}
-          <button
-            id="theme-toggle-btn"
-            onClick={onToggleTheme}
-            aria-label="Toggle theme"
-            className="p-2 rounded-full text-ink-body hover:text-ink hover:bg-subtle transition-colors cursor-pointer"
-            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4 text-ink" />}
-          </button>
-
-          {/* Command Palette Trigger */}
+        {/* Right: Search / Command + Rectangular 0px Blue Button */}
+        <div className="flex items-center gap-3">
           <button
             onClick={onOpenCommandPalette}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-bold text-ink-body hover:text-ink bg-subtle rounded-full hover:bg-subtle-hover transition-colors cursor-pointer"
-            title="Open Commands (⌘K)"
+            className="hidden sm:flex items-center gap-2 px-3 py-2 text-[12px] font-bold text-[#262626] hover:text-[#1c69d4] bg-[#f7f7f7] hover:bg-[#ebebeb] transition-colors cursor-pointer border border-[#e6e6e6]"
+            title="Open Command Center (⌘K)"
           >
             <Command className="w-3.5 h-3.5" />
-            <span>⌘K</span>
+            <span className="tracking-[1px] text-[11px] uppercase">Search</span>
+            <span className="text-[10px] font-mono px-1 py-0.2 bg-[#ffffff] border border-[#cccccc]">⌘K</span>
           </button>
 
-          {/* Copy Base Endpoint */}
           <button
             onClick={copyEndpointUrl}
-            className="btn-primary text-[13px] h-9 px-3.5 cursor-pointer"
-            title="Copy /v1 Endpoint"
+            className="btn-primary text-[12px] h-10 px-5 cursor-pointer uppercase tracking-[1px]"
+            title="Copy /v1 Endpoint for Oh My Pi"
           >
             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? "Copied" : "Copy /v1"}</span>
+            <span>{copied ? "COPIED" : "COPY /v1"}</span>
           </button>
         </div>
       </div>

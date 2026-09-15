@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Sparkles,
   Github,
+  ChevronRight,
 } from "lucide-react";
 import { PROVIDER_CATALOG, ProviderDefinition } from "@/lib/providers/catalog";
 import { OAUTH_PROVIDERS, OAuthTokenData } from "@/lib/oauth/providers";
@@ -57,7 +58,7 @@ export function ProvidersView({
   const [pingLatencies, setPingLatencies] = useState<Record<string, number>>({});
   const [sortByLatency, setSortByLatency] = useState(false);
 
-  // Device Code Flow State (for GitHub Copilot / CLI agents)
+  // Device Code Flow State
   const [deviceFlow, setDeviceFlow] = useState<{
     isOpen: boolean;
     providerId: string;
@@ -128,13 +129,11 @@ export function ProvidersView({
     }
   };
 
-  // OAuth Redirect Handlers (Google, OpenRouter, HuggingFace)
   const handleStartOAuthRedirect = async (providerId: string) => {
     try {
       const res = await fetch(`/api/oauth/authorize?provider=${providerId}`);
       const data = await res.json();
       if (data.authUrl) {
-        // Open OAuth popup window
         const width = 600;
         const height = 700;
         const left = window.screen.width / 2 - width / 2;
@@ -146,11 +145,10 @@ export function ProvidersView({
         );
       }
     } catch (err) {
-      console.error("OAuth init error:", err);
+      console.error("OAuth error:", err);
     }
   };
 
-  // Device Code Flow Handlers (GitHub Copilot)
   const handleStartDeviceFlow = async (providerId = "github_copilot") => {
     try {
       const res = await fetch("/api/oauth/device/start", {
@@ -169,7 +167,6 @@ export function ProvidersView({
           isPolling: true,
           status: "polling",
         });
-        // Start polling
         pollDeviceToken(data.deviceCode, providerId, data.interval || 5);
       }
     } catch (err) {
@@ -242,7 +239,7 @@ export function ProvidersView({
       a.download = `szroute-backup-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      setBackupMessage("Backup downloaded!");
+      setBackupMessage("Backup exported successfully!");
     }
   };
 
@@ -250,7 +247,7 @@ export function ProvidersView({
     if (onImportBackup && importJsonText.trim()) {
       const success = onImportBackup(importJsonText.trim());
       if (success) {
-        setBackupMessage("Configuration restored!");
+        setBackupMessage("Configuration restored successfully!");
         setTimeout(() => setBackupModalOpen(false), 1000);
       } else {
         setBackupMessage("Invalid backup JSON format.");
@@ -281,88 +278,89 @@ export function ProvidersView({
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e6e6e6] pb-6">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black text-ink tracking-tight">
-            Providers, API Keys & OAuth
+          <h2 className="text-3xl font-bold text-[#262626] tracking-tight">
+            Providers, Credentials & OAuth
           </h2>
-          <p className="text-[14px] text-ink-body font-medium mt-1">
-            Connect via zero-config OAuth 2.0 PKCE, Device code, or standard API keys.
+          <p className="text-[15px] text-[#3c3c3c] font-light mt-1">
+            Configure upstream API credentials, OAuth 2.0 PKCE, or GitHub Copilot device authentication.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* GitHub Copilot Device Code Trigger */}
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => handleStartDeviceFlow("github_copilot")}
-            className="btn-secondary text-[12px] h-9 px-3 flex items-center gap-1.5"
+            className="btn-secondary text-[12px] h-10 px-4 uppercase tracking-[0.5px]"
           >
             <Github className="w-3.5 h-3.5" />
-            <span>Copilot Device Auth</span>
+            <span>COPILOT DEVICE AUTH</span>
           </button>
 
           <button
             onClick={handleBenchmarkAll}
             disabled={isBenchmarking}
-            className="btn-secondary text-[12px] h-9 px-3"
+            className="btn-secondary text-[12px] h-10 px-4 uppercase tracking-[0.5px]"
           >
-            <Zap className={`w-3.5 h-3.5 ${isBenchmarking ? "animate-spin text-primary" : ""}`} />
-            <span>{isBenchmarking ? "Benchmarking..." : "Benchmark Speed"}</span>
+            <Zap className={`w-3.5 h-3.5 ${isBenchmarking ? "animate-spin text-[#1c69d4]" : ""}`} />
+            <span>{isBenchmarking ? "BENCHMARKING..." : "BENCHMARK SPEED"}</span>
           </button>
 
           <button
             onClick={() => setBackupModalOpen(true)}
-            className="btn-secondary text-[12px] h-9 px-3"
+            className="btn-secondary text-[12px] h-10 px-4 uppercase tracking-[0.5px]"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Backup / Sync</span>
+            <span>BACKUP / SYNC</span>
           </button>
 
-          <div className="relative w-full sm:w-52">
-            <Search className="w-4 h-4 text-ink-mute absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-60">
+            <Search className="w-4 h-4 text-[#6b6b6b] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search (Press /)..."
-              className="wise-input w-full pl-9 pr-3 py-1.5 text-[13px] rounded-full"
+              placeholder="Filter providers (Press /)..."
+              className="bmw-input w-full pl-9 pr-3 py-2 text-[13px]"
             />
           </div>
         </div>
       </div>
 
-      {/* Category Pills */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
-        <div className="flex flex-wrap items-center gap-1.5">
+      {/* Category Tabs with 2px Underline */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e6e6e6] pb-1">
+        <div className="flex flex-wrap items-center gap-6">
           {[
-            { id: "all", label: "All Providers" },
-            { id: "free", label: "100% Free Tiers" },
-            { id: "commercial", label: "Commercial" },
-            { id: "local", label: "Local" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveCategory(tab.id as any)}
-              className={`px-3 py-1 text-[12px] font-bold rounded-full transition-all ${
-                activeCategory === tab.id
-                  ? "bg-ink text-card"
-                  : "text-ink-body hover:text-ink hover:bg-subtle"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+            { id: "all", label: "ALL PROVIDERS" },
+            { id: "free", label: "100% FREE TIERS" },
+            { id: "commercial", label: "COMMERCIAL FRONTIER" },
+            { id: "local", label: "LOCAL INFERENCE" },
+          ].map((tab) => {
+            const isActive = activeCategory === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id as any)}
+                className={`py-3 text-[12px] font-bold tracking-[1.5px] uppercase transition-colors relative ${
+                  isActive ? "text-[#1c69d4]" : "text-[#6b6b6b] hover:text-[#262626]"
+                }`}
+              >
+                {tab.label}
+                {isActive && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1c69d4]" />}
+              </button>
+            );
+          })}
         </div>
 
         {sortByLatency && (
-          <div className="text-[11px] text-positive font-bold flex items-center gap-1 font-mono">
-            <ArrowUpDown className="w-3 h-3" /> Sorted by live speed
+          <div className="text-[12px] text-[#22c55e] font-bold flex items-center gap-1 font-mono uppercase tracking-[0.5px]">
+            <ArrowUpDown className="w-3.5 h-3.5" /> Sorted by live speed
           </div>
         )}
       </div>
 
-      {/* Provider Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 3-Up Provider Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProviders.map((provider) => {
           const hasKey = Boolean(apiKeys[provider.id]);
           const hasOAuth = Boolean(oauthTokens[provider.id]);
@@ -372,95 +370,83 @@ export function ProvidersView({
           return (
             <div
               key={provider.id}
-              className="wise-card p-5 space-y-4 flex flex-col justify-between"
+              className="bmw-card space-y-4 flex flex-col justify-between hover:border-[#1c69d4] transition-colors"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-subtle flex items-center justify-center font-black text-ink text-xs">
-                      {provider.name.slice(0, 2).toUpperCase()}
+                  <div>
+                    <div className="text-[11px] uppercase tracking-[1.5px] text-[#1c69d4] font-bold">
+                      {hasOAuth ? "OAUTH ACTIVE" : provider.freeTier.hasFree ? "FREE TIER" : "COMMERCIAL API"}
                     </div>
-                    <div>
-                      <h3 className="text-[15px] font-bold text-ink">{provider.name}</h3>
-                      <span className="text-[11px] font-mono font-bold text-ink-mute truncate max-w-[140px] block">
-                        {provider.baseUrl.replace(/^https?:\/\//, "")}
-                      </span>
-                    </div>
+                    <h3 className="text-[18px] font-bold text-[#262626] mt-0.5">
+                      {provider.name}
+                    </h3>
                   </div>
 
-                  <div className="flex flex-col items-end gap-1">
-                    {hasOAuth ? (
-                      <span className="badge-positive text-[10px] py-0.5 px-2">
-                        OAuth Connected
-                      </span>
-                    ) : provider.freeTier.hasFree ? (
-                      <span className="badge-positive text-[10px] py-0.5 px-2">
-                        Free
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-subtle text-ink-mute rounded-full">
-                        Paid
-                      </span>
-                    )}
-                    {latency !== undefined && latency < 9000 && (
-                      <span className="text-[10px] font-mono font-bold text-positive">
-                        {latency}ms
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <p className="text-[13px] text-ink-body leading-relaxed line-clamp-2">
-                  {provider.description}
-                </p>
-
-                {/* Models Preview */}
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {provider.models.map((m) => (
-                    <span
-                      key={m.id}
-                      className="px-2 py-0.5 text-[10px] font-semibold bg-subtle text-ink rounded-full truncate max-w-[170px]"
-                      title={m.name}
-                    >
-                      {m.name}
+                  {latency !== undefined && latency < 9000 && (
+                    <span className="text-[11px] font-mono font-bold text-[#22c55e] bg-[#f7f7f7] px-2 py-0.5 border border-[#e6e6e6]">
+                      {latency}ms
                     </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-border-subtle flex items-center justify-between text-[12px]">
-                <div className="font-semibold text-ink-body">
-                  {hasOAuth ? (
-                    <span className="text-positive flex items-center gap-1 font-bold">
-                      <Check className="w-3 h-3" /> OAuth Active
-                    </span>
-                  ) : hasKey ? (
-                    <span className="text-positive flex items-center gap-1 font-bold">
-                      <Check className="w-3 h-3" /> Key Saved
-                    </span>
-                  ) : (
-                    <span className="text-ink-mute">{provider.freeTier.monthlyFreeTokensEstimate || "Free ready"}</span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  {/* OAuth button if provider supports OAuth */}
+                <p className="text-[13px] text-[#3c3c3c] font-light leading-relaxed line-clamp-2">
+                  {provider.description}
+                </p>
+
+                {/* Models List */}
+                <div className="space-y-1 pt-1">
+                  <div className="text-[11px] uppercase tracking-[1px] text-[#6b6b6b] font-bold">
+                    Models ({provider.models.length})
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {provider.models.map((m) => (
+                      <span
+                        key={m.id}
+                        className="px-2 py-0.5 text-[11px] bg-[#fafafa] border border-[#e6e6e6] text-[#262626] font-light truncate max-w-[180px]"
+                        title={m.name}
+                      >
+                        {m.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer Actions */}
+              <div className="pt-3 border-t border-[#e6e6e6] flex items-center justify-between text-[12px]">
+                <div className="text-[#3c3c3c]">
+                  {hasOAuth ? (
+                    <span className="text-[#22c55e] font-bold flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> OAuth Ready
+                    </span>
+                  ) : hasKey ? (
+                    <span className="text-[#22c55e] font-bold flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> Key Stored
+                    </span>
+                  ) : (
+                    <span className="text-[#6b6b6b] font-light">
+                      {provider.freeTier.monthlyFreeTokensEstimate || "Free quota"}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
                   {oauthConfig && !hasOAuth && (
                     <button
                       onClick={() => handleStartOAuthRedirect(provider.id)}
-                      className="btn-primary text-[11px] h-7 px-2.5 font-bold"
-                      title="Login via OAuth PKCE"
+                      className="btn-primary text-[11px] h-8 px-3 uppercase tracking-[0.5px]"
                     >
-                      <span>OAuth</span>
+                      OAUTH
                     </button>
                   )}
 
                   <button
                     onClick={() => handleOpenKeyModal(provider)}
-                    className="btn-secondary text-[11px] h-7 px-2.5"
+                    className="btn-secondary text-[11px] h-8 px-3 uppercase tracking-[0.5px]"
                   >
                     <Key className="w-3 h-3" />
-                    <span>{hasKey || hasOAuth ? "Edit" : "Key"}</span>
+                    <span>{hasKey || hasOAuth ? "EDIT" : "KEY"}</span>
                   </button>
                 </div>
               </div>
@@ -471,58 +457,57 @@ export function ProvidersView({
 
       {/* GitHub Copilot Device Flow Modal */}
       {deviceFlow && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1a2129]/75 backdrop-blur-xs">
           <div
-            className="w-full max-w-md bg-card rounded-[24px] shadow-2xl p-6 space-y-4 border border-border-subtle text-center"
+            className="w-full max-w-md bg-[#ffffff] border-2 border-[#1c69d4] shadow-2xl p-8 space-y-5 text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mx-auto text-ink">
+            <div className="w-12 h-12 border-2 border-[#1c69d4] bg-[#ffffff] flex items-center justify-center mx-auto text-[#1c69d4]">
               <Github className="w-6 h-6" />
             </div>
 
             <div>
-              <h3 className="text-lg font-black text-ink">GitHub Copilot Device Login</h3>
-              <p className="text-[13px] text-ink-body font-medium mt-1">
-                Enter this 8-digit one-time code on GitHub to authorize SZRoute:
+              <h3 className="text-xl font-bold text-[#262626]">GitHub Copilot Device Auth</h3>
+              <p className="text-[14px] text-[#3c3c3c] font-light mt-1">
+                Enter this 8-digit verification code on GitHub:
               </p>
             </div>
 
-            {/* Code Box */}
-            <div className="p-4 bg-subtle rounded-2xl border border-border-subtle">
-              <div className="text-3xl font-mono font-black text-ink tracking-widest select-all">
+            <div className="p-4 bg-[#f7f7f7] border border-[#cccccc]">
+              <div className="text-3xl font-mono font-bold text-[#1c69d4] tracking-widest select-all">
                 {deviceFlow.userCode}
               </div>
             </div>
 
-            <div className="space-y-2 pt-1">
+            <div className="space-y-3 pt-2">
               <a
                 href={deviceFlow.verificationUri}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-primary w-full h-11 text-[14px] flex items-center justify-center gap-2"
+                className="btn-primary w-full h-11 text-[13px] uppercase tracking-[1px] flex items-center justify-center gap-2"
               >
-                <span>Open GitHub to Authorize</span>
+                <span>OPEN GITHUB VERIFICATION</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
 
-              <div className="text-[12px] text-ink-mute flex items-center justify-center gap-1.5 pt-2">
+              <div className="text-[12px] text-[#6b6b6b] font-light flex items-center justify-center gap-1.5 pt-1">
                 {deviceFlow.status === "polling" && (
                   <>
-                    <Zap className="w-3.5 h-3.5 animate-spin text-primary" />
-                    <span>Listening for authorization approval...</span>
+                    <Zap className="w-3.5 h-3.5 animate-spin text-[#1c69d4]" />
+                    <span>Awaiting authorization on GitHub...</span>
                   </>
                 )}
                 {deviceFlow.status === "success" && (
-                  <span className="text-positive font-bold">✓ Authorization approved! Connected.</span>
+                  <span className="text-[#22c55e] font-bold">✓ Copilot successfully connected!</span>
                 )}
               </div>
             </div>
 
             <button
               onClick={() => setDeviceFlow(null)}
-              className="text-[12px] text-ink-mute hover:text-ink font-bold pt-2 block mx-auto"
+              className="text-[12px] text-[#6b6b6b] hover:text-[#262626] uppercase font-bold tracking-[1px] pt-2"
             >
-              Cancel
+              DISMISS
             </button>
           </div>
         </div>
@@ -530,52 +515,55 @@ export function ProvidersView({
 
       {/* Backup & Restore Modal */}
       {backupModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1a2129]/75 backdrop-blur-xs">
           <div
-            className="w-full max-w-md bg-card rounded-[24px] shadow-2xl p-6 space-y-4 border border-border-subtle"
+            className="w-full max-w-lg bg-[#ffffff] border border-[#cccccc] shadow-2xl p-6 space-y-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
-              <h3 className="text-base font-bold text-ink">Backup & Restore</h3>
+            <div className="flex items-center justify-between border-b border-[#e6e6e6] pb-3">
+              <h3 className="text-lg font-bold text-[#262626]">Backup & State Synchronization</h3>
               <button
                 onClick={() => setBackupModalOpen(false)}
-                className="p-1 text-ink-mute hover:text-ink rounded-full"
+                className="p-1 text-[#6b6b6b] hover:text-[#262626]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 text-[13px]">
-              <div className="p-3.5 bg-subtle rounded-[16px] space-y-2">
-                <div className="font-bold text-ink">Export Configuration</div>
+            <div className="space-y-4 text-[13px]">
+              <div className="p-4 bg-[#f7f7f7] border border-[#e6e6e6] space-y-2">
+                <div className="font-bold text-[#262626] uppercase tracking-[0.5px]">Export Gateway State</div>
+                <p className="text-[#3c3c3c] font-light">
+                  Download encrypted JSON snapshot containing your configured API keys, OAuth tokens, and combos.
+                </p>
                 <button
                   onClick={handleDownloadBackup}
-                  className="btn-primary text-[12px] h-8 px-3"
+                  className="btn-primary text-[12px] h-9 px-4 uppercase tracking-[0.5px]"
                 >
-                  <Download className="w-3.5 h-3.5" /> Download JSON
+                  <Download className="w-3.5 h-3.5" /> DOWNLOAD SNAPSHOT JSON
                 </button>
               </div>
 
-              <div className="p-3.5 bg-subtle rounded-[16px] space-y-2">
-                <div className="font-bold text-ink">Import Configuration</div>
+              <div className="p-4 bg-[#f7f7f7] border border-[#e6e6e6] space-y-2">
+                <div className="font-bold text-[#262626] uppercase tracking-[0.5px]">Restore Gateway State</div>
                 <textarea
                   rows={3}
                   value={importJsonText}
                   onChange={(e) => setImportJsonText(e.target.value)}
-                  placeholder="Paste backup JSON..."
-                  className="w-full bg-card text-ink border border-border-subtle rounded-xl p-2 text-[11px] font-mono outline-none"
+                  placeholder="Paste snapshot JSON..."
+                  className="w-full bg-[#ffffff] text-[#262626] border border-[#cccccc] p-2 text-[12px] font-mono outline-none"
                 />
                 <button
                   onClick={handleApplyImport}
                   disabled={!importJsonText.trim()}
-                  className="btn-secondary text-[12px] h-8 px-3 disabled:opacity-40"
+                  className="btn-secondary text-[12px] h-9 px-4 uppercase tracking-[0.5px] disabled:opacity-40"
                 >
-                  <Upload className="w-3.5 h-3.5" /> Apply JSON
+                  <Upload className="w-3.5 h-3.5" /> RESTORE SNAPSHOT
                 </button>
               </div>
 
               {backupMessage && (
-                <div className="p-2 rounded-lg bg-primary/20 text-primary-on text-[12px] font-bold">
+                <div className="p-2.5 bg-[#f7f7f7] text-[#22c55e] text-[12px] font-bold border border-[#22c55e]">
                   {backupMessage}
                 </div>
               )}
@@ -584,47 +572,45 @@ export function ProvidersView({
         </div>
       )}
 
-      {/* Key Config Modal */}
+      {/* Key Configuration Modal */}
       {editingProvider && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1a2129]/75 backdrop-blur-xs">
           <div
-            className="w-full max-w-md bg-card rounded-[24px] shadow-2xl p-6 space-y-4 border border-border-subtle"
+            className="w-full max-w-md bg-[#ffffff] border-2 border-[#1c69d4] shadow-2xl p-6 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center font-bold text-xs text-ink">
-                  {editingProvider.name.slice(0, 2).toUpperCase()}
-                </div>
-                <h3 className="text-base font-bold text-ink">{editingProvider.name} Credentials</h3>
+            <div className="flex items-center justify-between border-b border-[#e6e6e6] pb-3">
+              <div>
+                <div className="text-[11px] uppercase tracking-[1.5px] text-[#1c69d4] font-bold">CREDENTIAL CONFIG</div>
+                <h3 className="text-lg font-bold text-[#262626]">{editingProvider.name}</h3>
               </div>
               <button
                 onClick={() => setEditingProvider(null)}
-                className="p-1 text-ink-mute hover:text-ink rounded-full"
+                className="p-1 text-[#6b6b6b] hover:text-[#262626]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[12px] font-bold text-ink">API Key / Token</label>
+              <label className="text-[12px] font-bold text-[#262626] uppercase tracking-[0.5px]">API Key / Secret Token</label>
               <input
                 type="password"
                 value={keyInput}
                 onChange={(e) => setKeyInput(e.target.value)}
                 placeholder={`Paste your ${editingProvider.name} key...`}
-                className="wise-input w-full font-mono text-[13px]"
+                className="bmw-input w-full font-mono text-[13px]"
               />
             </div>
 
             {testResult.status !== "idle" && (
               <div
-                className={`p-2.5 rounded-xl text-[12px] font-bold flex items-center gap-2 ${
+                className={`p-3 text-[12px] font-bold border ${
                   testResult.status === "testing"
-                    ? "bg-subtle text-ink"
+                    ? "bg-[#f7f7f7] text-[#262626] border-[#cccccc]"
                     : testResult.status === "ok"
-                    ? "bg-primary/20 text-primary-on"
-                    : "bg-negative/15 text-negative"
+                    ? "bg-[#ffffff] text-[#22c55e] border-[#22c55e]"
+                    : "bg-[#ffffff] text-[#dc2626] border-[#dc2626]"
                 }`}
               >
                 {testResult.status === "testing" && <span>Testing connection...</span>}
@@ -633,13 +619,13 @@ export function ProvidersView({
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
+            <div className="flex items-center justify-between pt-3 border-t border-[#e6e6e6]">
               <button
                 onClick={handleTestKey}
                 disabled={testResult.status === "testing"}
-                className="btn-secondary text-[12px] h-8 px-3"
+                className="btn-secondary text-[12px] h-9 px-4 uppercase tracking-[0.5px]"
               >
-                <Play className="w-3 h-3" /> Test
+                <Play className="w-3.5 h-3.5" /> TEST
               </button>
 
               <div className="flex items-center gap-2">
@@ -650,23 +636,23 @@ export function ProvidersView({
                       if (onRemoveOAuthToken) onRemoveOAuthToken(editingProvider.id);
                       setEditingProvider(null);
                     }}
-                    className="p-1.5 text-negative hover:bg-negative/10 rounded-full"
-                    title="Remove saved credential"
+                    className="p-2 text-[#dc2626] hover:bg-[#fafafa] border border-[#dc2626]"
+                    title="Remove credential"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
                 <button
                   onClick={() => setEditingProvider(null)}
-                  className="btn-secondary text-[12px] h-8 px-3"
+                  className="btn-secondary text-[12px] h-9 px-4 uppercase tracking-[0.5px]"
                 >
-                  Cancel
+                  CANCEL
                 </button>
                 <button
                   onClick={handleSave}
-                  className="btn-primary text-[12px] h-8 px-4"
+                  className="btn-primary text-[12px] h-9 px-5 uppercase tracking-[0.5px]"
                 >
-                  Save
+                  SAVE
                 </button>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   Flame,
   RotateCcw,
   User,
+  Bot,
 } from "lucide-react";
 import { DEFAULT_COMBOS, PROVIDER_CATALOG, VirtualCombo } from "@/lib/providers/catalog";
 import { RequestLogEntry } from "@/lib/store/useSZRouteStore";
@@ -36,7 +37,7 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
       id: "msg_welcome",
       role: "assistant",
       content:
-        "Hello! I am SZRoute AI Gateway. Send a prompt to test multi-provider failover and live RTK token compression.",
+        "SZRoute Corporate Gateway online. Ready for multi-provider streaming completions and RTK prompt minification.",
       provider: "szroute-edge",
       model: "free-auto",
     },
@@ -195,31 +196,31 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
       {
         id: `welcome_${Date.now()}`,
         role: "assistant",
-        content: "Chat cleared. Ready for your next prompt.",
+        content: "Chat cleared. Ready for your next completion request.",
       },
     ]);
   };
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-200">
-      {/* Minimal Studio Controls */}
-      <div className="wise-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-ink">
-            <Sparkles className="w-4 h-4" />
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Header & Controls Bar */}
+      <div className="bmw-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="text-[11px] uppercase tracking-[1.5px] text-[#1c69d4] font-bold">
+            STREAMING COMPLETIONS
           </div>
-          <div>
-            <h2 className="text-base font-black text-ink">AI Studio</h2>
-          </div>
+          <h2 className="text-xl font-bold text-[#262626] mt-0.5">
+            AI Studio Test Arena
+          </h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-subtle px-2.5 py-1 rounded-full text-[12px] font-bold">
-            <span className="text-ink-mute">Model:</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-[#f7f7f7] border border-[#cccccc] px-3 py-1.5 text-[12px] font-bold">
+            <span className="text-[#6b6b6b] uppercase tracking-[0.5px]">Model:</span>
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="bg-card text-ink text-[12px] font-bold rounded-full px-2 py-0.5 outline-none"
+              className="bg-[#ffffff] text-[#262626] font-bold px-2 py-0.5 outline-none"
             >
               <optgroup label="Virtual Combos">
                 {allCombos.map((c) => (
@@ -240,72 +241,72 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
             </select>
           </div>
 
-          <label className="flex items-center gap-1.5 cursor-pointer bg-subtle px-2.5 py-1 rounded-full text-[12px] font-bold text-ink">
+          <label className="flex items-center gap-2 cursor-pointer bg-[#f7f7f7] border border-[#cccccc] px-3 py-1.5 text-[12px] font-bold text-[#262626]">
             <input
               type="checkbox"
               checked={enableCompress}
               onChange={(e) => setEnableCompress(e.target.checked)}
-              className="rounded accent-primary"
+              className="accent-[#1c69d4]"
             />
-            <Flame className="w-3 h-3 text-negative" />
-            <span>RTK</span>
+            <span className="uppercase tracking-[0.5px]">RTK Compression</span>
           </label>
 
           <button
             onClick={handleClearChat}
-            className="p-1.5 text-ink-mute hover:text-ink bg-subtle hover:bg-subtle-hover rounded-full"
-            title="Clear Chat"
+            className="btn-secondary h-9 px-3 text-[11px] uppercase tracking-[0.5px]"
+            title="Reset Chat"
           >
             <RotateCcw className="w-3.5 h-3.5" />
+            <span>RESET</span>
           </button>
         </div>
       </div>
 
-      {/* Messages Thread */}
-      <div className="wise-card min-h-[480px] max-h-[580px] overflow-y-auto p-5 space-y-4 flex flex-col justify-between">
-        <div className="space-y-3">
+      {/* Messages Thread Container */}
+      <div className="bmw-card min-h-[500px] max-h-[600px] overflow-y-auto p-6 space-y-4 flex flex-col justify-between">
+        <div className="space-y-4">
           {messages.map((msg) => {
             const isUser = msg.role === "user";
 
             return (
               <div
                 key={msg.id}
-                className={`flex gap-2.5 ${isUser ? "justify-end" : "justify-start"}`}
+                className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 rounded-full bg-primary flex-shrink-0 flex items-center justify-center font-black text-[10px] text-ink">
+                  <div className="w-7 h-7 border border-[#1c69d4] bg-[#ffffff] flex-shrink-0 flex items-center justify-center font-bold text-[10px] text-[#1c69d4]">
                     SZ
                   </div>
                 )}
 
-                <div className={`space-y-1 max-w-xl ${isUser ? "items-end" : "items-start"}`}>
+                <div className={`space-y-1.5 max-w-2xl ${isUser ? "items-end" : "items-start"}`}>
                   <div
-                    className={`p-3.5 rounded-[18px] text-[14px] leading-relaxed ${
+                    className={`p-4 text-[14px] leading-relaxed ${
                       isUser
-                        ? "bg-ink text-card font-medium"
-                        : "bg-subtle text-ink"
+                        ? "bg-[#1a2129] text-[#ffffff] font-light"
+                        : "bg-[#f7f7f7] text-[#262626] border border-[#e6e6e6]"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.content || (isGenerating && "Generating...")}</div>
+                    <div className="whitespace-pre-wrap">{msg.content || (isGenerating && "Streaming response...")}</div>
                   </div>
 
                   {!isUser && (msg.provider || msg.latencyMs) && (
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-ink-mute px-2">
+                    <div className="flex items-center gap-3 text-[11px] font-mono text-[#6b6b6b] px-1">
                       {msg.provider && (
-                        <span className="badge-positive py-0 text-[10px]">
-                          ⚡ {msg.provider}
+                        <span className="text-[#1c69d4] font-bold">
+                          [PROVIDER: {msg.provider}]
                         </span>
                       )}
-                      {msg.latencyMs && <span>{msg.latencyMs}ms</span>}
+                      {msg.latencyMs && <span>LATENCY: {msg.latencyMs}ms</span>}
                       {msg.tokensSaved ? (
-                        <span className="text-positive">🔥 {msg.tokensSaved} tokens saved</span>
+                        <span className="text-[#22c55e] font-bold">SAVED: {msg.tokensSaved} TOKENS</span>
                       ) : null}
                     </div>
                   )}
                 </div>
 
                 {isUser && (
-                  <div className="w-7 h-7 rounded-full bg-subtle flex-shrink-0 flex items-center justify-center font-bold text-ink text-xs">
+                  <div className="w-7 h-7 bg-[#262626] flex-shrink-0 flex items-center justify-center font-bold text-white text-xs">
                     <User className="w-3.5 h-3.5" />
                   </div>
                 )}
@@ -316,23 +317,23 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
         </div>
 
         {/* Input Bar */}
-        <form onSubmit={handleSendMessage} className="pt-3 border-t border-border-subtle">
+        <form onSubmit={handleSendMessage} className="pt-4 border-t border-[#e6e6e6]">
           <div className="relative flex items-center">
             <input
               type="text"
               value={inputPrompt}
               onChange={(e) => setInputPrompt(e.target.value)}
-              placeholder="Ask anything or write code..."
+              placeholder="Send prompt or code to test routing and latency..."
               disabled={isGenerating}
-              className="wise-input w-full rounded-full pl-4 pr-24 py-2.5 text-[14px]"
+              className="bmw-input w-full pl-4 pr-32 py-3 text-[14px]"
             />
             <button
               type="submit"
               disabled={isGenerating || !inputPrompt.trim()}
-              className="absolute right-1.5 btn-primary h-8 px-3 text-[12px] disabled:opacity-40"
+              className="absolute right-1.5 btn-primary h-9 px-4 text-[12px] uppercase tracking-[0.5px] disabled:opacity-40"
             >
-              <span>Send</span>
-              <Send className="w-3 h-3" />
+              <span>SEND</span>
+              <Send className="w-3.5 h-3.5" />
             </button>
           </div>
         </form>
