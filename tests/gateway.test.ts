@@ -19,6 +19,21 @@ describe("SZRoute Provider Catalog & Virtual Combos", () => {
     assert.ok(openrouter && openrouter.freeTier.hasFree, "OpenRouter should be in free tier");
   });
 
+  test("gemini provider includes x-goog-api-client header", () => {
+    const gemini = PROVIDER_CATALOG.find((p) => p.id === "gemini");
+    assert.ok(gemini && gemini.customHeaders?.["x-goog-api-client"]);
+  });
+
+  test("openai is completely excluded from catalog and combos", () => {
+    const hasOpenAIProvider = PROVIDER_CATALOG.some((p) => p.id === "openai");
+    assert.equal(hasOpenAIProvider, false, "OpenAI should not exist in provider catalog");
+
+    const hasOpenAITarget = DEFAULT_COMBOS.some((c) =>
+      c.targets.some((t) => t.providerId === "openai")
+    );
+    assert.equal(hasOpenAITarget, false, "OpenAI should not exist in any combo targets");
+  });
+
   test("default virtual combos are configured with priority failover", () => {
     const freeAuto = DEFAULT_COMBOS.find((c) => c.id === "free-auto");
     assert.ok(freeAuto, "free-auto combo should exist");
@@ -46,10 +61,11 @@ describe("OAuth 2.0 & Device Code Engine", () => {
     assert.ok(!challenge.includes("+"), "Challenge should be base64url safe");
   });
 
-  test("detectProviderFromKey identifies key prefixes", () => {
+  test("detectProviderFromKey identifies key prefixes accurately", () => {
     assert.equal(detectProviderFromKey("gsk_test12345"), "groq");
     assert.equal(detectProviderFromKey("AIzaSyTest123"), "gemini");
-    assert.equal(detectProviderFromKey("csk_test123"), "cerebras");
+    assert.equal(detectProviderFromKey("csk-test12345"), "cerebras");
+    assert.equal(detectProviderFromKey("csk_test12345"), "cerebras");
     assert.equal(detectProviderFromKey("sk-ant-test123"), "anthropic");
     assert.equal(detectProviderFromKey("sk-or-v1-test123"), "openrouter");
     assert.equal(detectProviderFromKey("random_non_matching_token"), null);
