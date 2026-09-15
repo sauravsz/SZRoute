@@ -1,5 +1,12 @@
 import { PROVIDER_CATALOG, DEFAULT_COMBOS, ProviderDefinition, VirtualCombo } from "@/lib/providers/catalog";
 import { compressMessages, ChatMessage } from "@/lib/compression/engine";
+import {
+  isProviderCoolingDown,
+  tripProviderCircuit,
+  recordProviderSuccess,
+  getNextPooledKey,
+  normalizeToolsForProvider,
+} from "@/lib/gateway/circuitBreaker";
 
 export interface GatewayChatRequest {
   model: string;
@@ -125,7 +132,7 @@ export function resolveRouteTargets(
 }
 
 /**
- * Executes chat completion with multi-provider auto-failover, key auto-detection & streaming validation
+ * Executes chat completion with circuit-breaker cooldowns, multi-key pooling, & tool normalization
  */
 export async function executeGatewayChat(
   req: GatewayChatRequest,
@@ -152,24 +159,28 @@ export async function executeGatewayChat(
   let lastError: Error | null = null;
   let attempts = 0;
 
-  // Auto-detect provider if default token has known prefix
   const defaultToken = apiKeyMap["default"] || "";
   const detectedProvider = detectProviderFromKey(defaultToken);
 
   for (const target of resolved.targets) {
-    attempts++;
     const { provider, upstreamModelId } = target;
 
-    // Check key resolution: explicit provider key -> detected prefix key -> default token -> env var
-    let apiKey =
+    // Feature 1: Circuit breaker check (Skip providers that are currently on 429/5xx cooldown)
+    if (isProviderCoolingDown(provider.id)) {
+      console.warn(`[SZRoute Router] Provider '${provider.id}' is on cooldown. Fast-skipping to next tier.`);
+      continue;
+    }
+
+    attempts++;
+
+    // Feature 2: Multi-Key pooling and auto-detection
+    const rawKeys =
       apiKeyMap[provider.id] ||
       (detectedProvider === provider.id ? defaultToken : "") ||
       (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
-      "";
+      defaultToken;
 
-    if (!apiKey && defaultToken && !detectedProvider) {
-      apiKey = defaultToken;
-    }
+    const apiKey = getNextPooledKey(provider.id, rawKeys);
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -188,6 +199,9 @@ export async function executeGatewayChat(
       }
     }
 
+    // Feature 3: Universal Tool Calling Schema Normalization
+    const normalizedTools = normalizeToolsForProvider(req.tools, provider.id);
+
     const payload: Record<string, unknown> = {
       model: upstreamModelId,
       messages: finalMessages,
@@ -197,7 +211,7 @@ export async function executeGatewayChat(
 
     if (req.max_tokens) payload.max_tokens = req.max_tokens;
     if (req.top_p) payload.top_p = req.top_p;
-    if (req.tools) payload.tools = req.tools;
+    if (normalizedTools) payload.tools = normalizedTools;
     if (req.tool_choice) payload.tool_choice = req.tool_choice;
     if (req.response_format) payload.response_format = req.response_format;
 
@@ -212,16 +226,20 @@ export async function executeGatewayChat(
       if (response.ok) {
         const contentType = response.headers.get("content-type") || "";
 
+        // If streaming requested but upstream returned JSON, check for error payload
         if (req.stream && contentType.includes("application/json")) {
           const cloned = response.clone();
           const jsonBody = (await cloned.json().catch(() => null)) as Record<string, unknown> | null;
           if (jsonBody && "error" in jsonBody) {
             const errMsg = JSON.stringify(jsonBody.error);
-            console.warn(`[SZRoute Router] Provider ${provider.id} returned JSON error on stream: ${errMsg}. Failing over...`);
+            tripProviderCircuit(provider.id, 502, errMsg);
             lastError = new Error(`Provider ${provider.id} in-stream error: ${errMsg}`);
             continue;
           }
         }
+
+        // Record success and clear failure counter
+        recordProviderSuccess(provider.id);
 
         return {
           response,
@@ -234,19 +252,17 @@ export async function executeGatewayChat(
       }
 
       const errorText = await response.text();
-      console.warn(
-        `[SZRoute Router] Provider ${provider.id} returned HTTP ${response.status}: ${errorText.slice(0, 150)}. Attempting failover...`
-      );
+      tripProviderCircuit(provider.id, response.status, errorText);
 
       lastError = new Error(`Provider ${provider.id} error (${response.status}): ${errorText}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      console.warn(`[SZRoute Router] Network error for provider ${provider.id}:`, message);
+      tripProviderCircuit(provider.id, 500, message);
       lastError = err instanceof Error ? err : new Error(message);
     }
   }
 
   throw new Error(
-    `All ${attempts} providers failed in route for model '${req.model}'. Last error: ${lastError?.message || "Unknown error"}`
+    `All available providers failed in route for model '${req.model}'. Last error: ${lastError?.message || "Unknown error"}`
   );
 }

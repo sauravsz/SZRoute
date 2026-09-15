@@ -38,21 +38,21 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e6e6e6] pb-6">
         <div>
           <h2 className="text-3xl font-bold text-[#262626] tracking-tight">
-            Real-time Telemetry & Failover Stream
+            Live Telemetry & Traffic Logs
           </h2>
           <p className="text-[15px] text-[#3c3c3c] font-light mt-1">
-            Live telemetry stream capturing routed requests, failover trails, latency, and RTK token savings.
+            Real-time request stream capturing model routing, failover cascades, latency, and RTK compression.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="relative w-full sm:w-64">
+          <div className="relative w-full sm:w-60">
             <Search className="w-4 h-4 text-[#6b6b6b] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filter logs (Press /)..."
+              placeholder="Filter logs..."
               className="bmw-input w-full pl-9 pr-3 py-2 text-[13px]"
             />
           </div>
@@ -63,31 +63,31 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
             className="btn-secondary text-[12px] h-10 px-4 uppercase tracking-[0.5px] text-[#dc2626] disabled:opacity-40"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            CLEAR
+            <span>CLEAR</span>
           </button>
         </div>
       </div>
 
-      {/* Main Table */}
+      {/* Main Telemetry Table */}
       <div className="bmw-card overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[13px]">
             <thead className="bg-[#f7f7f7] border-b border-[#e6e6e6] text-[#262626] font-bold text-[11px] uppercase tracking-[1.5px]">
               <tr>
                 <th className="py-3.5 px-4">TIMESTAMP</th>
-                <th className="py-3.5 px-4">REQUESTED MODEL</th>
-                <th className="py-3.5 px-4">RESOLVED PROVIDER</th>
+                <th className="py-3.5 px-4">TARGET MODEL</th>
+                <th className="py-3.5 px-4">PROVIDER</th>
                 <th className="py-3.5 px-4">STATUS</th>
                 <th className="py-3.5 px-4">LATENCY</th>
-                <th className="py-3.5 px-4">TOKENS (SAVED)</th>
+                <th className="py-3.5 px-4">TOKENS</th>
                 <th className="py-3.5 px-4">FAILOVER TRAIL</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e6e6e6] text-[#262626]">
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-20 text-center text-[#6b6b6b] font-light">
-                    No telemetry records captured yet. Send a completion from Oh My Pi (omp) or AI Studio to observe live streams.
+                  <td colSpan={7} className="py-16 text-center text-[#6b6b6b] font-light">
+                    No traffic logs recorded. Send a request from Oh My Pi (omp) or AI Studio to observe live streams.
                   </td>
                 </tr>
               ) : (
@@ -99,7 +99,7 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                     <tr
                       key={log.id}
                       onClick={() => setSelectedEntry(log)}
-                      className="hover:bg-[#fafafa] cursor-pointer transition-colors"
+                      className="hover:bg-[#f7f7f7] cursor-pointer transition-colors"
                     >
                       <td className="py-3 px-4 font-mono text-[12px] text-[#6b6b6b]">
                         {log.timestamp}
@@ -108,7 +108,7 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                         {log.model}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 bg-[#f7f7f7] border border-[#e6e6e6] text-[#1c69d4] font-mono font-bold text-[11px] uppercase">
+                        <span className="px-2 py-0.5 text-[11px] font-mono font-bold bg-[#fafafa] border border-[#e6e6e6] text-[#1c69d4]">
                           {log.provider}
                         </span>
                       </td>
@@ -119,11 +119,11 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                           </span>
                         ) : isRateLimit ? (
                           <span className="text-[#f59e0b] font-bold text-[12px] flex items-center gap-1">
-                            <AlertTriangle className="w-3.5 h-3.5" /> 429 RATELIMIT
+                            <AlertTriangle className="w-3.5 h-3.5" /> 429
                           </span>
                         ) : (
                           <span className="text-[#dc2626] font-bold text-[12px] flex items-center gap-1">
-                            <XCircle className="w-3.5 h-3.5" /> {log.status || 500} ERROR
+                            <XCircle className="w-3.5 h-3.5" /> {log.status || 500}
                           </span>
                         )}
                       </td>
@@ -140,7 +140,7 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                       </td>
                       <td className="py-3 px-4 text-[12px]">
                         {log.failoverAttempts > 0 ? (
-                          <span className="text-[#f59e0b] font-bold flex items-center gap-1 uppercase">
+                          <span className="text-[#f59e0b] font-bold flex items-center gap-1">
                             <span>{log.failoverAttempts} failover</span>
                             <ArrowRight className="w-3 h-3" />
                             <span className="text-[#22c55e]">RECOVERED</span>
@@ -158,16 +158,16 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
         </div>
       </div>
 
-      {/* Selected Payload Box */}
+      {/* Selected Log Detail Card */}
       {selectedEntry && (
         <div className="bmw-card p-6 space-y-4 border-2 border-[#1c69d4]">
           <div className="flex items-center justify-between border-b border-[#e6e6e6] pb-3">
             <h3 className="text-base font-bold text-[#262626] flex items-center gap-2">
-              TELEMETRY PAYLOAD: <code className="text-[#1c69d4] font-mono">{selectedEntry.id}</code>
+              Request Payload Inspector: <code className="text-[#1c69d4] font-mono">{selectedEntry.id}</code>
             </h3>
             <button
               onClick={() => setSelectedEntry(null)}
-              className="text-[12px] font-bold uppercase tracking-[1px] text-[#6b6b6b] hover:text-[#262626]"
+              className="text-[12px] font-bold text-[#6b6b6b] hover:text-[#262626] uppercase tracking-[0.5px]"
             >
               CLOSE
             </button>
@@ -175,28 +175,28 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-[13px]">
             <div>
-              <span className="text-[#6b6b6b] block text-[10px] font-bold uppercase tracking-[1px]">TIMESTAMP</span>
+              <span className="text-[#6b6b6b] block text-[10px] uppercase font-bold tracking-[1px]">TIMESTAMP</span>
               <span className="text-[#262626] font-mono font-bold">{selectedEntry.timestamp}</span>
             </div>
             <div>
-              <span className="text-[#6b6b6b] block text-[10px] font-bold uppercase tracking-[1px]">REQUESTED MODEL</span>
+              <span className="text-[#6b6b6b] block text-[10px] uppercase font-bold tracking-[1px]">MODEL</span>
               <span className="text-[#262626] font-bold">{selectedEntry.model}</span>
             </div>
             <div>
-              <span className="text-[#6b6b6b] block text-[10px] font-bold uppercase tracking-[1px]">RESOLVED PROVIDER</span>
+              <span className="text-[#6b6b6b] block text-[10px] uppercase font-bold tracking-[1px]">PROVIDER</span>
               <span className="text-[#1c69d4] font-mono font-bold">{selectedEntry.provider}</span>
             </div>
             <div>
-              <span className="text-[#6b6b6b] block text-[10px] font-bold uppercase tracking-[1px]">EDGE LATENCY</span>
+              <span className="text-[#6b6b6b] block text-[10px] uppercase font-bold tracking-[1px]">LATENCY</span>
               <span className="text-[#22c55e] font-mono font-bold">{selectedEntry.latencyMs} ms</span>
             </div>
           </div>
 
-          <div className="space-y-1 pt-2">
-            <span className="text-[11px] uppercase font-bold tracking-[1px] text-[#6b6b6b]">
-              CAPTURED PROMPT SNIPPET
+          <div className="space-y-1.5 pt-2">
+            <span className="text-[11px] uppercase tracking-[1px] text-[#6b6b6b] font-bold">
+              Prompt Snippet
             </span>
-            <div className="bg-[#fafafa] border border-[#e6e6e6] p-4 text-[13px] font-mono text-[#262626] whitespace-pre-wrap font-light">
+            <div className="bg-[#f7f7f7] border border-[#e6e6e6] p-4 text-[13px] font-mono text-[#262626] whitespace-pre-wrap font-light">
               {selectedEntry.promptSnippet || "No prompt snippet captured"}
             </div>
           </div>

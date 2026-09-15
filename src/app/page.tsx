@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Navbar, NavTab } from "@/components/layout/Navbar";
+import { Sidebar, NavTab } from "@/components/layout/Sidebar";
 import { Footer } from "@/components/layout/Footer";
 import { CommandPaletteModal } from "@/components/command-palette/CommandPaletteModal";
 import { OverviewView } from "@/components/dashboard/OverviewView";
@@ -12,6 +12,7 @@ import { CompressionStudioView } from "@/components/compression/CompressionStudi
 import { TrafficInspectorView } from "@/components/inspector/TrafficInspectorView";
 import { SetupGuidesView } from "@/components/setup/SetupGuidesView";
 import { useSZRouteStore } from "@/lib/store/useSZRouteStore";
+import { Menu, X, Copy, Check, Command } from "lucide-react";
 
 const TAB_INDEX_MAP: NavTab[] = [
   "overview",
@@ -27,6 +28,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTab>("overview");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedProviderForModal, setSelectedProviderForModal] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const {
     apiKeys,
@@ -45,7 +47,7 @@ export default function HomePage() {
     stats,
   } = useSZRouteStore();
 
-  // Keyboard navigation (1-7 for tabs, / for search, Esc to clear)
+  // Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -76,73 +78,117 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#262626]">
-      {/* Top Corporate Navigation */}
-      <Navbar
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-      />
+    <div className="min-h-screen bg-[#ffffff] text-[#262626] flex flex-col md:flex-row antialiased">
+      {/* Mobile Top Header (Hidden on Desktop) */}
+      <header className="md:hidden sticky top-0 z-40 bg-[#ffffff] border-b border-[#e6e6e6] px-4 h-14 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 text-[#262626]"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          <span className="font-bold text-[#262626] text-[16px] tracking-tight">SZRoute</span>
+        </div>
+
+        <button
+          onClick={() => setCommandPaletteOpen(true)}
+          className="p-1.5 text-[#6b6b6b]"
+        >
+          <Command className="w-4 h-4" />
+        </button>
+      </header>
+
+      {/* Desktop Fixed Left Sidebar */}
+      <div className="hidden md:block">
+        <Sidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        />
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 bg-[#1a2129]/80 backdrop-blur-xs flex">
+          <div className="w-64 bg-[#ffffff] h-full shadow-2xl">
+            <Sidebar
+              activeTab={activeTab}
+              onTabChange={(tab) => {
+                setActiveTab(tab);
+                setMobileMenuOpen(false);
+              }}
+              onOpenCommandPalette={() => {
+                setCommandPaletteOpen(true);
+                setMobileMenuOpen(false);
+              }}
+            />
+          </div>
+          <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
+        </div>
+      )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 lg:px-12 py-8 sm:py-12">
-        {activeTab === "overview" && (
-          <OverviewView onNavigate={setActiveTab} stats={stats} />
-        )}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <main className="flex-1 max-w-[1320px] w-full mx-auto px-6 lg:px-12 py-8 sm:py-10">
+          {activeTab === "overview" && (
+            <OverviewView onNavigate={setActiveTab} stats={stats} />
+          )}
 
-        {activeTab === "providers" && (
-          <ProvidersView
-            apiKeys={apiKeys}
-            onSaveKey={saveApiKey}
-            onRemoveKey={removeApiKey}
-            oauthTokens={oauthTokens}
-            onSaveOAuthToken={saveOAuthToken}
-            onRemoveOAuthToken={removeOAuthToken}
-            onExportBackup={exportBackup}
-            onImportBackup={importBackup}
-            selectedProviderForModal={selectedProviderForModal}
-          />
-        )}
+          {activeTab === "providers" && (
+            <ProvidersView
+              apiKeys={apiKeys}
+              onSaveKey={saveApiKey}
+              onRemoveKey={removeApiKey}
+              oauthTokens={oauthTokens}
+              onSaveOAuthToken={saveOAuthToken}
+              onRemoveOAuthToken={removeOAuthToken}
+              onExportBackup={exportBackup}
+              onImportBackup={importBackup}
+              selectedProviderForModal={selectedProviderForModal}
+            />
+          )}
 
-        {activeTab === "combos" && (
-          <ComboBuilderView
-            customCombos={customCombos}
-            onSaveCombos={saveCombos}
-          />
-        )}
+          {activeTab === "combos" && (
+            <ComboBuilderView
+              customCombos={customCombos}
+              onSaveCombos={saveCombos}
+            />
+          )}
 
-        {activeTab === "studio" && (
-          <ChatStudioView
-            apiKeys={apiKeys}
-            customCombos={customCombos}
-            onLogRequest={addRequestLog}
-          />
-        )}
+          {activeTab === "studio" && (
+            <ChatStudioView
+              apiKeys={apiKeys}
+              customCombos={customCombos}
+              onLogRequest={addRequestLog}
+            />
+          )}
 
-        {activeTab === "compression" && <CompressionStudioView />}
+          {activeTab === "compression" && <CompressionStudioView />}
 
-        {activeTab === "inspector" && (
-          <TrafficInspectorView
-            requestLogs={requestLogs}
-            onClearLogs={clearLogs}
-          />
-        )}
+          {activeTab === "inspector" && (
+            <TrafficInspectorView
+              requestLogs={requestLogs}
+              onClearLogs={clearLogs}
+            />
+          )}
 
-        {activeTab === "setup" && (
-          <SetupGuidesView customCombos={customCombos} apiKeys={apiKeys} />
-        )}
-      </main>
+          {activeTab === "setup" && (
+            <SetupGuidesView customCombos={customCombos} apiKeys={apiKeys} />
+          )}
+        </main>
 
-      {/* Command Center Palette (⌘K) */}
-      <CommandPaletteModal
-        isOpen={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-        onSelectTab={setActiveTab}
-        onOpenKeyModal={handleOpenKeyModal}
-      />
+        {/* Global Command Palette (⌘K) */}
+        <CommandPaletteModal
+          isOpen={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+          onSelectTab={setActiveTab}
+          onOpenKeyModal={handleOpenKeyModal}
+        />
 
-      {/* Corporate Footer with M-Tricolor Stripe */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </div>
     </div>
   );
 }
