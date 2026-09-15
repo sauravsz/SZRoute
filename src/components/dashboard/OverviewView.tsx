@@ -89,7 +89,7 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
               Never stop coding. Free frontier models for omp.
             </h1>
 
-            <p className="text-[14px] sm:text-[16px] text-[var(--text-secondary)] leading-relaxed max-w-xl">
+            <p className="text-[14px] sm:text-[16px] text-[var(--text-secondary)] leading-relaxed max-w-xl font-normal">
               Connect <strong className="text-[var(--text-primary)] font-semibold">Oh My Pi (omp)</strong>, Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers). Save 15%–95% tokens with stacked RTK prompt minification.
             </p>
 
@@ -153,7 +153,7 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
               {/* Minimal Down Icon */}
               <div className="flex items-center justify-center -my-2 relative z-10">
-                <div className="w-6 h-6 rounded-full bg-[var(--text-primary)] text-[var(--bg-card)] flex items-center justify-center shadow-xs">
+                <div className="w-6 h-6 rounded-full bg-[var(--glass-surface-subtle)] border border-[var(--glass-border)] text-[var(--text-primary)] flex items-center justify-center shadow-2xs">
                   <ArrowDown className="w-3 h-3" />
                 </div>
               </div>
@@ -188,7 +188,7 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
             <button
               onClick={() => onNavigate("setup")}
-              className="w-full btn-liquid-primary h-10 text-[13px]"
+              className="w-full btn-liquid-secondary h-10 text-[13px] font-semibold border-border justify-center"
             >
               Configure Oh My Pi (omp) →
             </button>

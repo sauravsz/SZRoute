@@ -16,7 +16,6 @@ import {
   Moon,
   Zap,
   PanelLeftClose,
-  PanelLeft,
 } from "lucide-react";
 
 export type NavTab =
@@ -128,7 +127,7 @@ export function Sidebar({
             {onToggleSidebar && (
               <button
                 onClick={onToggleSidebar}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all cursor-pointer"
                 title="Toggle Sidebar (⌘B)"
               >
                 <PanelLeftClose className="w-4 h-4" />
@@ -138,7 +137,7 @@ export function Sidebar({
             {/* Theme Switcher Toggle */}
             <button
               onClick={onToggleTheme}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)] active:scale-90 transition-all cursor-pointer"
               title={isDark ? "Light Mode" : "Dark Mode"}
             >
               {isDark ? <Sun className="w-3.5 h-3.5 text-[#F59E0B]" /> : <Moon className="w-3.5 h-3.5 text-[#2563EB]" />}
@@ -147,7 +146,7 @@ export function Sidebar({
         </div>
 
         {/* Navigation List */}
-        <nav className="p-2 space-y-0.5">
+        <nav className="p-2 space-y-1">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -156,12 +155,12 @@ export function Sidebar({
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer text-left active:scale-[0.98] ${
                   isActive
-                    ? "bg-[var(--text-primary)] text-[var(--bg-card)] shadow-xs font-semibold"
+                    ? "bg-[var(--glass-surface-elevated)] text-[var(--text-primary)] border border-[var(--glass-border)] shadow-xs font-semibold"
                     : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)]"
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={isActive ? "text-[var(--bg-card)]" : "text-[var(--text-tertiary)]"}>
+                  <span className={isActive ? "text-[var(--accent)]" : "text-[var(--text-tertiary)]"}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -171,7 +170,7 @@ export function Sidebar({
                   <span
                     className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full font-semibold transition-colors ${
                       isActive
-                        ? "bg-white/20 text-white"
+                        ? "bg-[var(--accent-subtle)] text-[var(--accent)] border border-[var(--accent-border)]"
                         : "bg-[var(--glass-surface-subtle)] text-[var(--text-tertiary)]"
                     }`}
                   >
@@ -201,9 +200,9 @@ export function Sidebar({
         {/* Copy Gateway Endpoint Capsule Button */}
         <button
           onClick={copyEndpointUrl}
-          className="w-full btn-liquid-primary text-[12px] h-9 cursor-pointer"
+          className="w-full btn-liquid-secondary text-[12px] h-9 cursor-pointer justify-center font-semibold"
         >
-          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? <Check className="w-3.5 h-3.5 text-[var(--system-green)]" /> : <Copy className="w-3.5 h-3.5" />}
           <span>{copied ? "Copied!" : "Copy /v1 Endpoint"}</span>
         </button>
 
