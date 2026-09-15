@@ -7,8 +7,7 @@ import {
   Flame,
   RotateCcw,
   User,
-  ChevronRight,
-  ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { DEFAULT_COMBOS, PROVIDER_CATALOG, VirtualCombo } from "@/lib/providers/catalog";
 import { RequestLogEntry } from "@/lib/store/useSZRouteStore";
@@ -203,21 +202,25 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-4 animate-spring-slide-up">
       {/* Studio Header & Controls Bar */}
-      <div className="bmw-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="text-[11px] uppercase tracking-[1.5px] text-[#1c69d4] font-bold">STREAMING TEST ARENA</div>
-          <h2 className="text-xl font-bold text-[#262626]">AI Chat Studio</h2>
+      <div className="apple-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#AF52DE] to-[#5856D6] flex items-center justify-center text-white shadow-xs">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-[var(--label-primary)]">AI Chat Studio</h2>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#f7f7f7] border border-[#cccccc] px-3 py-1 text-[12px] font-bold">
-            <span className="text-[#6b6b6b] uppercase tracking-[0.5px]">Model:</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 bg-[var(--bg-subtle)] px-3 py-1 rounded-2xl text-[12px] font-semibold">
+            <span className="text-[var(--label-secondary)]">Model:</span>
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="bg-[#ffffff] text-[#262626] text-[12px] font-bold px-2 py-0.5 outline-none border border-[#e6e6e6]"
+              className="bg-[var(--bg-card)] text-[var(--label-primary)] text-[12px] font-semibold rounded-xl px-2.5 py-0.5 outline-none border border-[var(--separator)]"
             >
               <optgroup label="Virtual Combos">
                 {allCombos.map((c) => (
@@ -238,30 +241,29 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
             </select>
           </div>
 
-          <label className="flex items-center gap-1.5 cursor-pointer bg-[#f7f7f7] border border-[#cccccc] px-3 py-1 text-[12px] font-bold text-[#262626]">
+          <label className="flex items-center gap-1.5 cursor-pointer bg-[var(--bg-subtle)] px-3 py-1 rounded-2xl text-[12px] font-semibold text-[var(--label-primary)] active:scale-95 transition-transform">
             <input
               type="checkbox"
               checked={enableCompress}
               onChange={(e) => setEnableCompress(e.target.checked)}
-              className="accent-[#1c69d4]"
+              className="rounded accent-[var(--system-blue)]"
             />
-            <Flame className="w-3 h-3 text-[#e22718]" />
-            <span className="uppercase tracking-[0.5px]">RTK COMPRESSION</span>
+            <Flame className="w-3.5 h-3.5 text-[var(--system-red)]" />
+            <span>RTK</span>
           </label>
 
           <button
             onClick={handleClearChat}
-            className="btn-secondary h-8 px-3 text-[11px] uppercase tracking-[0.5px]"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-subtle)] hover:bg-[var(--bg-subtle-hover)] active:scale-90 transition-all text-[var(--label-secondary)]"
             title="Clear Chat Arena"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>RESET</span>
           </button>
         </div>
       </div>
 
       {/* Messages Thread Container */}
-      <div className="bmw-card min-h-[500px] max-h-[600px] overflow-y-auto p-6 space-y-4 flex flex-col justify-between">
+      <div className="apple-card min-h-[500px] max-h-[600px] overflow-y-auto p-6 space-y-4 flex flex-col justify-between">
         <div className="space-y-4">
           {messages.map((msg) => {
             const isUser = msg.role === "user";
@@ -272,40 +274,40 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
                 className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 border border-[#1c69d4] bg-[#ffffff] flex-shrink-0 flex items-center justify-center font-bold text-[10px] text-[#1c69d4]">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#007AFF] to-[#5856D6] flex-shrink-0 flex items-center justify-center font-bold text-xs text-white shadow-xs">
                     SZ
                   </div>
                 )}
 
                 <div className={`space-y-1 max-w-2xl ${isUser ? "items-end" : "items-start"}`}>
                   <div
-                    className={`p-4 text-[14px] leading-relaxed ${
+                    className={`p-4 rounded-3xl text-[14px] leading-relaxed shadow-xs ${
                       isUser
-                        ? "bg-[#1c69d4] text-[#ffffff] font-medium"
-                        : "bg-[#f7f7f7] text-[#262626] border border-[#e6e6e6]"
+                        ? "bg-[var(--system-blue)] text-white font-medium rounded-br-md"
+                        : "bg-[var(--bg-subtle)] text-[var(--label-primary)] rounded-bl-md"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap font-light">{msg.content || (isGenerating && "Generating completion stream...")}</div>
+                    <div className="whitespace-pre-wrap">{msg.content || (isGenerating && "Generating completion stream...")}</div>
                   </div>
 
                   {!isUser && (msg.provider || msg.latencyMs) && (
-                    <div className="flex items-center gap-3 text-[11px] font-mono text-[#6b6b6b] px-1">
+                    <div className="flex items-center gap-2.5 text-[11px] text-[var(--label-secondary)] px-1">
                       {msg.provider && (
-                        <span className="text-[#1c69d4] font-bold">
+                        <span className="badge-apple-blue py-0 text-[10px]">
                           ⚡ {msg.provider} / {msg.model}
                         </span>
                       )}
                       {msg.latencyMs && <span>{msg.latencyMs}ms</span>}
                       {msg.tokensSaved ? (
-                        <span className="text-[#22c55e] font-bold">✓ {msg.tokensSaved} tokens compressed</span>
+                        <span className="text-[var(--system-green)] font-semibold">✓ {msg.tokensSaved} tokens compressed</span>
                       ) : null}
                     </div>
                   )}
                 </div>
 
                 {isUser && (
-                  <div className="w-7 h-7 bg-[#262626] text-[#ffffff] flex-shrink-0 flex items-center justify-center font-bold text-xs">
-                    <User className="w-3.5 h-3.5" />
+                  <div className="w-8 h-8 rounded-full bg-[var(--bg-subtle)] text-[var(--label-primary)] flex-shrink-0 flex items-center justify-center font-bold text-xs">
+                    <User className="w-4 h-4" />
                   </div>
                 )}
               </div>
@@ -315,7 +317,7 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
         </div>
 
         {/* Input Bar */}
-        <form onSubmit={handleSendMessage} className="pt-4 border-t border-[#e6e6e6]">
+        <form onSubmit={handleSendMessage} className="pt-3 border-t border-[var(--separator)]">
           <div className="relative flex items-center">
             <input
               type="text"
@@ -323,15 +325,15 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
               onChange={(e) => setInputPrompt(e.target.value)}
               placeholder="Send prompt or code instructions..."
               disabled={isGenerating}
-              className="bmw-input w-full pr-28 py-3 text-[14px]"
+              className="apple-input w-full pr-24 py-3 text-[14px] rounded-full shadow-2xs"
             />
             <button
               type="submit"
               disabled={isGenerating || !inputPrompt.trim()}
-              className="absolute right-1.5 btn-primary h-9 px-4 text-[12px] uppercase tracking-[0.5px] disabled:opacity-40"
+              className="absolute right-1.5 btn-apple-primary h-9 px-4 text-[13px] disabled:opacity-40"
             >
-              <span>SEND</span>
-              <Send className="w-3 h-3" />
+              <span>Send</span>
+              <Send className="w-3.5 h-3.5" />
             </button>
           </div>
         </form>

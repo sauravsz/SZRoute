@@ -1,34 +1,34 @@
 <div align="center">
 
-# ⚡ SZRoute Corporate
+# ⚡ SZRoute
 
-### Enterprise AI Gateway & Multi-Provider Router for Oh My Pi (`omp`)
+### Universal AI Gateway & Multi-Provider Router for Oh My Pi (`omp`)
 
 **Connect Oh My Pi (`omp`), Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers) with 15%–95% RTK token compression, automatic failovers, and Edge streaming.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![Vercel Edge](https://img.shields.io/badge/Vercel-Edge%20Serverless-1c69d4?style=flat&logo=vercel&logoColor=white)](https://vercel.com/)
-[![Design System](https://img.shields.io/badge/Design-BMW%20Corporate-1c69d4?style=flat)](https://szroute.vercel.app/)
+[![Vercel Edge](https://img.shields.io/badge/Vercel-Edge%20Serverless-007AFF?style=flat&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Design System](https://img.shields.io/badge/Design-Apple%20HIG%20%2B%20SwiftUI-007AFF?style=flat)](https://szroute.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [**Live Production Deployment**](https://szroute.vercel.app) • [**Oh My Pi Integration**](#-oh-my-pi-omp-quick-start) • [**Virtual Combos**](#-virtual-combos--model-chains) • [**MCP Server Protocol**](#-model-context-protocol-mcp-server)
 
 <br/>
 
-<img src="./public/screenshots/overview.png" alt="SZRoute BMW Corporate Overview" width="100%" />
+<img src="./public/screenshots/overview.png" alt="SZRoute Apple HIG Overview" width="100%" />
 
 </div>
 
 ---
 
-## 🏛️ BMW Corporate Precision Design Language
+## 🍏 Apple Human Interface Guidelines (HIG) & SwiftUI Animations
 
-SZRoute is crafted with a measured, high-performance corporate automotive aesthetic:
-- **BMW Corporate Blue (`#1c69d4`)**: Signature brand action color for all primary CTAs, active indicators, and links.
-- **Pure Canvas (`#ffffff`) & Dark Navy Hero (`#1a2129`)**: Rhythmic contrast rotating white card plates against dark navy showcase bands.
-- **BMW Type Latin Hierarchy**: High-contrast typography pairing **heavy 700 display headlines** with **light 300 body text**.
-- **0px Rectangular Precision (`rounded-none`)**: Engineered rectangular geometry across all buttons, inputs, cards, and modal dialogs.
-- **M-Tricolor Stripe Divider**: Accent stripe (`#0066b1` $\to$ `#1c69d4` $\to$ `#e22718`) framing corporate footers and spec boundaries.
+SZRoute features a fluid, native macOS/iOS design language with purposeful SwiftUI micro-interactions:
+- **SF Pro Typography & System Colors**: Apple System Blue (`#007AFF`), Green (`#34C759`), Purple (`#AF52DE`), and Orange (`#FF9500`).
+- **Concentric Squircle Curves**: Progressive 28px card squircle curvature (`rounded-3xl` outer $\to$ `rounded-2xl` inner items $\to$ `rounded-full` capsule buttons).
+- **SwiftUI Spring Micro-Interactions**: Tactile press scaling (`active:scale-[0.98]`), spring keyframe transitions, and smooth hover feedback.
+- **Glassmorphic App Shell**: Translucent backdrop-blurred navigation bars and Spotlight search overlay.
+- **Adaptive Light & Dark Modes**: Native macOS dynamic theming with instant sun/moon toggle.
 
 ---
 
@@ -63,7 +63,7 @@ omp --model fast-reasoning
 
 ---
 
-## 📸 Corporate Web Surfaces
+## 📸 Interactive Web Surfaces
 
 <div align="center">
 
@@ -74,7 +74,7 @@ omp --model fast-reasoning
 <br/><br/>
 
 ### 2. Virtual Combos & Model Chains
-*Engineered 4-up model card grids with priority failover ladders (Tier 1 $\to$ Tier 2 $\to$ Tier 3).*
+*Concentric squircle cards with priority failover execution ladders (Tier 1 $\to$ Tier 2 $\to$ Tier 3).*
 <img src="./public/screenshots/combos.png" alt="SZRoute Virtual Combos" width="100%" />
 
 <br/><br/>

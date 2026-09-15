@@ -12,7 +12,7 @@ import { CompressionStudioView } from "@/components/compression/CompressionStudi
 import { TrafficInspectorView } from "@/components/inspector/TrafficInspectorView";
 import { SetupGuidesView } from "@/components/setup/SetupGuidesView";
 import { useSZRouteStore } from "@/lib/store/useSZRouteStore";
-import { Menu, X, Copy, Check, Command } from "lucide-react";
+import { Menu, X, Command, Sun, Moon } from "lucide-react";
 
 const TAB_INDEX_MAP: NavTab[] = [
   "overview",
@@ -29,6 +29,7 @@ export default function HomePage() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [selectedProviderForModal, setSelectedProviderForModal] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(false);
 
   const {
     apiKeys,
@@ -46,6 +47,32 @@ export default function HomePage() {
     importBackup,
     stats,
   } = useSZRouteStore();
+
+  // Load system theme on mount (default to system / light)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("szroute_theme");
+      if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        setIsDark(true);
+        document.documentElement.classList.add("dark");
+      } else {
+        setIsDark(false);
+        document.documentElement.classList.remove("dark");
+      }
+    } catch {}
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("szroute_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("szroute_theme", "light");
+    }
+  };
 
   // Global keyboard shortcuts (1-7 for tabs, / for search, Esc to clear)
   useEffect(() => {
@@ -78,40 +105,51 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ffffff] text-[#262626] flex flex-col md:flex-row antialiased">
-      {/* Mobile Top Header (Hidden on Desktop) */}
-      <header className="md:hidden sticky top-0 z-40 bg-[#ffffff] border-b border-[#e6e6e6] px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-[var(--bg-page)] text-[var(--label-primary)] flex flex-col md:flex-row antialiased transition-colors duration-200">
+      {/* Mobile Top Header */}
+      <header className="md:hidden sticky top-0 z-40 bg-[var(--bg-card)]/85 backdrop-blur-md border-b border-[var(--separator)] px-4 h-14 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 text-[#262626]"
+            className="p-1.5 rounded-xl text-[var(--label-primary)] hover:bg-[var(--bg-subtle)] active:scale-90 transition-transform"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <span className="font-bold text-[#262626] text-[16px] tracking-tight">SZRoute</span>
+          <span className="font-bold text-[16px] tracking-tight">SZRoute</span>
         </div>
 
-        <button
-          onClick={() => setCommandPaletteOpen(true)}
-          className="p-1.5 text-[#6b6b6b]"
-        >
-          <Command className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleToggleTheme}
+            className="p-1.5 rounded-full text-[var(--label-secondary)] hover:bg-[var(--bg-subtle)]"
+          >
+            {isDark ? <Sun className="w-4 h-4 text-[#FFD60A]" /> : <Moon className="w-4 h-4 text-[var(--system-blue)]" />}
+          </button>
+
+          <button
+            onClick={() => setCommandPaletteOpen(true)}
+            className="p-1.5 rounded-full text-[var(--label-secondary)] hover:bg-[var(--bg-subtle)]"
+          >
+            <Command className="w-4 h-4" />
+          </button>
+        </div>
       </header>
 
-      {/* Desktop Fixed Left Sidebar */}
+      {/* Desktop Left Glass Sidebar */}
       <div className="hidden md:block">
         <Sidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          isDark={isDark}
+          onToggleTheme={handleToggleTheme}
         />
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-[#1a2129]/80 backdrop-blur-xs flex">
-          <div className="w-64 bg-[#ffffff] h-full shadow-2xl">
+        <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex animate-in fade-in duration-150">
+          <div className="w-64 bg-[var(--bg-card)] h-full shadow-2xl animate-spring-pop">
             <Sidebar
               activeTab={activeTab}
               onTabChange={(tab) => {
@@ -122,6 +160,8 @@ export default function HomePage() {
                 setCommandPaletteOpen(true);
                 setMobileMenuOpen(false);
               }}
+              isDark={isDark}
+              onToggleTheme={handleToggleTheme}
             />
           </div>
           <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
@@ -130,7 +170,7 @@ export default function HomePage() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <main className="flex-1 max-w-[1320px] w-full mx-auto px-6 lg:px-12 py-8 sm:py-10">
+        <main className="flex-1 max-w-[1320px] w-full mx-auto px-5 lg:px-10 py-6 sm:py-8">
           {activeTab === "overview" && (
             <OverviewView onNavigate={setActiveTab} stats={stats} />
           )}

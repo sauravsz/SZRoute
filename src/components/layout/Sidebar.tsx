@@ -12,8 +12,8 @@ import {
   Copy,
   Check,
   Command,
-  ChevronRight,
-  ShieldCheck,
+  Sun,
+  Moon,
   Zap,
 } from "lucide-react";
 
@@ -30,9 +30,17 @@ interface SidebarProps {
   activeTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   onOpenCommandPalette: () => void;
+  isDark: boolean;
+  onToggleTheme: () => void;
 }
 
-export function Sidebar({ activeTab, onTabChange, onOpenCommandPalette }: SidebarProps) {
+export function Sidebar({
+  activeTab,
+  onTabChange,
+  onOpenCommandPalette,
+  isDark,
+  onToggleTheme,
+}: SidebarProps) {
   const [copied, setCopied] = useState(false);
 
   const copyEndpointUrl = () => {
@@ -42,78 +50,95 @@ export function Sidebar({ activeTab, onTabChange, onOpenCommandPalette }: Sideba
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const navItems: Array<{ id: NavTab; label: string; icon: React.ReactNode; badge?: string }> = [
+  const navItems: Array<{
+    id: NavTab;
+    label: string;
+    icon: React.ReactNode;
+    color: string;
+    badge?: string;
+  }> = [
     {
       id: "overview",
-      label: "OVERVIEW",
+      label: "Overview",
       icon: <Activity className="w-4 h-4" />,
+      color: "bg-[#007AFF] text-white",
     },
     {
       id: "providers",
-      label: "PROVIDERS & KEYS",
+      label: "Providers & Keys",
       icon: <Key className="w-4 h-4" />,
+      color: "bg-[#FF9500] text-white",
       badge: "160+",
     },
     {
       id: "combos",
-      label: "VIRTUAL COMBOS",
+      label: "Virtual Combos",
       icon: <Layers className="w-4 h-4" />,
-      badge: "AUTO",
+      color: "bg-[#34C759] text-white",
+      badge: "Auto",
     },
     {
       id: "studio",
-      label: "AI CHAT STUDIO",
+      label: "AI Chat Studio",
       icon: <Sparkles className="w-4 h-4" />,
+      color: "bg-[#AF52DE] text-white",
     },
     {
       id: "compression",
-      label: "RTK COMPRESSION",
-      icon: <Flame className="w-4 h-4 text-[#e22718]" />,
+      label: "RTK Compression",
+      icon: <Flame className="w-4 h-4" />,
+      color: "bg-[#FF3B30] text-white",
       badge: "-95%",
     },
     {
       id: "inspector",
-      label: "TELEMETRY LOGS",
+      label: "Telemetry Logs",
       icon: <FileText className="w-4 h-4" />,
+      color: "bg-[#5AC8FA] text-white",
     },
     {
       id: "setup",
-      label: "omp INTEGRATION",
+      label: "omp Integration",
       icon: <Terminal className="w-4 h-4" />,
+      color: "bg-[#5856D6] text-white",
     },
   ];
 
   return (
-    <aside className="w-64 bg-[#ffffff] border-r border-[#e6e6e6] flex flex-col justify-between h-screen sticky top-0 flex-shrink-0 z-30 select-none">
-      {/* Top Brand Header */}
+    <aside className="w-64 apple-glass border-r border-[var(--separator)] flex flex-col justify-between h-screen sticky top-0 flex-shrink-0 z-30 select-none transition-all">
+      {/* Top App Identity */}
       <div>
-        <div className="p-5 border-b border-[#e6e6e6] flex items-center justify-between">
+        <div className="p-4 border-b border-[var(--separator)] flex items-center justify-between">
           <button
             onClick={() => onTabChange("overview")}
-            className="flex items-center gap-3 text-left group cursor-pointer"
+            className="flex items-center gap-3 text-left group cursor-pointer active:scale-95 transition-transform"
           >
-            {/* Bavarian Roundel */}
-            <div className="w-8 h-8 rounded-full border-2 border-[#1c69d4] bg-[#ffffff] flex items-center justify-center p-0.5 shadow-xs flex-shrink-0">
-              <div className="w-full h-full rounded-full grid grid-cols-2 grid-rows-2 overflow-hidden">
-                <div className="bg-[#1c69d4]" />
-                <div className="bg-[#ffffff]" />
-                <div className="bg-[#ffffff]" />
-                <div className="bg-[#1c69d4]" />
-              </div>
+            {/* Apple macOS App Squircle Icon */}
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] flex items-center justify-center p-0.5 shadow-md group-hover:scale-105 transition-transform">
+              <Zap className="w-5 h-5 text-white fill-white" />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-bold text-[#262626] text-[16px] tracking-tight leading-tight">
+              <span className="font-bold text-[15px] tracking-tight text-[var(--label-primary)]">
                 SZRoute
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-[1.5px] text-[#6b6b6b]">
-                Enterprise Gateway
+              <span className="text-[11px] font-medium text-[var(--label-secondary)]">
+                AI Gateway for omp
               </span>
             </div>
           </button>
+
+          {/* Theme Switcher Toggle */}
+          <button
+            onClick={onToggleTheme}
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-subtle)] hover:bg-[var(--bg-subtle-hover)] active:scale-90 transition-all text-[var(--label-primary)]"
+            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-[#FFD60A]" /> : <Moon className="w-4 h-4 text-[#007AFF]" />}
+          </button>
         </div>
 
-        {/* Vertical Navigation Links */}
+        {/* SwiftUI Navigation List */}
         <nav className="p-3 space-y-1">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
@@ -121,25 +146,29 @@ export function Sidebar({ activeTab, onTabChange, onOpenCommandPalette }: Sideba
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-bold tracking-[1.5px] uppercase transition-all cursor-pointer text-left border-l-2 ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-pointer text-left active:scale-[0.98] ${
                   isActive
-                    ? "bg-[#f7f7f7] text-[#1c69d4] border-[#1c69d4]"
-                    : "text-[#6b6b6b] hover:text-[#262626] hover:bg-[#fafafa] border-transparent"
+                    ? "bg-[var(--system-blue)] text-white shadow-sm font-semibold"
+                    : "text-[var(--label-primary)] hover:bg-[var(--bg-subtle)]"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className={isActive ? "text-[#1c69d4]" : "text-[#6b6b6b]"}>
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs shadow-2xs transition-transform ${
+                      isActive ? "bg-white/20 text-white" : item.color
+                    }`}
+                  >
                     {item.icon}
-                  </span>
+                  </div>
                   <span>{item.label}</span>
                 </div>
 
                 {item.badge && (
                   <span
-                    className={`text-[10px] font-mono px-1.5 py-0.2 uppercase font-bold border ${
+                    className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold transition-colors ${
                       isActive
-                        ? "bg-[#1c69d4] text-[#ffffff] border-[#1c69d4]"
-                        : "bg-[#f7f7f7] text-[#6b6b6b] border-[#e6e6e6]"
+                        ? "bg-white/25 text-white"
+                        : "bg-[var(--bg-subtle)] text-[var(--label-secondary)]"
                     }`}
                   >
                     {item.badge}
@@ -152,39 +181,36 @@ export function Sidebar({ activeTab, onTabChange, onOpenCommandPalette }: Sideba
       </div>
 
       {/* Bottom Actions & Status */}
-      <div className="p-4 border-t border-[#e6e6e6] space-y-3 bg-[#fafafa]">
-        {/* Command Palette Button */}
+      <div className="p-3 border-t border-[var(--separator)] space-y-2 bg-[var(--bg-subtle)]/30 rounded-b-2xl">
+        {/* Command Palette Trigger Button */}
         <button
           onClick={onOpenCommandPalette}
-          className="w-full flex items-center justify-between px-3 py-2 text-[11px] font-bold text-[#262626] uppercase tracking-[1px] bg-[#ffffff] border border-[#cccccc] hover:border-[#262626] transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between px-3 py-2 text-[12px] font-medium text-[var(--label-primary)] bg-[var(--bg-card)] rounded-xl border border-[var(--separator)] hover:border-[var(--system-blue)] active:scale-[0.98] transition-all cursor-pointer shadow-2xs"
         >
           <div className="flex items-center gap-2">
-            <Command className="w-3.5 h-3.5 text-[#1c69d4]" />
-            <span>Search</span>
+            <Command className="w-3.5 h-3.5 text-[var(--system-blue)]" />
+            <span>Search Commands</span>
           </div>
-          <span className="font-mono text-[10px] px-1 bg-[#f7f7f7] border border-[#e6e6e6]">⌘K</span>
+          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-md bg-[var(--bg-subtle)] text-[var(--label-secondary)]">⌘K</span>
         </button>
 
-        {/* Copy Gateway Endpoint Button */}
+        {/* Copy Gateway Endpoint Capsule Button */}
         <button
           onClick={copyEndpointUrl}
-          className="w-full btn-primary h-10 text-[11px] uppercase tracking-[1px] flex items-center justify-center gap-1.5 cursor-pointer"
+          className="w-full btn-apple-primary text-[13px] h-10 cursor-pointer shadow-sm"
         >
-          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-          <span>{copied ? "COPIED" : "COPY /v1 ENDPOINT"}</span>
+          {copied ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4 text-white" />}
+          <span>{copied ? "Endpoint Copied!" : "Copy /v1 Endpoint"}</span>
         </button>
 
         {/* Live Status Pill */}
-        <div className="flex items-center justify-between text-[11px] text-[#6b6b6b] pt-1">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="font-bold text-[#262626]">Edge Active</span>
+        <div className="flex items-center justify-between text-[11px] text-[var(--label-secondary)] px-1 pt-1">
+          <span className="flex items-center gap-1.5 font-medium">
+            <span className="w-2 h-2 rounded-full bg-[var(--system-green)] animate-pulse" />
+            <span>160+ Providers Online</span>
           </span>
-          <span className="font-mono text-[10px]">v4.0.0</span>
+          <span className="font-mono text-[10px]">v4.0 Edge</span>
         </div>
-
-        {/* M-Tricolor Stripe Accent */}
-        <div className="m-stripe-divider -mx-4 -mb-4 mt-2" />
       </div>
     </aside>
   );

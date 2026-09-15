@@ -15,7 +15,7 @@ import {
   X,
   Flame,
 } from "lucide-react";
-import { NavTab } from "../layout/Navbar";
+import { NavTab } from "../layout/Sidebar";
 import { PROVIDER_CATALOG, DEFAULT_COMBOS } from "@/lib/providers/catalog";
 
 interface CommandPaletteModalProps {
@@ -31,6 +31,7 @@ interface CommandItem {
   title: string;
   subtitle?: string;
   icon: React.ReactNode;
+  iconBg: string;
   shortcut?: string;
   action: () => void;
 }
@@ -76,7 +77,8 @@ export function CommandPaletteModal({
       category: "Navigation",
       title: "Overview & Model Showcase",
       subtitle: "Telemetry, token savings, and provider matrix",
-      icon: <Activity className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Activity className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#007AFF]",
       shortcut: "1",
       action: () => {
         onSelectTab("overview");
@@ -88,7 +90,8 @@ export function CommandPaletteModal({
       category: "Navigation",
       title: "160+ Providers & Credentials",
       subtitle: "Configure API keys, OAuth PKCE, benchmark speed",
-      icon: <Key className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Key className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#FF9500]",
       shortcut: "2",
       action: () => {
         onSelectTab("providers");
@@ -98,9 +101,10 @@ export function CommandPaletteModal({
     {
       id: "nav-combos",
       category: "Navigation",
-      title: "Combos & Fallback Chains",
+      title: "Virtual Combos & Fallbacks",
       subtitle: "Multi-tier priority routing and auto-failovers",
-      icon: <Layers className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Layers className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#34C759]",
       shortcut: "3",
       action: () => {
         onSelectTab("combos");
@@ -110,9 +114,10 @@ export function CommandPaletteModal({
     {
       id: "nav-studio",
       category: "Navigation",
-      title: "Launch AI Studio",
+      title: "AI Chat Studio Playground",
       subtitle: "Multi-model chat with live streaming",
-      icon: <Sparkles className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Sparkles className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#AF52DE]",
       shortcut: "4",
       action: () => {
         onSelectTab("studio");
@@ -124,7 +129,8 @@ export function CommandPaletteModal({
       category: "Navigation",
       title: "RTK + Caveman Token Compression",
       subtitle: "Test token reduction rules and inspect live savings",
-      icon: <Flame className="w-4 h-4 text-[#e22718]" />,
+      icon: <Flame className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#FF3B30]",
       shortcut: "5",
       action: () => {
         onSelectTab("compression");
@@ -136,7 +142,8 @@ export function CommandPaletteModal({
       category: "Navigation",
       title: "Live Telemetry Logs",
       subtitle: "Real-time request stream, failover trails, and latency",
-      icon: <Activity className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Activity className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#5AC8FA]",
       shortcut: "6",
       action: () => {
         onSelectTab("inspector");
@@ -148,7 +155,8 @@ export function CommandPaletteModal({
       category: "Navigation",
       title: "Oh My Pi (omp) Integration",
       subtitle: "Configuration snippets for omp, Cursor, Cline, and Codex",
-      icon: <Terminal className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Terminal className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#5856D6]",
       shortcut: "7",
       action: () => {
         onSelectTab("setup");
@@ -161,7 +169,8 @@ export function CommandPaletteModal({
       category: "Providers" as const,
       title: `${p.name} (${p.freeTier.badgeText || "Provider"})`,
       subtitle: p.description,
-      icon: <Key className="w-4 h-4 text-[#262626]" />,
+      icon: <Key className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#FF9500]",
       action: () => {
         onSelectTab("providers");
         if (onOpenKeyModal) onOpenKeyModal(p.id);
@@ -174,7 +183,8 @@ export function CommandPaletteModal({
       category: "Combos" as const,
       title: `Combo: ${c.name}`,
       subtitle: c.description,
-      icon: <Layers className="w-4 h-4 text-[#1c69d4]" />,
+      icon: <Layers className="w-4 h-4 text-white" />,
+      iconBg: "bg-[#34C759]",
       action: () => {
         onSelectTab("combos");
         onClose();
@@ -208,14 +218,14 @@ export function CommandPaletteModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-[#1a2129]/75 backdrop-blur-xs animate-in fade-in duration-100">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
       <div
-        className="w-full max-w-2xl bg-[#ffffff] border border-[#cccccc] shadow-2xl overflow-hidden flex flex-col rounded-none"
+        className="w-full max-w-xl bg-[var(--bg-card)] border border-[var(--separator)] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-spring-pop"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top Search Input */}
-        <div className="px-5 py-4 border-b border-[#e6e6e6] flex items-center gap-3 bg-[#ffffff]">
-          <Search className="w-4 h-4 text-[#1c69d4]" />
+        {/* Apple Spotlight Search Input */}
+        <div className="px-5 py-3.5 border-b border-[var(--separator)] flex items-center gap-3 bg-[var(--bg-card)]">
+          <Search className="w-5 h-5 text-[var(--system-blue)]" />
           <input
             ref={inputRef}
             type="text"
@@ -225,21 +235,21 @@ export function CommandPaletteModal({
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search commands, models, providers..."
-            className="flex-1 bg-transparent text-[#262626] placeholder-[#6b6b6b] text-[15px] font-bold outline-none"
+            placeholder="Search commands, providers, models..."
+            className="flex-1 bg-transparent text-[var(--label-primary)] placeholder-[var(--label-tertiary)] text-[16px] font-medium outline-none"
           />
           <button
             onClick={onClose}
-            className="p-1.5 text-[#6b6b6b] hover:text-[#262626] hover:bg-[#f7f7f7] transition-colors"
+            className="p-1 rounded-full text-[var(--label-tertiary)] hover:text-[var(--label-primary)] hover:bg-[var(--bg-subtle)] transition-colors active:scale-90"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Command Rows List */}
-        <div className="max-h-[380px] overflow-y-auto p-2 space-y-1 bg-[#ffffff]">
+        <div className="max-h-[380px] overflow-y-auto p-2 space-y-1 bg-[var(--bg-card)]">
           {filtered.length === 0 ? (
-            <div className="py-12 text-center text-[#6b6b6b] text-[14px] font-light">
+            <div className="py-12 text-center text-[var(--label-secondary)] text-[14px]">
               No results matching &ldquo;{query}&rdquo;
             </div>
           ) : (
@@ -250,25 +260,39 @@ export function CommandPaletteModal({
                   key={cmd.id}
                   onClick={() => cmd.action()}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`flex items-center justify-between px-4 py-3 cursor-pointer transition-colors border-l-2 ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl cursor-pointer transition-all duration-150 ${
                     isSelected
-                      ? "bg-[#f7f7f7] text-[#262626] border-[#1c69d4]"
-                      : "text-[#3c3c3c] hover:bg-[#fafafa] border-transparent"
+                      ? "bg-[var(--system-blue)] text-white shadow-xs"
+                      : "text-[var(--label-primary)] hover:bg-[var(--bg-subtle)]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#fafafa] border border-[#e6e6e6] flex items-center justify-center">
+                    <div
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs shadow-2xs ${
+                        isSelected ? "bg-white/20 text-white" : cmd.iconBg
+                      }`}
+                    >
                       {cmd.icon}
                     </div>
                     <div>
-                      <div className="text-[14px] font-bold text-[#262626] flex items-center gap-2">
-                        {cmd.title}
-                        <span className="text-[10px] uppercase font-bold tracking-[1px] px-1.5 py-0.5 text-[#262626] bg-[#f7f7f7] border border-[#e6e6e6]">
+                      <div className="text-[14px] font-semibold flex items-center gap-2">
+                        <span>{cmd.title}</span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            isSelected
+                              ? "bg-white/25 text-white"
+                              : "bg-[var(--bg-subtle)] text-[var(--label-secondary)]"
+                          }`}
+                        >
                           {cmd.category}
                         </span>
                       </div>
                       {cmd.subtitle && (
-                        <div className="text-[12px] text-[#6b6b6b] font-light truncate max-w-md">
+                        <div
+                          className={`text-[12px] truncate max-w-sm ${
+                            isSelected ? "text-white/80" : "text-[var(--label-secondary)]"
+                          }`}
+                        >
                           {cmd.subtitle}
                         </div>
                       )}
@@ -276,7 +300,13 @@ export function CommandPaletteModal({
                   </div>
 
                   {cmd.shortcut && (
-                    <span className="px-2 py-0.5 bg-[#ffffff] border border-[#cccccc] text-[11px] font-mono font-bold text-[#262626]">
+                    <span
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : "bg-[var(--bg-subtle)] text-[var(--label-secondary)]"
+                      }`}
+                    >
                       {cmd.shortcut}
                     </span>
                   )}
@@ -287,17 +317,15 @@ export function CommandPaletteModal({
         </div>
 
         {/* Bottom Legend */}
-        <div className="px-5 py-3 bg-[#f7f7f7] border-t border-[#e6e6e6] flex items-center justify-between text-[12px] text-[#3c3c3c] font-light">
-          <div className="flex items-center gap-3">
+        <div className="px-5 py-2.5 bg-[var(--bg-subtle)]/50 border-t border-[var(--separator)] flex items-center justify-between text-[12px] text-[var(--label-secondary)] font-medium">
+          <div className="flex items-center gap-2">
             <span>↑↓ Navigate</span>
             <span>•</span>
-            <span>⏎ Execute</span>
+            <span>⏎ Select</span>
             <span>•</span>
-            <span>Esc Dismiss</span>
+            <span>Esc Close</span>
           </div>
-          <span className="text-[#262626] font-bold uppercase tracking-[1px] text-[11px]">
-            BMW Command Hub
-          </span>
+          <span className="text-[var(--system-blue)] font-semibold">Spotlight Search</span>
         </div>
       </div>
     </div>
