@@ -2,33 +2,33 @@
 
 # ⚡ SZRoute
 
-### Universal AI Gateway & Multi-Provider Router for Oh My Pi (`omp`)
+### Liquid Glass AI Gateway & Multi-Provider Router for Oh My Pi (`omp`)
 
 **Connect Oh My Pi (`omp`), Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers) with 15%–95% RTK token compression, automatic failovers, and Edge streaming.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![Vercel Edge](https://img.shields.io/badge/Vercel-Edge%20Serverless-007AFF?style=flat&logo=vercel&logoColor=white)](https://vercel.com/)
-[![Design System](https://img.shields.io/badge/Design-Apple%20HIG%20%2B%20SwiftUI-007AFF?style=flat)](https://szroute.vercel.app/)
+[![Design System](https://img.shields.io/badge/Design-Liquid%20Glass%20UI-007AFF?style=flat)](https://szroute.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [**Live Production Deployment**](https://szroute.vercel.app) • [**Oh My Pi Integration**](#-oh-my-pi-omp-quick-start) • [**Virtual Combos**](#-virtual-combos--model-chains) • [**MCP Server Protocol**](#-model-context-protocol-mcp-server)
 
 <br/>
 
-<img src="./public/screenshots/overview.png" alt="SZRoute Apple HIG Overview" width="100%" />
+<img src="./public/screenshots/overview.png" alt="SZRoute Liquid Glass Overview" width="100%" />
 
 </div>
 
 ---
 
-## 🍏 Apple Human Interface Guidelines (HIG) & SwiftUI Animations
+## 🔮 Liquid Glass UI Architecture
 
-SZRoute features a fluid, native macOS/iOS design language with purposeful SwiftUI micro-interactions:
-- **SF Pro Typography & System Colors**: Apple System Blue (`#007AFF`), Green (`#34C759`), Purple (`#AF52DE`), and Orange (`#FF9500`).
-- **Concentric Squircle Curves**: Progressive 28px card squircle curvature (`rounded-3xl` outer $\to$ `rounded-2xl` inner items $\to$ `rounded-full` capsule buttons).
-- **SwiftUI Spring Micro-Interactions**: Tactile press scaling (`active:scale-[0.98]`), spring keyframe transitions, and smooth hover feedback.
-- **Glassmorphic App Shell**: Translucent backdrop-blurred navigation bars and Spotlight search overlay.
-- **Adaptive Light & Dark Modes**: Native macOS dynamic theming with instant sun/moon toggle.
+SZRoute features a translucent, optical glass design with ambient fluid refraction and SwiftUI spring physics:
+- **Translucent Optical Refraction (`liquid-glass`)**: Multi-layered glass plates with real optical caustics, specular edge gradients, and `-webkit-backdrop-filter: blur(28px) saturate(190%)`.
+- **Ambient Atmospheric Fluid Mesh**: Luminous animated fluid color orbs moving beneath glass surfaces (`animate-ambient-1`, `animate-ambient-2`, `animate-ambient-3`).
+- **SVG Optical Displacement Lens (`<feDisplacementMap>`)**: Real-time simulated optical refraction curvature and chromatic dispersion.
+- **SwiftUI Elastic Jelly Springs**: Tactile press physics (`active:scale-[0.96]`, `cubic-bezier(0.34, 1.56, 0.64, 1)`) and spring-pop spotlight modals.
+- **Adaptive Crystal & Obsidian Themes**: Frosty crystal liquid glass in Light mode and smoked obsidian glass in Dark mode.
 
 ---
 
@@ -74,7 +74,7 @@ omp --model fast-reasoning
 <br/><br/>
 
 ### 2. Virtual Combos & Model Chains
-*Concentric squircle cards with priority failover execution ladders (Tier 1 $\to$ Tier 2 $\to$ Tier 3).*
+*Concentric liquid glass cards with priority failover execution ladders (Tier 1 $\to$ Tier 2 $\to$ Tier 3).*
 <img src="./public/screenshots/combos.png" alt="SZRoute Virtual Combos" width="100%" />
 
 <br/><br/>

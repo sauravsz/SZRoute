@@ -4,78 +4,76 @@
 
 @layer base {
   :root {
-    --system-blue: #007AFF;
-    --system-green: #34C759;
-    --system-indigo: #5856D6;
-    --system-orange: #FF9500;
-    --system-pink: #FF2D55;
-    --system-purple: #AF52DE;
-    --system-red: #FF3B30;
-    --system-teal: #5AC8FA;
-    --system-yellow: #FFCC00;
+    --liquid-primary: #007AFF;
+    --liquid-secondary: #5856D6;
+    --liquid-green: #34C759;
+    --liquid-orange: #FF9500;
+    --liquid-pink: #FF2D55;
+    --liquid-purple: #AF52DE;
+    --liquid-red: #FF3B30;
+    --liquid-cyan: #32ADE6;
 
-    --bg-page: #F2F2F7;
-    --bg-card: #FFFFFF;
-    --bg-card-secondary: #F8F9FA;
-    --bg-subtle: rgba(118, 118, 128, 0.12);
-    --bg-subtle-hover: rgba(118, 118, 128, 0.2);
+    --bg-page: #EEF2F6;
+    --glass-surface: rgba(255, 255, 255, 0.72);
+    --glass-surface-elevated: rgba(255, 255, 255, 0.88);
+    --glass-surface-subtle: rgba(255, 255, 255, 0.45);
     
-    --label-primary: #000000;
-    --label-secondary: rgba(60, 60, 67, 0.7);
-    --label-tertiary: rgba(60, 60, 67, 0.4);
-    --label-quaternary: rgba(60, 60, 67, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-border-subtle: rgba(255, 255, 255, 0.4);
+    --glass-edge-specular: rgba(255, 255, 255, 0.9);
 
-    --separator: rgba(60, 60, 67, 0.14);
-    --separator-opaque: #C6C6C8;
+    --text-primary: #0A0D14;
+    --text-secondary: #4E5A6E;
+    --text-tertiary: #8C98A9;
 
-    --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), 0 8px 28px rgba(0, 0, 0, 0.04);
+    --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08), 0 2px 8px 0 rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+    --glass-shadow-elevated: 0 16px 48px 0 rgba(15, 23, 42, 0.12), 0 4px 16px 0 rgba(15, 23, 42, 0.06), inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1.5px 1px 0 rgba(0, 0, 0, 0.08);
   }
 
   .dark {
-    --system-blue: #0A84FF;
-    --system-green: #30D158;
-    --system-indigo: #5E5CE6;
-    --system-orange: #FF9F0A;
-    --system-pink: #FF375F;
-    --system-purple: #BF5AF2;
-    --system-red: #FF453A;
-    --system-teal: #64D2FF;
-    --system-yellow: #FFD60A;
+    --liquid-primary: #0A84FF;
+    --liquid-secondary: #5E5CE6;
+    --liquid-green: #30D158;
+    --liquid-orange: #FF9F0A;
+    --liquid-pink: #FF375F;
+    --liquid-purple: #BF5AF2;
+    --liquid-red: #FF453A;
+    --liquid-cyan: #64D2FF;
 
-    --bg-page: #000000;
-    --bg-card: #1C1C1E;
-    --bg-card-secondary: #2C2C2E;
-    --bg-subtle: rgba(118, 118, 128, 0.24);
-    --bg-subtle-hover: rgba(118, 118, 128, 0.36);
+    --bg-page: #07090E;
+    --glass-surface: rgba(18, 22, 32, 0.68);
+    --glass-surface-elevated: rgba(24, 30, 44, 0.82);
+    --glass-surface-subtle: rgba(18, 22, 32, 0.4);
 
-    --label-primary: #FFFFFF;
-    --label-secondary: rgba(235, 235, 245, 0.7);
-    --label-tertiary: rgba(235, 235, 245, 0.4);
-    --label-quaternary: rgba(235, 235, 245, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-border-subtle: rgba(255, 255, 255, 0.08);
+    --glass-edge-specular: rgba(255, 255, 255, 0.28);
 
-    --separator: rgba(84, 84, 88, 0.45);
-    --separator-opaque: #38383A;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-tertiary: #64748B;
 
-    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 12px 40px rgba(0, 0, 0, 0.4);
+    --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), 0 2px 10px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+    --glass-shadow-elevated: 0 20px 60px 0 rgba(0, 0, 0, 0.65), 0 6px 20px 0 rgba(0, 0, 0, 0.4), inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.3), inset 0 -1.5px 1.5px 0 rgba(0, 0, 0, 0.5);
   }
 
   html,
   body {
     background-color: var(--bg-page);
-    color: var(--label-primary);
+    color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
-    transition: background-color 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), color 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+    overflow-x: hidden;
   }
 
   ::selection {
-    background-color: var(--system-blue);
-    color: #FFFFFF;
+    background-color: rgba(0, 122, 255, 0.3);
+    color: var(--text-primary);
   }
 
-  /* macOS Smooth Scrollbar */
+  /* Liquid Smooth Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -86,66 +84,140 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(142, 142, 147, 0.3);
+    background: rgba(148, 163, 184, 0.25);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(142, 142, 147, 0.5);
+    background: rgba(148, 163, 184, 0.45);
   }
 }
 
 @layer components {
-  /* Apple Concentric Card (24px Squircle) */
-  .apple-card {
-    background-color: var(--bg-card);
-    color: var(--label-primary);
-    border-radius: 24px;
-    padding: 24px;
-    border: 1px solid var(--separator);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, border-color 0.2s ease;
+  /* Liquid Glass Main Surface (Refractive Glass Lens with Edge Caustics) */
+  .liquid-glass {
+    background-color: var(--glass-surface);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.25s ease;
   }
 
-  .apple-card-interactive {
-    background-color: var(--bg-card);
-    color: var(--label-primary);
-    border-radius: 24px;
-    padding: 24px;
-    border: 1px solid var(--separator);
-    box-shadow: var(--card-shadow);
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, border-color 0.2s ease;
+  .liquid-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--glass-edge-specular) 50%, transparent 100%);
+    pointer-events: none;
   }
 
-  .apple-card-interactive:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.06);
+  /* Liquid Glass Elevated Lens */
+  .liquid-glass-elevated {
+    background-color: var(--glass-surface-elevated);
+    backdrop-filter: blur(36px) saturate(200%);
+    -webkit-backdrop-filter: blur(36px) saturate(200%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow-elevated);
+    border-radius: 30px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .apple-card-interactive:active {
-    transform: scale(0.985);
+  /* Interactive Liquid Glass Card with Hover Lift & Elastic Touch */
+  .liquid-glass-interactive {
+    background-color: var(--glass-surface);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease, background-color 0.2s ease;
   }
 
-  /* Apple Glass Blur Panel */
-  .apple-glass {
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--separator);
+  .liquid-glass-interactive::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--glass-edge-specular) 50%, transparent 100%);
+    pointer-events: none;
   }
 
-  .dark .apple-glass {
-    background-color: rgba(28, 28, 30, 0.82);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--separator);
+  .liquid-glass-interactive:hover {
+    transform: translateY(-3px) scale(1.008);
+    box-shadow: 0 16px 44px 0 rgba(15, 23, 42, 0.12), 0 4px 16px 0 rgba(15, 23, 42, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 122, 255, 0.35);
   }
 
-  /* Apple Primary Capsule Button (SwiftUI Spring Touch Feedback) */
-  .btn-apple-primary {
-    background-color: var(--system-blue);
+  .liquid-glass-interactive:active {
+    transform: scale(0.975);
+    transition-duration: 0.1s;
+  }
+
+  /* Liquid Primary Action Pill Button */
+  .btn-liquid-primary {
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
     color: #FFFFFF;
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
+    border-radius: 9999px;
+    padding: 9px 22px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-liquid-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 100%);
+    border-radius: 9999px 9999px 0 0;
+    pointer-events: none;
+  }
+
+  .btn-liquid-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1.5px) scale(1.02);
+    box-shadow: 0 6px 22px rgba(0, 122, 255, 0.45), inset 0 1px 1.5px rgba(255, 255, 255, 0.8);
+  }
+
+  .btn-liquid-primary:active {
+    transform: scale(0.95);
+    filter: brightness(0.95);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+  }
+
+  /* Liquid Secondary Translucent Pill Button */
+  .btn-liquid-secondary {
+    background-color: var(--glass-surface-subtle);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
     border-radius: 9999px;
     padding: 9px 20px;
     height: 42px;
@@ -153,69 +225,51 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.15s ease;
-    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease;
   }
 
-  .btn-apple-primary:hover {
-    filter: brightness(1.06);
-    transform: translateY(-1px);
+  .btn-liquid-secondary:hover {
+    background-color: var(--glass-surface);
+    transform: translateY(-1.5px) scale(1.02);
+    border-color: rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.7);
   }
 
-  .btn-apple-primary:active {
-    transform: scale(0.96);
-    filter: brightness(0.95);
+  .btn-liquid-secondary:active {
+    transform: scale(0.95);
   }
 
-  /* Apple Secondary Capsule Button */
-  .btn-apple-secondary {
-    background-color: var(--bg-subtle);
-    color: var(--label-primary);
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 9999px;
-    padding: 9px 18px;
-    height: 42px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.15s ease;
-  }
-
-  .btn-apple-secondary:hover {
-    background-color: var(--bg-subtle-hover);
-    transform: translateY(-1px);
-  }
-
-  .btn-apple-secondary:active {
-    transform: scale(0.96);
-  }
-
-  /* Apple Subtle Form Input */
-  .apple-input {
-    background-color: var(--bg-subtle);
-    color: var(--label-primary);
-    border: 1px solid transparent;
-    border-radius: 14px;
-    padding: 10px 16px;
+  /* Liquid Glass Subtle Input */
+  .liquid-input {
+    background-color: var(--glass-surface-subtle);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 10px 18px;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   }
 
-  .apple-input:focus {
-    background-color: var(--bg-card);
-    border-color: var(--system-blue);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.18);
+  .liquid-input:focus {
+    background-color: var(--glass-surface-elevated);
+    border-color: #007AFF;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.02);
   }
 
-  /* Apple Pill Status Badge */
-  .badge-apple-green {
-    background-color: rgba(52, 199, 89, 0.15);
-    color: var(--system-green);
+  /* Liquid Status Badge */
+  .badge-liquid-green {
+    background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(48, 209, 88, 0.1) 100%);
+    color: #34C759;
+    border: 1px solid rgba(52, 199, 89, 0.35);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(52, 199, 89, 0.15);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 9999px;
     padding: 4px 12px;
     display: inline-flex;
@@ -223,11 +277,13 @@
     gap: 6px;
   }
 
-  .badge-apple-blue {
-    background-color: rgba(0, 122, 255, 0.12);
-    color: var(--system-blue);
+  .badge-liquid-blue {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(88, 86, 214, 0.1) 100%);
+    color: #007AFF;
+    border: 1px solid rgba(0, 122, 255, 0.35);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 2px 8px rgba(0, 122, 255, 0.15);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 9999px;
     padding: 4px 12px;
     display: inline-flex;

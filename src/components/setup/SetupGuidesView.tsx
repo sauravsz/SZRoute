@@ -121,25 +121,25 @@ for chunk in response:
       {/* Header & Dynamic Combo Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#5856D6]/15 text-[#5856D6] flex items-center justify-center">
+          <h2 className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#5856D6]/15 text-[#5856D6] flex items-center justify-center border border-[#5856D6]/30 shadow-xs">
               <Terminal className="w-5 h-5" />
             </div>
             <span>Client Integration & Setup Guides</span>
           </h2>
-          <p className="text-[14px] text-[var(--label-secondary)] mt-0.5">
+          <p className="text-[14px] text-[var(--text-secondary)] mt-0.5">
             Drop-in configuration snippets for Oh My Pi (omp), Cursor, Cline, Codex, Python SDK, and cURL.
           </p>
         </div>
 
         {/* Dynamic Combo Selector Pill */}
-        <div className="flex items-center gap-2 bg-[var(--bg-subtle)] px-3 py-1.5 rounded-2xl">
-          <Sliders className="w-4 h-4 text-[var(--system-blue)]" />
-          <span className="text-[12px] text-[var(--label-secondary)] font-semibold">Target:</span>
+        <div className="flex items-center gap-2 bg-[var(--glass-surface-subtle)] border border-[var(--glass-border-subtle)] px-3.5 py-1.5 rounded-2xl">
+          <Sliders className="w-4 h-4 text-[#007AFF]" />
+          <span className="text-[12px] text-[var(--text-secondary)] font-bold">Target:</span>
           <select
             value={selectedCombo}
             onChange={(e) => setSelectedCombo(e.target.value)}
-            className="bg-[var(--bg-card)] text-[var(--label-primary)] px-3 py-1 text-[12px] font-semibold rounded-xl outline-none border border-[var(--separator)] cursor-pointer"
+            className="bg-[var(--glass-surface)] text-[var(--text-primary)] px-3 py-1 text-[12px] font-bold rounded-xl outline-none border border-[var(--glass-border)] cursor-pointer shadow-xs"
           >
             {allCombos.map((c) => (
               <option key={c.id} value={c.id}>
@@ -150,55 +150,55 @@ for chunk in response:
         </div>
       </div>
 
-      {/* Guides 2-Up Concentric Card Grid */}
+      {/* Guides 2-Up Liquid Glass Card Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {guides.map((guide) => (
           <div
             key={guide.id}
-            className="apple-card-interactive p-6 space-y-4 flex flex-col justify-between"
+            className="liquid-glass-interactive p-6 space-y-4 flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-2xl bg-[var(--system-blue)]/12 text-[var(--system-blue)] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white flex items-center justify-center shadow-xs">
                     <Terminal className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-[16px] font-bold text-[var(--label-primary)]">
+                    <h3 className="text-[16px] font-bold text-[var(--text-primary)]">
                       {guide.title}
                     </h3>
                   </div>
                 </div>
-                <span className="badge-apple-blue text-[11px] py-0.5">
+                <span className="badge-liquid-blue text-[11px] py-0.5">
                   {guide.badge}
                 </span>
               </div>
 
-              <p className="text-[13px] text-[var(--label-secondary)] leading-relaxed">
+              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed">
                 {guide.description}
               </p>
 
-              {/* Code Snippet Box */}
+              {/* Code Snippet Box in Smoked Glass Container */}
               <div className="relative group pt-1">
-                <pre className="bg-[var(--bg-card-secondary)] dark:bg-black/60 text-[var(--label-primary)] border border-[var(--separator)] rounded-2xl p-4 text-[13px] font-mono overflow-x-auto whitespace-pre leading-relaxed shadow-xs">
+                <pre className="bg-[var(--glass-surface-subtle)] text-[var(--text-primary)] border border-[var(--glass-border)] rounded-2xl p-4 text-[13px] font-mono overflow-x-auto whitespace-pre leading-relaxed shadow-inner">
                   {guide.code}
                 </pre>
                 <button
                   onClick={() => copySnippet(guide.id, guide.code)}
-                  className="absolute top-3 right-3 p-2 bg-[var(--bg-card)] hover:bg-[var(--bg-subtle)] text-[var(--label-primary)] rounded-xl border border-[var(--separator)] active:scale-90 transition-all shadow-xs"
+                  className="absolute top-3 right-3 p-2 bg-[var(--glass-surface-elevated)] hover:bg-[var(--glass-surface)] text-[var(--text-primary)] rounded-xl border border-[var(--glass-border)] active:scale-90 transition-all shadow-xs"
                   title="Copy code snippet"
                 >
                   {copiedId === guide.id ? (
-                    <Check className="w-4 h-4 text-[var(--system-green)]" />
+                    <Check className="w-4 h-4 text-[#34C759]" />
                   ) : (
-                    <Copy className="w-4 h-4 text-[var(--label-secondary)]" />
+                    <Copy className="w-4 h-4 text-[var(--text-secondary)]" />
                   )}
                 </button>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[var(--separator)]">
-              <span className="text-[12px] font-semibold text-[var(--system-blue)] flex items-center gap-1">
+            <div className="pt-2 border-t border-[var(--glass-border-subtle)]">
+              <span className="text-[12px] font-semibold text-[#007AFF] flex items-center gap-1">
                 Tested on Vercel Edge <ChevronRight className="w-3.5 h-3.5" />
               </span>
             </div>

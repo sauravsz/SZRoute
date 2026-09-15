@@ -75,28 +75,31 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
   return (
     <div className="space-y-10 animate-spring-slide-up">
-      {/* Apple-styled Hero Showcase Card (Concentric 28px Squircle) */}
-      <section className="apple-card p-6 sm:p-10 relative overflow-hidden bg-gradient-to-b from-[var(--bg-card)] to-[var(--bg-card-secondary)]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left: Typography Hierarchy */}
+      {/* ─── Hero Liquid Glass Showcase Lens ─── */}
+      <section className="liquid-glass p-7 sm:p-10 relative overflow-hidden">
+        {/* Optical Glass Caustic Flare Highlight */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-gradient-to-br from-[#007AFF]/20 via-[#5856D6]/15 to-transparent blur-2xl pointer-events-none" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          {/* Left Column: Hero Content & Actions */}
           <div className="lg:col-span-7 space-y-5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--system-blue)]/10 text-[var(--system-blue)] text-[12px] font-semibold">
-              <span className="w-2 h-2 rounded-full bg-[var(--system-blue)] animate-pulse" />
-              <span>Zero-Cost Gateway for Oh My Pi (omp)</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full badge-liquid-blue">
+              <span className="w-2 h-2 rounded-full bg-[#007AFF] animate-pulse" />
+              <span>Zero-Cost AI Gateway for Oh My Pi (omp)</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[var(--label-primary)] leading-[1.1]">
-              Never stop coding. Free frontier models for omp.
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[var(--text-primary)] leading-[1.08]">
+              Never stop coding. Free frontier AI for omp.
             </h1>
 
-            <p className="text-[15px] sm:text-[17px] text-[var(--label-secondary)] leading-relaxed max-w-xl">
-              Connect <strong className="text-[var(--label-primary)] font-semibold">Oh My Pi (omp)</strong>, Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers). Save 15%–95% tokens with RTK prompt minification.
+            <p className="text-[15px] sm:text-[17px] text-[var(--text-secondary)] leading-relaxed max-w-xl font-normal">
+              Connect <strong className="text-[var(--text-primary)] font-bold">Oh My Pi (omp)</strong>, Cursor, Cline, and Codex to 160+ AI providers (50+ free tiers). Save 15%–95% tokens with stacked RTK compression.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={() => onNavigate("studio")}
-                className="btn-apple-primary text-[14px] shadow-md"
+                className="btn-liquid-primary text-[14px]"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Launch Studio</span>
@@ -104,36 +107,37 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
               <button
                 onClick={() => onNavigate("setup")}
-                className="btn-apple-secondary text-[14px]"
+                className="btn-liquid-secondary text-[14px]"
               >
-                <Terminal className="w-4 h-4" />
+                <Terminal className="w-4 h-4 text-[#5856D6]" />
                 <span>omp Integration</span>
               </button>
 
               <button
                 onClick={copyUrl}
-                className="btn-apple-secondary text-[14px]"
+                className="btn-liquid-secondary text-[14px]"
               >
-                {copiedEndpoint ? <Check className="w-4 h-4 text-[var(--system-green)]" /> : <Copy className="w-4 h-4" />}
+                {copiedEndpoint ? <Check className="w-4 h-4 text-[#34C759]" /> : <Copy className="w-4 h-4 text-[#007AFF]" />}
                 <span>{copiedEndpoint ? "Endpoint Copied" : "Copy /v1 Endpoint"}</span>
               </button>
             </div>
           </div>
 
-          {/* Right: Concentric Interactive AI Cost Calculator */}
-          <div className="lg:col-span-5 p-5 bg-[var(--bg-card)] rounded-3xl border border-[var(--separator)] shadow-lg space-y-4">
+          {/* Right Column: Liquid Interactive AI Token & Cost Calculator */}
+          <div className="lg:col-span-5 p-5 liquid-glass-elevated space-y-4">
             <div className="flex items-center justify-between pb-1">
-              <span className="text-[12px] font-bold text-[var(--label-secondary)] uppercase tracking-wider">
-                Token & Cost Telemetry
+              <span className="text-[12px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                Token & Cost Calculator
               </span>
-              <span className="badge-apple-green text-[11px] py-0.5 font-bold">
+              <span className="badge-liquid-green text-[11px] py-0.5">
                 100% FREE
               </span>
             </div>
 
             <div className="space-y-3">
-              <div className="p-3.5 bg-[var(--bg-subtle)] rounded-2xl space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-[var(--label-secondary)] font-semibold">
+              {/* Input Tokens Box */}
+              <div className="p-3.5 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border-subtle)] space-y-1">
+                <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] font-bold">
                   <span>Input Prompt Tokens</span>
                   <span>Standard Cost: ${standardCost}</span>
                 </div>
@@ -143,40 +147,41 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
                     value={calcTokens}
                     onChange={(e) => setCalcTokens(Math.max(1000, parseInt(e.target.value) || 0))}
                     step={10000}
-                    className="bg-transparent text-2xl font-bold text-[var(--label-primary)] outline-none w-full"
+                    className="bg-transparent text-2xl font-black text-[var(--text-primary)] outline-none w-full"
                   />
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--bg-card)] text-[var(--label-secondary)] shadow-2xs">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-[var(--glass-surface)] text-[var(--text-secondary)] border border-[var(--glass-border)] shadow-xs">
                     Tokens
                   </span>
                 </div>
               </div>
 
-              {/* Minimal Apple Separator with Down Arrow */}
+              {/* Optical Glass Down Arrow */}
               <div className="flex items-center justify-center -my-2 relative z-10">
-                <div className="w-7 h-7 rounded-full bg-[var(--system-blue)] text-white flex items-center justify-center shadow-xs">
-                  <ArrowDown className="w-3.5 h-3.5" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#007AFF] to-[#5856D6] text-white flex items-center justify-center shadow-md border border-white/40">
+                  <ArrowDown className="w-4 h-4" />
                 </div>
               </div>
 
-              <div className="p-3.5 bg-[var(--system-blue)]/10 border border-[var(--system-blue)]/20 rounded-2xl space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-[var(--system-blue)]">
+              {/* SZRoute Routing + RTK Output */}
+              <div className="p-3.5 bg-gradient-to-br from-[#007AFF]/15 to-[#5856D6]/10 border border-[#007AFF]/30 rounded-2xl space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-bold text-[#007AFF]">
                   <span>SZRoute Edge Routing + RTK</span>
-                  <span>You Pay: $0.00</span>
+                  <span className="text-[#34C759] font-black">You Pay: $0.00</span>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-2xl font-bold text-[var(--label-primary)]">
-                      {calcTokens - rtkSavingsTokens} <span className="text-xs font-medium text-[var(--label-secondary)]">tokens</span>
+                    <div className="text-2xl font-black text-[var(--text-primary)]">
+                      {calcTokens - rtkSavingsTokens} <span className="text-xs font-semibold text-[var(--text-secondary)]">tokens</span>
                     </div>
-                    <div className="text-[11px] text-[var(--system-green)] font-semibold">
-                      ✓ 42% tokens compressed via RTK
+                    <div className="text-[11px] text-[#34C759] font-bold">
+                      🔥 42% tokens compressed via RTK
                     </div>
                   </div>
 
                   <select
                     value={calcSelectedModel}
                     onChange={(e) => setCalcSelectedModel(e.target.value)}
-                    className="bg-[var(--bg-card)] text-[var(--label-primary)] text-[12px] font-semibold px-3 py-1.5 rounded-xl border border-[var(--separator)] outline-none"
+                    className="bg-[var(--glass-surface)] text-[var(--text-primary)] text-[12px] font-bold px-3 py-1.5 rounded-xl border border-[var(--glass-border)] outline-none shadow-xs"
                   >
                     <option value="free-auto">free-auto (Groq/Cerebras)</option>
                     <option value="code-expert">code-expert (Claude 3.7)</option>
@@ -188,91 +193,91 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
 
             <button
               onClick={() => onNavigate("setup")}
-              className="w-full btn-apple-primary h-11 text-[13px] font-semibold"
+              className="w-full btn-liquid-primary h-11 text-[13px] font-bold shadow-lg"
             >
-              Configure Oh My Pi (omp) →
+              Route Oh My Pi (omp) for Free →
             </button>
           </div>
         </div>
       </section>
 
-      {/* 4-Up Apple Metric Grid */}
+      {/* ─── 4-Up Liquid Glass Metric Cards Grid ─── */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="apple-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[var(--label-secondary)] text-[12px] font-semibold">
+        <div className="liquid-glass-interactive p-5 space-y-2">
+          <div className="flex items-center justify-between text-[var(--text-secondary)] text-[12px] font-bold">
             <span>Requests Processed</span>
-            <div className="w-7 h-7 rounded-lg bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#007AFF] to-[#32ADE6] text-white flex items-center justify-center shadow-xs">
               <Activity className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
             {stats.totalRequests.toLocaleString()}
           </div>
-          <div className="text-[12px] text-[var(--system-green)] font-medium">
+          <div className="text-[12px] text-[#34C759] font-bold">
             100% failover coverage
           </div>
         </div>
 
-        <div className="apple-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[var(--label-secondary)] text-[12px] font-semibold">
+        <div className="liquid-glass-interactive p-5 space-y-2">
+          <div className="flex items-center justify-between text-[var(--text-secondary)] text-[12px] font-bold">
             <span>Tokens Compressed</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FF3B30]/15 text-[#FF3B30] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#FF3B30] to-[#FF2D55] text-white flex items-center justify-center shadow-xs">
               <Flame className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
             {stats.totalTokensSaved.toLocaleString()}
           </div>
-          <div className="text-[12px] text-[var(--system-red)] font-medium">
+          <div className="text-[12px] text-[#FF3B30] font-bold">
             15%–95% RTK reduction
           </div>
         </div>
 
-        <div className="apple-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[var(--label-secondary)] text-[12px] font-semibold">
+        <div className="liquid-glass-interactive p-5 space-y-2">
+          <div className="flex items-center justify-between text-[var(--text-secondary)] text-[12px] font-bold">
             <span>Average Latency</span>
-            <div className="w-7 h-7 rounded-lg bg-[#FF9500]/15 text-[#FF9500] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#FF9500] to-[#FFCC00] text-white flex items-center justify-center shadow-xs">
               <Zap className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
             {stats.avgLatencyMs > 0 ? `${stats.avgLatencyMs} ms` : "120 ms"}
           </div>
-          <div className="text-[12px] text-[var(--label-secondary)] font-medium">
+          <div className="text-[12px] text-[var(--text-secondary)] font-medium">
             Wafer-scale LPU speed
           </div>
         </div>
 
-        <div className="apple-card p-5 space-y-2">
-          <div className="flex items-center justify-between text-[var(--label-secondary)] text-[12px] font-semibold">
+        <div className="liquid-glass-interactive p-5 space-y-2">
+          <div className="flex items-center justify-between text-[var(--text-secondary)] text-[12px] font-bold">
             <span>Financial Savings</span>
-            <div className="w-7 h-7 rounded-lg bg-[#34C759]/15 text-[#34C759] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#34C759] to-[#30D158] text-white flex items-center justify-center shadow-xs">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
             ${stats.estimatedDollarsSaved}
           </div>
-          <div className="text-[12px] text-[var(--system-green)] font-medium">
+          <div className="text-[12px] text-[#34C759] font-bold">
             Aggregated free inference
           </div>
         </div>
       </section>
 
-      {/* Virtual Combos Showcase (Concentric Cards Grid) */}
+      {/* ─── Virtual Combos Showcase (Refractive Glass Lenses) ─── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[var(--label-primary)] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-[var(--text-primary)] tracking-tight">
               Virtual Combos & Auto-Failovers
             </h2>
-            <p className="text-[14px] text-[var(--label-secondary)] mt-0.5">
+            <p className="text-[14px] text-[var(--text-secondary)] mt-0.5">
               Multi-tier fallback routing chains for Oh My Pi (omp)
             </p>
           </div>
           <button
             onClick={() => onNavigate("combos")}
-            className="text-[13px] font-semibold text-[var(--system-blue)] hover:underline flex items-center gap-1 active:scale-95 transition-transform"
+            className="text-[13px] font-bold text-[#007AFF] hover:underline flex items-center gap-1 active:scale-95 transition-transform"
           >
             <span>Manage Combos</span>
             <ChevronRight className="w-4 h-4" />
@@ -283,43 +288,43 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
           {DEFAULT_COMBOS.map((combo) => (
             <div
               key={combo.id}
-              className="apple-card-interactive p-5 space-y-3 flex flex-col justify-between"
+              className="liquid-glass-interactive p-5 space-y-3 flex flex-col justify-between"
             >
               <div className="space-y-2.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#34C759] to-[#007AFF] flex items-center justify-center text-white shadow-xs">
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#34C759] to-[#007AFF] flex items-center justify-center text-white shadow-xs">
                   <Layers className="w-5 h-5" />
                 </div>
 
                 <div>
-                  <div className="text-[11px] uppercase font-bold tracking-wider text-[var(--system-blue)]">
-                    {combo.strategy}
+                  <div className="text-[11px] uppercase font-bold tracking-wider text-[#007AFF]">
+                    {combo.strategy} Routing
                   </div>
-                  <h3 className="text-[16px] font-bold text-[var(--label-primary)] leading-snug">
+                  <h3 className="text-[16px] font-bold text-[var(--text-primary)] leading-snug">
                     {combo.name}
                   </h3>
-                  <code className="text-[12px] font-mono text-[var(--label-secondary)] block">
+                  <code className="text-[12px] font-mono font-semibold text-[var(--text-secondary)] block">
                     model: &quot;{combo.id}&quot;
                   </code>
                 </div>
 
-                <p className="text-[13px] text-[var(--label-secondary)] leading-relaxed">
+                <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed">
                   {combo.description}
                 </p>
 
                 <div className="space-y-1 pt-1">
                   {combo.targets.map((t, i) => (
-                    <div key={i} className="text-[12px] text-[var(--label-secondary)] flex items-center justify-between py-0.5">
-                      <span className="font-medium text-[var(--label-primary)]">{i + 1}. {t.providerId}</span>
+                    <div key={i} className="text-[12px] text-[var(--text-secondary)] flex items-center justify-between py-0.5 border-b border-[var(--glass-border-subtle)] last:border-0">
+                      <span className="font-semibold text-[var(--text-primary)]">{i + 1}. {t.providerId}</span>
                       <span className="font-mono text-[11px] truncate max-w-[110px]">{t.modelId}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-[var(--separator)]">
+              <div className="pt-2 border-t border-[var(--glass-border-subtle)]">
                 <button
                   onClick={() => onNavigate("studio")}
-                  className="w-full btn-apple-secondary text-[12px] h-8 font-semibold"
+                  className="w-full btn-liquid-secondary text-[12px] h-8 font-bold"
                 >
                   Test in Studio →
                 </button>
@@ -329,20 +334,20 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
         </div>
       </section>
 
-      {/* Free Tier Provider Matrix (Apple Grouped Style) */}
+      {/* ─── Free Tier Provider Matrix ─── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[var(--label-primary)] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-[var(--text-primary)] tracking-tight">
               Frontier Providers Health Matrix
             </h2>
-            <p className="text-[14px] text-[var(--label-secondary)] mt-0.5">
+            <p className="text-[14px] text-[var(--text-secondary)] mt-0.5">
               Aggregating ~1.9B free tokens/month across leading providers
             </p>
           </div>
           <button
             onClick={() => onNavigate("providers")}
-            className="text-[13px] font-semibold text-[var(--system-blue)] hover:underline flex items-center gap-1 active:scale-95 transition-transform"
+            className="text-[13px] font-bold text-[#007AFF] hover:underline flex items-center gap-1 active:scale-95 transition-transform"
           >
             <span>All 160+ Providers</span>
             <ChevronRight className="w-4 h-4" />
@@ -357,42 +362,42 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
             return (
               <div
                 key={provider.id}
-                className="apple-card-interactive p-5 space-y-3 flex flex-col justify-between"
+                className="liquid-glass-interactive p-5 space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-2.5">
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="text-[11px] uppercase font-bold text-[var(--system-green)]">
+                      <div className="text-[11px] uppercase font-bold text-[#34C759]">
                         {provider.freeTier.badgeText}
                       </div>
-                      <h3 className="text-[16px] font-bold text-[var(--label-primary)] mt-0.5">
+                      <h3 className="text-[16px] font-bold text-[var(--text-primary)] mt-0.5">
                         {provider.name}
                       </h3>
                     </div>
 
-                    <div className="w-8 h-8 rounded-xl bg-[var(--bg-subtle)] flex items-center justify-center font-bold text-xs text-[var(--label-primary)]">
+                    <div className="w-8 h-8 rounded-xl bg-[var(--glass-surface-subtle)] border border-[var(--glass-border)] flex items-center justify-center font-black text-xs text-[var(--text-primary)]">
                       {provider.name.slice(0, 2).toUpperCase()}
                     </div>
                   </div>
 
-                  <p className="text-[13px] text-[var(--label-secondary)] leading-relaxed line-clamp-2">
+                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-2">
                     {provider.description}
                   </p>
                 </div>
 
-                <div className="pt-2.5 border-t border-[var(--separator)] flex items-center justify-between text-[12px]">
-                  <span className="text-[var(--label-secondary)] truncate max-w-[130px]">
+                <div className="pt-2.5 border-t border-[var(--glass-border-subtle)] flex items-center justify-between text-[12px]">
+                  <span className="text-[var(--text-secondary)] font-medium truncate max-w-[130px]">
                     {provider.freeTier.monthlyFreeTokensEstimate || "Free quota"}
                   </span>
                   <button
                     onClick={() => testPing(provider.id)}
                     disabled={isTesting}
-                    className="btn-apple-secondary text-[11px] h-7 px-3 font-semibold active:scale-90"
+                    className="btn-liquid-secondary text-[11px] h-7 px-3 font-bold active:scale-90"
                   >
                     {isTesting ? (
                       <span>Pinging...</span>
                     ) : pingResult ? (
-                      <span className={pingResult.status === "ok" ? "text-[var(--system-green)]" : "text-[var(--system-red)]"}>
+                      <span className={pingResult.status === "ok" ? "text-[#34C759]" : "text-[#FF3B30]"}>
                         {pingResult.latencyMs}ms
                       </span>
                     ) : (

@@ -277,13 +277,13 @@ export function ProvidersView({
 
   return (
     <div className="space-y-6 animate-spring-slide-up">
-      {/* Top Header */}
+      {/* Top Header & Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[var(--label-primary)] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
             Providers, API Keys & OAuth
           </h2>
-          <p className="text-[14px] text-[var(--label-secondary)] mt-0.5">
+          <p className="text-[14px] text-[var(--text-secondary)] mt-0.5">
             Configure upstream credentials, OAuth 2.0 PKCE, or GitHub Copilot device authentication.
           </p>
         </div>
@@ -291,7 +291,7 @@ export function ProvidersView({
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => handleStartDeviceFlow("github_copilot")}
-            className="btn-apple-secondary text-[12px] h-9 px-3.5"
+            className="btn-liquid-secondary text-[12px] h-9 px-3.5"
           >
             <Github className="w-3.5 h-3.5" />
             <span>Copilot Device Auth</span>
@@ -300,36 +300,36 @@ export function ProvidersView({
           <button
             onClick={handleBenchmarkAll}
             disabled={isBenchmarking}
-            className="btn-apple-secondary text-[12px] h-9 px-3.5"
+            className="btn-liquid-secondary text-[12px] h-9 px-3.5"
           >
-            <Zap className={`w-3.5 h-3.5 ${isBenchmarking ? "animate-spin text-[var(--system-blue)]" : ""}`} />
+            <Zap className={`w-3.5 h-3.5 ${isBenchmarking ? "animate-spin text-[#007AFF]" : ""}`} />
             <span>{isBenchmarking ? "Benchmarking..." : "Benchmark Speed"}</span>
           </button>
 
           <button
             onClick={() => setBackupModalOpen(true)}
-            className="btn-apple-secondary text-[12px] h-9 px-3.5"
+            className="btn-liquid-secondary text-[12px] h-9 px-3.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Backup / Sync</span>
           </button>
 
           <div className="relative w-full sm:w-56">
-            <Search className="w-4 h-4 text-[var(--label-tertiary)] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search (Press /)..."
-              className="apple-input w-full pl-9 pr-3 py-1.5 text-[13px]"
+              className="liquid-input w-full pl-9 pr-3 py-1.5 text-[13px]"
             />
           </div>
         </div>
       </div>
 
-      {/* Segmented Control Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--separator)] pb-3">
-        <div className="flex flex-wrap items-center gap-1.5 bg-[var(--bg-subtle)] p-1 rounded-2xl">
+      {/* Segmented Category Filter Strip */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--glass-border-subtle)] pb-3">
+        <div className="flex flex-wrap items-center gap-1.5 bg-[var(--glass-surface-subtle)] p-1 rounded-2xl border border-[var(--glass-border-subtle)]">
           {[
             { id: "all", label: "All Providers" },
             { id: "free", label: "100% Free Tiers" },
@@ -341,10 +341,10 @@ export function ProvidersView({
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id as any)}
-                className={`px-3 py-1 rounded-xl text-[12px] font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1 rounded-xl text-[12px] font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? "bg-[var(--bg-card)] text-[var(--label-primary)] shadow-2xs"
-                    : "text-[var(--label-secondary)] hover:text-[var(--label-primary)]"
+                    ? "bg-gradient-to-r from-[#007AFF] to-[#5856D6] text-white shadow-xs"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {tab.label}
@@ -354,14 +354,14 @@ export function ProvidersView({
         </div>
 
         {sortByLatency && (
-          <div className="text-[12px] text-[var(--system-green)] font-semibold flex items-center gap-1">
+          <div className="text-[12px] text-[#34C759] font-bold flex items-center gap-1">
             <ArrowUpDown className="w-3.5 h-3.5" /> Sorted by live speed
           </div>
         )}
       </div>
 
-      {/* 3-Up Provider Concentric Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* 3-Up Liquid Glass Provider Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredProviders.map((provider) => {
           const hasKey = Boolean(apiKeys[provider.id]);
           const hasOAuth = Boolean(oauthTokens[provider.id]);
@@ -371,27 +371,27 @@ export function ProvidersView({
           return (
             <div
               key={provider.id}
-              className="apple-card-interactive p-5 space-y-3 flex flex-col justify-between"
+              className="liquid-glass-interactive p-5 space-y-3 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="text-[11px] uppercase font-bold text-[var(--system-blue)]">
+                    <div className="text-[11px] uppercase font-bold text-[#007AFF]">
                       {hasOAuth ? "OAuth Active" : provider.freeTier.hasFree ? "Free Tier" : "Commercial API"}
                     </div>
-                    <h3 className="text-[17px] font-bold text-[var(--label-primary)] mt-0.5">
+                    <h3 className="text-[17px] font-bold text-[var(--text-primary)] mt-0.5">
                       {provider.name}
                     </h3>
                   </div>
 
                   {latency !== undefined && latency < 9000 && (
-                    <span className="text-[11px] font-mono font-bold text-[var(--system-green)] bg-[var(--system-green)]/15 px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-mono font-bold text-[#34C759] bg-[#34C759]/15 px-2.5 py-0.5 rounded-full border border-[#34C759]/30">
                       {latency}ms
                     </span>
                   )}
                 </div>
 
-                <p className="text-[13px] text-[var(--label-secondary)] leading-relaxed line-clamp-2">
+                <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-2">
                   {provider.description}
                 </p>
 
@@ -401,7 +401,7 @@ export function ProvidersView({
                     {provider.models.map((m) => (
                       <span
                         key={m.id}
-                        className="px-2.5 py-0.5 text-[11px] bg-[var(--bg-subtle)] text-[var(--label-secondary)] font-medium rounded-full truncate max-w-[180px]"
+                        className="px-2.5 py-0.5 text-[11px] bg-[var(--glass-surface-subtle)] text-[var(--text-secondary)] font-medium rounded-full border border-[var(--glass-border-subtle)] truncate max-w-[180px]"
                         title={m.name}
                       >
                         {m.name}
@@ -412,14 +412,14 @@ export function ProvidersView({
               </div>
 
               {/* Card Footer Actions */}
-              <div className="pt-3 border-t border-[var(--separator)] flex items-center justify-between text-[12px]">
-                <div className="text-[var(--label-secondary)]">
+              <div className="pt-3 border-t border-[var(--glass-border-subtle)] flex items-center justify-between text-[12px]">
+                <div className="text-[var(--text-secondary)]">
                   {hasOAuth ? (
-                    <span className="text-[var(--system-green)] font-semibold flex items-center gap-1">
+                    <span className="text-[#34C759] font-bold flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" /> OAuth Ready
                     </span>
                   ) : hasKey ? (
-                    <span className="text-[var(--system-green)] font-semibold flex items-center gap-1">
+                    <span className="text-[#34C759] font-bold flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" /> Key Saved
                     </span>
                   ) : (
@@ -431,7 +431,7 @@ export function ProvidersView({
                   {oauthConfig && !hasOAuth && (
                     <button
                       onClick={() => handleStartOAuthRedirect(provider.id)}
-                      className="btn-apple-primary text-[11px] h-7 px-3 font-semibold active:scale-95"
+                      className="btn-liquid-primary text-[11px] h-7 px-3 font-semibold"
                     >
                       OAuth
                     </button>
@@ -439,7 +439,7 @@ export function ProvidersView({
 
                   <button
                     onClick={() => handleOpenKeyModal(provider)}
-                    className="btn-apple-secondary text-[11px] h-7 px-3 font-semibold active:scale-95"
+                    className="btn-liquid-secondary text-[11px] h-7 px-3 font-semibold"
                   >
                     <Key className="w-3 h-3" />
                     <span>{hasKey || hasOAuth ? "Edit" : "Key"}</span>
@@ -451,26 +451,26 @@ export function ProvidersView({
         })}
       </div>
 
-      {/* GitHub Copilot Device Flow Modal */}
+      {/* GitHub Copilot Device Flow Glass Modal */}
       {deviceFlow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
           <div
-            className="w-full max-w-md bg-[var(--bg-card)] rounded-3xl border border-[var(--separator)] shadow-2xl p-6 space-y-4 text-center animate-spring-pop"
+            className="w-full max-w-md liquid-glass-elevated p-7 space-y-4 text-center animate-spring-pop"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-2xl bg-[var(--system-blue)]/15 text-[var(--system-blue)] flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center mx-auto border border-[#007AFF]/30">
               <Github className="w-6 h-6" />
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-[var(--label-primary)]">GitHub Copilot Device Login</h3>
-              <p className="text-[13px] text-[var(--label-secondary)] mt-1">
+              <h3 className="text-lg font-black text-[var(--text-primary)]">GitHub Copilot Device Login</h3>
+              <p className="text-[13px] text-[var(--text-secondary)] mt-1 font-medium">
                 Enter this 8-digit verification code on GitHub:
               </p>
             </div>
 
-            <div className="p-4 bg-[var(--bg-subtle)] rounded-2xl border border-[var(--separator)]">
-              <div className="text-3xl font-mono font-bold text-[var(--system-blue)] tracking-widest select-all">
+            <div className="p-4 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border)] shadow-inner">
+              <div className="text-3xl font-mono font-black text-[#007AFF] tracking-widest select-all">
                 {deviceFlow.userCode}
               </div>
             </div>
@@ -480,28 +480,28 @@ export function ProvidersView({
                 href={deviceFlow.verificationUri}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-apple-primary w-full h-11 text-[13px] flex items-center justify-center gap-2"
+                className="btn-liquid-primary w-full h-11 text-[13px] flex items-center justify-center gap-2"
               >
                 <span>Open GitHub to Authorize</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
 
-              <div className="text-[12px] text-[var(--label-secondary)] flex items-center justify-center gap-1.5 pt-1">
+              <div className="text-[12px] text-[var(--text-secondary)] flex items-center justify-center gap-1.5 pt-1">
                 {deviceFlow.status === "polling" && (
                   <>
-                    <Zap className="w-3.5 h-3.5 animate-spin text-[var(--system-blue)]" />
+                    <Zap className="w-3.5 h-3.5 animate-spin text-[#007AFF]" />
                     <span>Awaiting approval on GitHub...</span>
                   </>
                 )}
                 {deviceFlow.status === "success" && (
-                  <span className="text-[var(--system-green)] font-semibold">✓ Copilot connected!</span>
+                  <span className="text-[#34C759] font-bold">✓ Copilot connected!</span>
                 )}
               </div>
             </div>
 
             <button
               onClick={() => setDeviceFlow(null)}
-              className="text-[12px] text-[var(--label-secondary)] hover:text-[var(--label-primary)] font-semibold pt-1 block mx-auto"
+              className="text-[12px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-bold pt-1 block mx-auto"
             >
               Cancel
             </button>
@@ -509,57 +509,57 @@ export function ProvidersView({
         </div>
       )}
 
-      {/* Backup & Restore Modal */}
+      {/* Backup & Restore Glass Modal */}
       {backupModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
           <div
-            className="w-full max-w-lg bg-[var(--bg-card)] rounded-3xl border border-[var(--separator)] shadow-2xl p-6 space-y-4 animate-spring-pop"
+            className="w-full max-w-lg liquid-glass-elevated p-6 space-y-4 animate-spring-pop"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[var(--separator)] pb-3">
-              <h3 className="text-base font-bold text-[var(--label-primary)]">Backup & Synchronization</h3>
+            <div className="flex items-center justify-between border-b border-[var(--glass-border-subtle)] pb-3">
+              <h3 className="text-base font-bold text-[var(--text-primary)]">Backup & Synchronization</h3>
               <button
                 onClick={() => setBackupModalOpen(false)}
-                className="p-1 rounded-full text-[var(--label-tertiary)] hover:text-[var(--label-primary)] hover:bg-[var(--bg-subtle)]"
+                className="p-1 rounded-full text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 text-[13px]">
-              <div className="p-4 bg-[var(--bg-subtle)] rounded-2xl space-y-2">
-                <div className="font-semibold text-[var(--label-primary)]">Export Gateway State</div>
-                <p className="text-[var(--label-secondary)] text-[12px]">
+              <div className="p-4 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border-subtle)] space-y-2">
+                <div className="font-bold text-[var(--text-primary)]">Export Gateway State</div>
+                <p className="text-[var(--text-secondary)] text-[12px]">
                   Download encrypted JSON snapshot containing your configured API keys, OAuth tokens, and combos.
                 </p>
                 <button
                   onClick={handleDownloadBackup}
-                  className="btn-apple-primary text-[12px] h-8 px-4"
+                  className="btn-liquid-primary text-[12px] h-8 px-4"
                 >
                   <Download className="w-3.5 h-3.5" /> Download JSON
                 </button>
               </div>
 
-              <div className="p-4 bg-[var(--bg-subtle)] rounded-2xl space-y-2">
-                <div className="font-semibold text-[var(--label-primary)]">Restore Gateway State</div>
+              <div className="p-4 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border-subtle)] space-y-2">
+                <div className="font-bold text-[var(--text-primary)]">Restore Gateway State</div>
                 <textarea
                   rows={3}
                   value={importJsonText}
                   onChange={(e) => setImportJsonText(e.target.value)}
                   placeholder="Paste snapshot JSON..."
-                  className="w-full bg-[var(--bg-card)] text-[var(--label-primary)] border border-[var(--separator)] rounded-xl p-2.5 text-[11px] font-mono outline-none"
+                  className="w-full bg-[var(--glass-surface)] text-[var(--text-primary)] border border-[var(--glass-border)] rounded-xl p-2.5 text-[11px] font-mono outline-none"
                 />
                 <button
                   onClick={handleApplyImport}
                   disabled={!importJsonText.trim()}
-                  className="btn-apple-secondary text-[12px] h-8 px-4 disabled:opacity-40"
+                  className="btn-liquid-secondary text-[12px] h-8 px-4 disabled:opacity-40"
                 >
                   <Upload className="w-3.5 h-3.5" /> Restore Snapshot
                 </button>
               </div>
 
               {backupMessage && (
-                <div className="p-2.5 bg-[var(--system-green)]/15 text-[var(--system-green)] text-[12px] font-semibold rounded-xl">
+                <div className="p-2.5 bg-[#34C759]/20 text-[#34C759] text-[12px] font-bold rounded-xl border border-[#34C759]/30">
                   {backupMessage}
                 </div>
               )}
@@ -568,34 +568,34 @@ export function ProvidersView({
         </div>
       )}
 
-      {/* Key Config Modal */}
+      {/* Key Config Glass Modal */}
       {editingProvider && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
           <div
-            className="w-full max-w-md bg-[var(--bg-card)] rounded-3xl border border-[var(--separator)] shadow-2xl p-6 space-y-4 animate-spring-pop"
+            className="w-full max-w-md liquid-glass-elevated p-6 space-y-4 animate-spring-pop"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[var(--separator)] pb-3">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border-subtle)] pb-3">
               <div>
-                <div className="text-[11px] uppercase font-bold text-[var(--system-blue)]">Credential Setup</div>
-                <h3 className="text-base font-bold text-[var(--label-primary)]">{editingProvider.name}</h3>
+                <div className="text-[11px] uppercase font-bold text-[#007AFF]">Credential Setup</div>
+                <h3 className="text-base font-bold text-[var(--text-primary)]">{editingProvider.name}</h3>
               </div>
               <button
                 onClick={() => setEditingProvider(null)}
-                className="p-1 rounded-full text-[var(--label-tertiary)] hover:text-[var(--label-primary)] hover:bg-[var(--bg-subtle)]"
+                className="p-1 rounded-full text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface-subtle)]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[12px] font-semibold text-[var(--label-primary)]">API Key / Secret Token</label>
+              <label className="text-[12px] font-semibold text-[var(--text-primary)]">API Key / Secret Token</label>
               <input
                 type="password"
                 value={keyInput}
                 onChange={(e) => setKeyInput(e.target.value)}
                 placeholder={`Paste your ${editingProvider.name} key...`}
-                className="apple-input w-full font-mono text-[13px]"
+                className="liquid-input w-full font-mono text-[13px]"
               />
             </div>
 
@@ -603,10 +603,10 @@ export function ProvidersView({
               <div
                 className={`p-3 text-[12px] font-semibold rounded-2xl flex items-center gap-2 ${
                   testResult.status === "testing"
-                    ? "bg-[var(--bg-subtle)] text-[var(--label-primary)]"
+                    ? "bg-[var(--glass-surface-subtle)] text-[var(--text-primary)]"
                     : testResult.status === "ok"
-                    ? "bg-[var(--system-green)]/15 text-[var(--system-green)]"
-                    : "bg-[var(--system-red)]/15 text-[var(--system-red)]"
+                    ? "bg-[#34C759]/20 text-[#34C759] border border-[#34C759]/30"
+                    : "bg-[#FF3B30]/20 text-[#FF3B30] border border-[#FF3B30]/30"
                 }`}
               >
                 {testResult.status === "testing" && <span>Testing connection...</span>}
@@ -615,11 +615,11 @@ export function ProvidersView({
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2 border-t border-[var(--separator)]">
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--glass-border-subtle)]">
               <button
                 onClick={handleTestKey}
                 disabled={testResult.status === "testing"}
-                className="btn-apple-secondary text-[12px] h-9 px-4"
+                className="btn-liquid-secondary text-[12px] h-9 px-4"
               >
                 <Play className="w-3.5 h-3.5" /> Test Ping
               </button>
@@ -632,7 +632,7 @@ export function ProvidersView({
                       if (onRemoveOAuthToken) onRemoveOAuthToken(editingProvider.id);
                       setEditingProvider(null);
                     }}
-                    className="p-2 rounded-xl text-[var(--system-red)] hover:bg-[var(--system-red)]/10"
+                    className="p-2 rounded-xl text-[#FF3B30] hover:bg-[#FF3B30]/15"
                     title="Remove credential"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -640,13 +640,13 @@ export function ProvidersView({
                 )}
                 <button
                   onClick={() => setEditingProvider(null)}
-                  className="btn-apple-secondary text-[12px] h-9 px-4"
+                  className="btn-liquid-secondary text-[12px] h-9 px-4"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="btn-apple-primary text-[12px] h-9 px-5"
+                  className="btn-liquid-primary text-[12px] h-9 px-5"
                 >
                   Save
                 </button>
