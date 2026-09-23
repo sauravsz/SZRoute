@@ -90,6 +90,67 @@ export function useSZRouteStore() {
     return () => window.removeEventListener("message", handleOAuthMessage);
   }, [oauthTokens, apiKeys]);
 
+  // Automatic OAuth Token Refresh Loop (proactively refreshes tokens before 60-min expiry)
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    let isCancelled = false;
+
+    const checkAndRefreshTokens = async () => {
+      const now = Date.now();
+      const entries = Object.entries(oauthTokens);
+
+      for (const [providerId, tokenData] of entries) {
+        if (!tokenData || !tokenData.refreshToken) continue;
+
+        // Proactively refresh if expired or expiring within 5 minutes (300,000 ms)
+        const isExpiringSoon = !tokenData.expiresAt || tokenData.expiresAt - now < 300_000;
+        if (!isExpiringSoon) continue;
+
+        try {
+          const res = await fetch("/api/oauth/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              providerId,
+              refreshToken: tokenData.refreshToken,
+            }),
+          });
+
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.tokenData && !isCancelled) {
+              const fresh: OAuthTokenData = {
+                ...tokenData,
+                accessToken: json.tokenData.accessToken,
+                refreshToken: json.tokenData.refreshToken || tokenData.refreshToken,
+                expiresIn: json.tokenData.expiresIn,
+                expiresAt: json.tokenData.expiresAt,
+              };
+              saveOAuthToken(providerId, fresh);
+              console.log(
+                `[SZRoute Auto-Refresh] Successfully refreshed token for '${providerId}' (valid for ${Math.round(
+                  json.tokenData.expiresIn / 60
+                )}m)`
+              );
+            }
+          }
+        } catch (err) {
+          console.warn(`[SZRoute Auto-Refresh] Background refresh attempt for '${providerId}' failed:`, err);
+        }
+      }
+    };
+
+    // Run check on mount
+    checkAndRefreshTokens();
+
+    // Check every 60 seconds
+    const interval = setInterval(checkAndRefreshTokens, 60_000);
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, [isLoaded, oauthTokens]);
   const saveApiKey = (providerId: string, key: string) => {
     const updated = { ...apiKeys, [providerId]: key };
     setApiKeys(updated);

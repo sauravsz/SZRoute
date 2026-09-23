@@ -5,6 +5,7 @@ import { compressPrompt, compressMessages, estimateTokenCount, ContentBlock } fr
 import { resolveRouteTargets, detectProviderFromKey } from "../src/lib/gateway/router";
 import { shouldTripCircuit, isProviderCoolingDown, tripProviderCircuit, getNextPooledKey } from "../src/lib/gateway/circuitBreaker";
 import { OAUTH_PROVIDERS, generateCodeVerifier, generateCodeChallenge } from "../src/lib/oauth/providers";
+import { refreshOAuthToken } from "../src/lib/oauth/refresh";
 
 describe("SZRoute Provider Catalog & Virtual Combos", () => {
   test("catalog contains top free and commercial providers", () => {
@@ -74,6 +75,17 @@ describe("OAuth 2.0 & Device Code Engine", () => {
     assert.equal(detectProviderFromKey("sk-ant-test123"), "anthropic");
     assert.equal(detectProviderFromKey("sk-or-v1-test123"), "openrouter");
     assert.equal(detectProviderFromKey("random_non_matching_token"), null);
+  });
+
+  test("refreshOAuthToken rejects empty or invalid refresh tokens safely", async () => {
+    const resultEmpty = await refreshOAuthToken("antigravity", "");
+    assert.equal(resultEmpty, null);
+
+    const resultNull = await refreshOAuthToken("kiro", null as any);
+    assert.equal(resultNull, null);
+
+    const resultInvalidProvider = await refreshOAuthToken("non_existent_provider_xyz", "dummy_token");
+    assert.equal(resultInvalidProvider, null);
   });
 });
 

@@ -1,5 +1,6 @@
 import { PROVIDER_CATALOG, DEFAULT_COMBOS, ProviderDefinition, VirtualCombo } from "@/lib/providers/catalog";
 import { compressMessages, ChatMessage } from "@/lib/compression/engine";
+import { refreshOAuthToken } from "@/lib/oauth/refresh";
 import {
   isProviderCoolingDown,
   tripProviderCircuit,
@@ -277,7 +278,20 @@ export async function executeGatewayChat(
       tokenCandidate ||
       (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
       "";
-    const apiKey = getNextPooledKey(provider.id, rawKeys);
+    let apiKey = getNextPooledKey(provider.id, rawKeys);
+
+    // If no active key is provided, check if a long-lived OAuth refresh token is available in env
+    if (!apiKey) {
+      const refreshTokenEnv =
+        process.env[`${provider.id.toUpperCase()}_REFRESH_TOKEN`] ||
+        process.env[`${provider.id.replace(/-/g, "_").toUpperCase()}_REFRESH_TOKEN`];
+      if (refreshTokenEnv) {
+        const refreshed = await refreshOAuthToken(provider.id, refreshTokenEnv);
+        if (refreshed?.accessToken) {
+          apiKey = refreshed.accessToken;
+        }
+      }
+    }
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -365,11 +379,48 @@ export async function executeGatewayChat(
     }
 
     try {
-      const response = await fetch(upstreamUrl, {
+      let response = await fetch(upstreamUrl, {
         method: "POST",
         headers,
         body: JSON.stringify(requestBody),
       });
+
+      // On 401 Unauthorized: Attempt on-the-fly OAuth token refresh and retry
+      if (response.status === 401) {
+        const refreshTokenCandidate =
+          apiKeyMap[`${provider.id}_refresh_token`] ||
+          apiKeyMap["refresh_token"] ||
+          process.env[`${provider.id.toUpperCase()}_REFRESH_TOKEN`] ||
+          process.env[`${provider.id.replace(/-/g, "_").toUpperCase()}_REFRESH_TOKEN`] ||
+          "";
+
+        if (refreshTokenCandidate) {
+          const refreshed = await refreshOAuthToken(provider.id, refreshTokenCandidate);
+          if (refreshed?.accessToken) {
+            const retryHeaders = { ...headers };
+            if (provider.authHeader === "Authorization") {
+              retryHeaders["Authorization"] = provider.authPrefix
+                ? `${provider.authPrefix} ${refreshed.accessToken}`
+                : refreshed.accessToken;
+            } else {
+              retryHeaders[provider.authHeader] = refreshed.accessToken;
+            }
+            if (provider.id === "gemini") {
+              retryHeaders["x-goog-api-key"] = refreshed.accessToken;
+            }
+
+            const retryRes = await fetch(upstreamUrl, {
+              method: "POST",
+              headers: retryHeaders,
+              body: JSON.stringify(requestBody),
+            });
+
+            if (retryRes.ok) {
+              response = retryRes;
+            }
+          }
+        }
+      }
       if (response.ok) {
         const contentType = response.headers.get("content-type") || "";
 
