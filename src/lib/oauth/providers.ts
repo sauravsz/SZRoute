@@ -73,6 +73,57 @@ export const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
     description: "OAuth connect OpenRouter to auto-provision and manage free API keys.",
     badge: "Auto-Provision OAuth",
   },
+  antigravity: {
+    id: "antigravity",
+    name: "Google Antigravity",
+    type: "pkce",
+    authorizationUrl: "https://accounts.google.com/o/oauth2/v2/auth",
+    tokenUrl: "https://oauth2.googleapis.com/token",
+    clientId:
+      process.env.ANTIGRAVITY_CLIENT_ID ||
+      "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com",
+    scopes: [
+      "openid",
+      "email",
+      "profile",
+      "https://www.googleapis.com/auth/cloud-platform",
+    ],
+    description: "Authenticate with Google Cloud Code to route requests through Google Antigravity & Code Assist tiers.",
+    badge: "Cloud Code OAuth",
+  },
+  kiro: {
+    id: "kiro",
+    name: "Kiro AI (AWS Builder ID)",
+    type: "device_code",
+    authorizationUrl: "https://oidc.us-east-1.amazonaws.com/device_authorization",
+    tokenUrl: "https://oidc.us-east-1.amazonaws.com/token",
+    clientId: process.env.KIRO_CLIENT_ID || "kiro-client-id",
+    scopes: ["codewhisperer:completions", "codewhisperer:analysis"],
+    description: "Authenticate via AWS Builder ID Device Code to access Kiro AI and Amazon Q Developer coding models.",
+    badge: "AWS Builder ID",
+  },
+  claude: {
+    id: "claude",
+    name: "Anthropic Claude (OAuth)",
+    type: "pkce",
+    authorizationUrl: "https://claude.ai/oauth/authorize",
+    tokenUrl: "https://claude.ai/oauth/token",
+    clientId: process.env.CLAUDE_OAUTH_CLIENT_ID || "9d1c250a-e61b-44d9-88ed-5944d1962f5e",
+    scopes: ["user:read", "model:read", "inference:write"],
+    description: "Log in with your Anthropic Claude account to route requests through your Claude Pro/Team plan.",
+    badge: "Claude Account OAuth",
+  },
+  codex: {
+    id: "codex",
+    name: "OpenAI ChatGPT (OAuth)",
+    type: "pkce",
+    authorizationUrl: "https://auth.openai.com/authorize",
+    tokenUrl: "https://auth.openai.com/oauth/token",
+    clientId: process.env.CODEX_OAUTH_CLIENT_ID || "app_EMoamEEZ73f0CkXaXp7hrann",
+    scopes: ["openid", "profile", "email", "model.request"],
+    description: "Authenticate via OpenAI account to connect your ChatGPT Plus/Team subscription.",
+    badge: "ChatGPT Plus/Team",
+  },
 };
 
 /**

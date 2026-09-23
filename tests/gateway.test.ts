@@ -44,14 +44,18 @@ describe("SZRoute Provider Catalog & Virtual Combos", () => {
 });
 
 describe("OAuth 2.0 & Device Code Engine", () => {
-  test("oauth providers registry contains Google, GitHub Copilot, HuggingFace, OpenRouter", () => {
+  test("oauth providers registry contains Google, GitHub Copilot, HuggingFace, OpenRouter, Antigravity, Kiro", () => {
     assert.ok(OAUTH_PROVIDERS["google"]);
     assert.ok(OAUTH_PROVIDERS["github_copilot"]);
     assert.ok(OAUTH_PROVIDERS["huggingface"]);
     assert.ok(OAUTH_PROVIDERS["openrouter"]);
+    assert.ok(OAUTH_PROVIDERS["antigravity"]);
+    assert.ok(OAUTH_PROVIDERS["kiro"]);
 
     assert.equal(OAUTH_PROVIDERS["github_copilot"].type, "device_code");
+    assert.equal(OAUTH_PROVIDERS["kiro"].type, "device_code");
     assert.equal(OAUTH_PROVIDERS["google"].type, "pkce");
+    assert.equal(OAUTH_PROVIDERS["antigravity"].type, "pkce");
   });
 
   test("PKCE code verifier and challenge generation", async () => {

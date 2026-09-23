@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = await fetch("https://github.com/login/device/code", {
+    const authEndpoint = provider.authorizationUrl || "https://github.com/login/device/code";
+    const res = await fetch(authEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

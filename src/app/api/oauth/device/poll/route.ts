@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
     }
 
-    const res = await fetch("https://github.com/login/oauth/access_token", {
+    const tokenEndpoint = provider.tokenUrl || "https://github.com/login/oauth/access_token";
+    const res = await fetch(tokenEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
