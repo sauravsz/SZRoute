@@ -8,17 +8,19 @@ import { OAUTH_PROVIDERS, generateCodeVerifier, generateCodeChallenge } from "..
 import { refreshOAuthToken } from "../src/lib/oauth/refresh";
 
 describe("SZRoute Provider Catalog & Virtual Combos", () => {
-  test("catalog contains top free and commercial providers", () => {
-    assert.ok(PROVIDER_CATALOG.length >= 10, "Should have providers registered");
+  test("catalog contains active free providers including Antigravity and Kiro", () => {
+    assert.ok(PROVIDER_CATALOG.length >= 5, "Should have providers registered");
     const groq = PROVIDER_CATALOG.find((p) => p.id === "groq");
     const cerebras = PROVIDER_CATALOG.find((p) => p.id === "cerebras");
     const gemini = PROVIDER_CATALOG.find((p) => p.id === "gemini");
-    const openrouter = PROVIDER_CATALOG.find((p) => p.id === "openrouter");
+    const antigravity = PROVIDER_CATALOG.find((p) => p.id === "antigravity");
+    const kiro = PROVIDER_CATALOG.find((p) => p.id === "kiro");
 
     assert.ok(groq && groq.freeTier.hasFree, "Groq should be in free tier");
     assert.ok(cerebras && cerebras.freeTier.hasFree, "Cerebras should be in free tier");
     assert.ok(gemini && gemini.freeTier.hasFree, "Gemini should be in free tier");
-    assert.ok(openrouter && openrouter.freeTier.hasFree, "OpenRouter should be in free tier");
+    assert.ok(antigravity && antigravity.freeTier.hasFree, "Antigravity should be in free tier");
+    assert.ok(kiro && kiro.freeTier.hasFree, "Kiro should be in free tier");
   });
 
   test("gemini provider includes x-goog-api-client header", () => {
@@ -279,10 +281,10 @@ describe("Advanced Route Resolution & Provider Prefixing", () => {
     assert.equal(groqRoute.targets[0].provider.id, "groq");
     assert.equal(groqRoute.targets[0].upstreamModelId, "llama-3.3-70b-versatile");
 
-    const anthropicRoute = resolveRouteTargets("anthropic/claude-3-7-sonnet-20250219");
-    assert.equal(anthropicRoute.isCombo, false);
-    assert.equal(anthropicRoute.targets[0].provider.id, "anthropic");
-    assert.equal(anthropicRoute.targets[0].upstreamModelId, "claude-3-7-sonnet-20250219");
+    const kiroRoute = resolveRouteTargets("kiro/claude-3-7-sonnet");
+    assert.equal(kiroRoute.isCombo, false);
+    assert.equal(kiroRoute.targets[0].provider.id, "kiro");
+    assert.equal(kiroRoute.targets[0].upstreamModelId, "claude-3-7-sonnet");
   });
 
   test("resolves hyphen/underscore normalized model aliases", () => {

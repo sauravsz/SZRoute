@@ -69,7 +69,7 @@ export async function refreshOAuthToken(
     }
 
     // 2. Google AI Studio / Gemini
-    if (providerId === "google") {
+    if (providerId === "google" || providerId === "gemini") {
       const clientId =
         (extraData.clientId as string) ||
         process.env.GOOGLE_OAUTH_CLIENT_ID ||
@@ -107,7 +107,7 @@ export async function refreshOAuthToken(
         refreshToken: data.refresh_token || refreshToken,
         expiresIn,
         expiresAt: Date.now() + expiresIn * 1000,
-        providerId: "google",
+        providerId,
       };
     }
 

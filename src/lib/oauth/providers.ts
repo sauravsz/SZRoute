@@ -40,6 +40,21 @@ export const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
     description: "Authorize directly with your Google account for Gemini 2.5 Flash and Pro access.",
     badge: "15 RPM Free Access",
   },
+  gemini: {
+    id: "gemini",
+    name: "Google Gemini (AI Studio)",
+    type: "pkce",
+    authorizationUrl: "https://accounts.google.com/o/oauth2/v2/auth",
+    tokenUrl: "https://oauth2.googleapis.com/token",
+    clientId: process.env.GOOGLE_OAUTH_CLIENT_ID || "szroute-public-client.apps.googleusercontent.com",
+    scopes: [
+      "https://www.googleapis.com/auth/generative-language",
+      "openid",
+      "email",
+    ],
+    description: "Authorize directly with your Google account for Gemini 2.5 Flash and Pro access.",
+    badge: "15 RPM Free Access",
+  },
   github_copilot: {
     id: "github_copilot",
     name: "GitHub Copilot",

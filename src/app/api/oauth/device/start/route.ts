@@ -30,14 +30,25 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
 
-    if (data.device_code && data.user_code) {
+    const deviceCode = data.device_code || data.deviceCode;
+    const userCode = data.user_code || data.userCode;
+    const verificationUri =
+      data.verification_uri_complete ||
+      data.verificationUriComplete ||
+      data.verification_uri ||
+      data.verificationUri ||
+      "https://github.com/login/device";
+    const expiresIn = data.expires_in || data.expiresIn || 900;
+    const interval = data.interval || 5;
+
+    if (deviceCode && userCode) {
       return NextResponse.json({
         success: true,
-        deviceCode: data.device_code,
-        userCode: data.user_code,
-        verificationUri: data.verification_uri || "https://github.com/login/device",
-        expiresIn: data.expires_in || 900,
-        interval: data.interval || 5,
+        deviceCode,
+        userCode,
+        verificationUri,
+        expiresIn,
+        interval,
         provider: providerId,
       });
     }

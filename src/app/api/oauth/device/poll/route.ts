@@ -48,31 +48,39 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Success: User approved and token granted
-    if (data.access_token) {
-      // For Copilot, fetch copilot internal session token
-      let finalToken = data.access_token;
-      try {
-        const copilotRes = await fetch("https://api.github.com/copilot_internal/v2/token", {
-          headers: {
-            Authorization: `token ${data.access_token}`,
-            Accept: "application/json",
-            "User-Agent": "SZRoute/4.0",
-          },
-        });
-        const copilotJson = await copilotRes.json().catch(() => null);
-        if (copilotJson && copilotJson.token) {
-          finalToken = copilotJson.token;
-        }
-      } catch {}
+    const accessToken = data.access_token || data.accessToken;
+    if (accessToken) {
+      let finalToken = accessToken;
+      if (providerId === "github_copilot") {
+        // For Copilot, fetch copilot internal session token
+        try {
+          const copilotRes = await fetch("https://api.github.com/copilot_internal/v2/token", {
+            headers: {
+              Authorization: `token ${accessToken}`,
+              Accept: "application/json",
+              "User-Agent": "SZRoute/4.0",
+            },
+          });
+          const copilotJson = await copilotRes.json().catch(() => null);
+          if (copilotJson && copilotJson.token) {
+            finalToken = copilotJson.token;
+          }
+        } catch {}
+      }
+
+      const refreshToken = data.refresh_token || data.refreshToken;
+      const expiresIn = data.expires_in || data.expiresIn;
 
       const tokenData: OAuthTokenData = {
         accessToken: finalToken,
-        tokenType: data.token_type || "Bearer",
+        refreshToken,
+        tokenType: data.token_type || data.tokenType || "Bearer",
+        expiresIn,
+        expiresAt: expiresIn ? Date.now() + expiresIn * 1000 : undefined,
         scope: data.scope,
         connectedAt: new Date().toISOString(),
         providerId,
       };
-
       return NextResponse.json({
         status: "success",
         tokenData,

@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Sparkles,
   Github,
+  Cpu,
   ChevronRight,
 } from "lucide-react";
 import { PROVIDER_CATALOG, ProviderDefinition } from "@/lib/providers/catalog";
@@ -452,7 +453,13 @@ export function ProvidersView({
                 <div className="flex items-center gap-2">
                   {oauthConfig && !hasOAuth && (
                     <button
-                      onClick={() => handleStartOAuthRedirect(provider.id)}
+                      onClick={() => {
+                        if (oauthConfig.type === "device_code") {
+                          handleStartDeviceFlow(provider.id);
+                        } else {
+                          handleStartOAuthRedirect(provider.id);
+                        }
+                      }}
                       className="btn-liquid-primary text-[11px] h-7 px-3 font-semibold"
                     >
                       OAuth
@@ -473,7 +480,7 @@ export function ProvidersView({
         })}
       </div>
 
-      {/* GitHub Copilot Device Flow Glass Modal */}
+      {/* Device Flow Glass Modal */}
       {deviceFlow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
           <div
@@ -481,13 +488,23 @@ export function ProvidersView({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-12 h-12 rounded-2xl bg-[#007AFF]/15 text-[#007AFF] flex items-center justify-center mx-auto border border-[#007AFF]/30">
-              <Github className="w-6 h-6" />
+              {deviceFlow.providerId === "github_copilot" ? (
+                <Github className="w-6 h-6" />
+              ) : (
+                <Cpu className="w-6 h-6 text-[#FF9900]" />
+              )}
             </div>
 
             <div>
-              <h3 className="text-lg font-black text-[var(--text-primary)]">GitHub Copilot Device Login</h3>
+              <h3 className="text-lg font-black text-[var(--text-primary)]">
+                {deviceFlow.providerId === "kiro"
+                  ? "Kiro AI (AWS Builder ID) Login"
+                  : "GitHub Copilot Device Login"}
+              </h3>
               <p className="text-[13px] text-[var(--text-secondary)] mt-1 font-medium">
-                Enter this 8-digit verification code on GitHub:
+                {deviceFlow.providerId === "kiro"
+                  ? "Enter this verification code on AWS Builder ID:"
+                  : "Enter this 8-digit verification code on GitHub:"}
               </p>
             </div>
 
@@ -504,7 +521,11 @@ export function ProvidersView({
                 rel="noreferrer"
                 className="btn-liquid-primary w-full h-11 text-[13px] flex items-center justify-center gap-2"
               >
-                <span>Open GitHub to Authorize</span>
+                <span>
+                  {deviceFlow.providerId === "kiro"
+                    ? "Open AWS to Authorize"
+                    : "Open GitHub to Authorize"}
+                </span>
                 <ExternalLink className="w-4 h-4" />
               </a>
 
@@ -512,11 +533,17 @@ export function ProvidersView({
                 {deviceFlow.status === "polling" && (
                   <>
                     <Zap className="w-3.5 h-3.5 animate-spin text-[#007AFF]" />
-                    <span>Awaiting approval on GitHub...</span>
+                    <span>
+                      {deviceFlow.providerId === "kiro"
+                        ? "Awaiting approval on AWS..."
+                        : "Awaiting approval on GitHub..."}
+                    </span>
                   </>
                 )}
                 {deviceFlow.status === "success" && (
-                  <span className="text-[#34C759] font-bold">✓ Copilot connected!</span>
+                  <span className="text-[#34C759] font-bold">
+                    ✓ {deviceFlow.providerId === "kiro" ? "Kiro AI connected!" : "Copilot connected!"}
+                  </span>
                 )}
               </div>
             </div>
