@@ -146,6 +146,14 @@ npx vercel --prod
 
 ---
 
+## 🙏 Credits & Heritage
+
+SZRoute was initially forked from [OmniRoute](https://github.com/diegosouzapw/OmniRoute) by Diego Souza. It has since been completely re-architected into an independent, serverless Vercel Edge AI gateway featuring the Liquid Glass UI design system, single-pass RTK + Caveman token compression, universal circuit breaker with multi-key pooling, bidirectional Anthropic translation, and native Oh My Pi (`omp`) integration.
+
+Special thanks to the OmniRoute project and contributors for the original inspiration and foundational provider concepts.
+
+---
+
 ## 📄 License
 
 MIT License. Designed for autonomous AI workflows with the **Oh My Pi (`omp`)** coding agent.
