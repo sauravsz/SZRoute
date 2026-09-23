@@ -182,14 +182,18 @@ export function useSZRouteStore() {
     try {
       const parsed = JSON.parse(jsonString) as ExportBackupData;
       if (parsed.version === "szroute-v4") {
-        if (parsed.apiKeys) {
-          setApiKeys(parsed.apiKeys);
-          localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(parsed.apiKeys));
-        }
+        const mergedKeys = { ...(parsed.apiKeys || {}) };
         if (parsed.oauthTokens) {
+          for (const [pId, tokenData] of Object.entries(parsed.oauthTokens)) {
+            if (tokenData && tokenData.accessToken && !mergedKeys[pId]) {
+              mergedKeys[pId] = tokenData.accessToken;
+            }
+          }
           setOauthTokens(parsed.oauthTokens);
           localStorage.setItem(STORAGE_KEY_OAUTH, JSON.stringify(parsed.oauthTokens));
         }
+        setApiKeys(mergedKeys);
+        localStorage.setItem(STORAGE_KEY_API_KEYS, JSON.stringify(mergedKeys));
         if (parsed.customCombos) {
           setCustomCombos(parsed.customCombos);
           localStorage.setItem(STORAGE_KEY_COMBOS, JSON.stringify(parsed.customCombos));

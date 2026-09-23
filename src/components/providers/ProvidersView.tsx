@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Search,
   Key,
@@ -53,7 +53,29 @@ export function ProvidersView({
   const [backupModalOpen, setBackupModalOpen] = useState(false);
   const [importJsonText, setImportJsonText] = useState("");
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result;
+      if (typeof text === "string" && text.trim()) {
+        setImportJsonText(text.trim());
+        if (onImportBackup) {
+          const success = onImportBackup(text.trim());
+          if (success) {
+            setBackupMessage("Backup restored successfully from file!");
+            setTimeout(() => setBackupModalOpen(false), 1200);
+          } else {
+            setBackupMessage("Invalid backup JSON format.");
+          }
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
   const [isBenchmarking, setIsBenchmarking] = useState(false);
   const [pingLatencies, setPingLatencies] = useState<Record<string, number>>({});
   const [sortByLatency, setSortByLatency] = useState(false);
@@ -530,31 +552,54 @@ export function ProvidersView({
               <div className="p-4 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border-subtle)] space-y-2">
                 <div className="font-bold text-[var(--text-primary)]">Export Gateway State</div>
                 <p className="text-[var(--text-secondary)] text-[12px]">
-                  Download encrypted JSON snapshot containing your configured API keys, OAuth tokens, and combos.
+                  Download a portable JSON snapshot containing your {Object.keys(apiKeys).length} configured API key(s)
+                  {oauthTokens && Object.keys(oauthTokens).length > 0
+                    ? ` and ${Object.keys(oauthTokens).length} connected OAuth account(s)`
+                    : ""}.
                 </p>
                 <button
                   onClick={handleDownloadBackup}
                   className="btn-liquid-primary text-[12px] h-8 px-4"
                 >
-                  <Download className="w-3.5 h-3.5" /> Download JSON
+                  <Download className="w-3.5 h-3.5" /> Download JSON Backup
                 </button>
               </div>
 
               <div className="p-4 bg-[var(--glass-surface-subtle)] rounded-2xl border border-[var(--glass-border-subtle)] space-y-2">
                 <div className="font-bold text-[var(--text-primary)]">Restore Gateway State</div>
+                <p className="text-[var(--text-secondary)] text-[12px]">
+                  Upload a previously exported backup file or paste its JSON content below.
+                </p>
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json,application/json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="btn-liquid-secondary text-[12px] h-8 px-4"
+                  >
+                    <Upload className="w-3.5 h-3.5" /> Choose .json File
+                  </button>
+                  <span className="text-[11px] text-[var(--text-secondary)]">or paste JSON</span>
+                </div>
                 <textarea
                   rows={3}
                   value={importJsonText}
                   onChange={(e) => setImportJsonText(e.target.value)}
-                  placeholder="Paste snapshot JSON..."
+                  placeholder="Paste backup snapshot JSON..."
                   className="w-full bg-[var(--glass-surface)] text-[var(--text-primary)] border border-[var(--glass-border)] rounded-xl p-2.5 text-[11px] font-mono outline-none"
                 />
                 <button
                   onClick={handleApplyImport}
                   disabled={!importJsonText.trim()}
-                  className="btn-liquid-secondary text-[12px] h-8 px-4 disabled:opacity-40"
+                  className="btn-liquid-primary text-[12px] h-8 px-4 disabled:opacity-40"
                 >
-                  <Upload className="w-3.5 h-3.5" /> Restore Snapshot
+                  <Check className="w-3.5 h-3.5" /> Restore Snapshot
                 </button>
               </div>
 
