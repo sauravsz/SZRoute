@@ -205,7 +205,7 @@ export default function HomePage() {
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-10">
         <main className="flex-1 max-w-[1340px] w-full mx-auto px-5 lg:px-8 py-6 sm:py-8">
           {activeTab === "overview" && (
-            <OverviewView onNavigate={setActiveTab} stats={stats} />
+            <OverviewView onNavigate={setActiveTab} apiKeys={apiKeys} stats={stats} />
           )}
 
           {activeTab === "providers" && (

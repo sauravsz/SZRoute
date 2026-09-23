@@ -110,13 +110,27 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
       const failoverAttempts = parseInt(res.headers.get("x-szroute-failover-attempts") || "0", 10);
 
       if (!res.ok) {
-        const errJson = await res.json().catch(() => ({ error: { message: "Unknown error" } }));
-        const errMsg = errJson?.error?.message || "Failed to generate completion";
+        const errText = await res.text().catch(() => "");
+        const totalLatency = Date.now() - startTime;
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantMsgId ? { ...m, content: `⚠️ Error: ${errMsg}`, provider: resolvedProvider } : m
+            m.id === assistantMsgId
+              ? { ...m, content: `⚠️ Gateway error ${res.status}: ${errText.slice(0, 160)}`, latencyMs: totalLatency }
+              : m
           )
         );
+        if (onLogRequest) {
+          onLogRequest({
+            model: selectedModel,
+            provider: resolvedProvider,
+            latencyMs: totalLatency,
+            status: res.status,
+            tokensProcessed: 0,
+            tokensSaved: 0,
+            failoverAttempts,
+            promptSnippet: trimmed.slice(0, 80),
+          });
+        }
         return;
       }
 
@@ -125,13 +139,15 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let streamedContent = "";
+      let buffer = "";
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
           const trimmedLine = line.trim();
@@ -160,6 +176,29 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
         }
       }
 
+      if (buffer.trim().startsWith("data: ") && buffer.trim() !== "data: [DONE]") {
+        try {
+          const data = JSON.parse(buffer.trim().slice(6));
+          const delta = data.choices?.[0]?.delta?.content || "";
+          if (delta) {
+            streamedContent += delta;
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantMsgId
+                  ? {
+                      ...m,
+                      content: streamedContent,
+                      provider: resolvedProvider,
+                      model: resolvedModel,
+                      tokensSaved,
+                    }
+                  : m
+              )
+            );
+          }
+        } catch {}
+      }
+
       const totalLatency = Date.now() - startTime;
       setMessages((prev) =>
         prev.map((m) =>
@@ -181,12 +220,24 @@ export function ChatStudioView({ apiKeys, customCombos, onLogRequest }: ChatStud
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
+      const totalLatency = Date.now() - startTime;
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantMsgId ? { ...m, content: `⚠️ Connection error: ${msg}` } : m
+          m.id === assistantMsgId ? { ...m, content: `⚠️ Connection error: ${msg}`, latencyMs: totalLatency } : m
         )
       );
-    } finally {
+      if (onLogRequest) {
+        onLogRequest({
+          model: selectedModel,
+          provider: "unknown",
+          latencyMs: totalLatency,
+          status: 500,
+          tokensProcessed: 0,
+          tokensSaved: 0,
+          failoverAttempts: 0,
+          promptSnippet: trimmed.slice(0, 80),
+        });
+      }
       setIsGenerating(false);
     }
   };

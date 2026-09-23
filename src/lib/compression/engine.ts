@@ -32,15 +32,18 @@ export type ContentBlock = ContentBlockText | ContentBlockImage | Record<string,
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool";
-  content: string | ContentBlock[];
+  content: string | ContentBlock[] | null;
+  name?: string;
+  tool_call_id?: string;
+  tool_calls?: unknown[];
+  [key: string]: unknown;
 }
 
-// Pre-compiled regex patterns (Cut #2: Single-pass compiled regex execution)
+// Pre-compiled regex patterns (Single-pass compiled regex execution)
 const RE_EXCESS_BLANK_LINES = /\n{3,}/g;
-const RE_EXCESS_HORIZONTAL_SPACES = /[ \t]{2,}/g;
 const RE_TRAILING_SPACES = /[ \t]+$/gm;
-const RE_JSON_BLOCKS = /```(?:json)?\s*([\s\S]*?)\s*```/gi;
-
+const RE_JSON_BLOCKS = /```json\b\s*([\s\S]*?)\s*```/gi;
+const RE_CODE_BLOCK = /(```[\s\S]*?```|`[^`\n]+`)/g;
 const RE_AI_BOILERPLATES = [
   /please note that as an ai language model,?\s*/gi,
   /as an ai,? (?:i can|i am able to|i will)\s*/gi,
@@ -64,7 +67,7 @@ const RE_FILLER_PHRASES = [
  * Heuristic fast token count estimation (~4 chars/token in English, ~1.5 chars/token for code/JSON)
  */
 export function estimateTokenCount(text: string): number {
-  if (!text) return 0;
+  if (typeof text !== "string" || !text) return 0;
   return Math.max(1, Math.ceil(text.length / 3.8));
 }
 
@@ -95,24 +98,14 @@ export function compressPrompt(
     level = "standard",
   } = options;
 
-  let current = prompt;
   const applied: string[] = [];
   const originalTokens = estimateTokenCount(prompt);
 
-  // 1. RTK: Structural Markdown & Whitespace Normalization
-  if (stripMarkdownSpacing) {
-    const before = current;
-    current = current
-      .replace(RE_EXCESS_BLANK_LINES, "\n\n")
-      .replace(RE_EXCESS_HORIZONTAL_SPACES, " ")
-      .replace(RE_TRAILING_SPACES, "");
-    if (current !== before) applied.push("rtk-whitespace-minification");
-  }
-
-  // 2. RTK: JSON Payload Compaction
+  // 1. RTK: JSON Payload Compaction on explicit JSON blocks before code shielding
+  let processedPrompt = prompt;
   if (compactJson) {
-    const before = current;
-    current = current.replace(RE_JSON_BLOCKS, (match, jsonContent) => {
+    const beforeJson = processedPrompt;
+    processedPrompt = processedPrompt.replace(RE_JSON_BLOCKS, (match, jsonContent) => {
       try {
         const parsed = JSON.parse(jsonContent);
         return "```json\n" + JSON.stringify(parsed) + "\n```";
@@ -120,10 +113,28 @@ export function compressPrompt(
         return match;
       }
     });
-    if (current !== before) applied.push("rtk-json-compaction");
+    if (processedPrompt !== beforeJson) applied.push("rtk-json-compaction");
   }
 
-  // 3. Caveman: NLP Filler & Conversational Fluff Removal
+  // 2. Shield code blocks and inline code from whitespace collapsing and NLP filtering
+  const codeBlocks: string[] = [];
+  let current = processedPrompt.replace(RE_CODE_BLOCK, (match) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(match);
+    return `__SZROUTE_CODE_BLOCK_${idx}__`;
+  });
+
+  // 3. RTK: Structural Markdown & Whitespace Normalization on non-code prose
+  if (stripMarkdownSpacing) {
+    const before = current;
+    current = current
+      .replace(RE_EXCESS_BLANK_LINES, "\n\n")
+      .replace(/(?<=\S)[ \t]{2,}/g, " ")
+      .replace(RE_TRAILING_SPACES, "");
+    if (current !== before) applied.push("rtk-whitespace-minification");
+  }
+
+  // 4. Caveman: NLP Filler & Conversational Fluff Removal (outside code blocks)
   if (enableCaveman) {
     const before = current;
     for (const pat of RE_FILLER_PHRASES) {
@@ -132,7 +143,7 @@ export function compressPrompt(
     if (current !== before) applied.push("caveman-filler-removal");
   }
 
-  // 4. RTK: AI Boilerplate & Metacognitive Noise Purge
+  // 5. RTK: AI Boilerplate & Metacognitive Noise Purge (outside code blocks)
   if (enableRtk) {
     const before = current;
     for (const pat of RE_AI_BOILERPLATES) {
@@ -142,6 +153,13 @@ export function compressPrompt(
       current = current.replace(/^(?:sure|certainly|of course|here is|here are)[\s,:!.-]*/gim, "");
     }
     if (current !== before) applied.push("rtk-ai-boilerplate-purge");
+  }
+
+  // 6. Restore shielded code blocks verbatim
+  if (codeBlocks.length > 0) {
+    current = current.replace(/__SZROUTE_CODE_BLOCK_(\d+)__/g, (_, idx) => {
+      return codeBlocks[Number(idx)] ?? "";
+    });
   }
 
   current = current.trim();
@@ -189,6 +207,7 @@ export function compressMessages(
         const str = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
         if (seenSystemPrompts.has(str)) {
           allRules.add("rtk-system-prompt-deduplication");
+          totalOriginal += estimateTokenCount(str);
           return false;
         }
         seenSystemPrompts.add(str);
@@ -204,7 +223,7 @@ export function compressMessages(
       totalOriginal += res.originalTokens;
       totalCompressed += res.compressedTokens;
       res.rulesApplied.forEach((r) => allRules.add(r));
-      return { role: msg.role, content: res.compressedText };
+      return { ...msg, content: res.compressedText };
     }
 
     // 2. Multimodal / Vision Array Content Blocks
@@ -215,7 +234,7 @@ export function compressMessages(
           totalOriginal += res.originalTokens;
           totalCompressed += res.compressedTokens;
           res.rulesApplied.forEach((r) => allRules.add(r));
-          return { type: "text", text: res.compressedText };
+          return { ...block, text: res.compressedText };
         }
         // Preserve image and other blocks as-is
         const blockStr = JSON.stringify(block);
@@ -225,7 +244,7 @@ export function compressMessages(
         return block;
       });
 
-      return { role: msg.role, content: processedBlocks };
+      return { ...msg, content: processedBlocks };
     }
 
     return msg;

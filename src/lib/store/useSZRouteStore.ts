@@ -207,15 +207,20 @@ export function useSZRouteStore() {
   };
 
   const totalRequests = requestLogs.length;
+  const successfulLogs = requestLogs.filter(
+    (l) => typeof l.status === "number" ? l.status >= 200 && l.status < 300 : true
+  );
+  const successRate = totalRequests > 0 ? Math.round((successfulLogs.length / totalRequests) * 100) : 100;
   const totalTokensSaved = requestLogs.reduce((acc, l) => acc + (l.tokensSaved || 0), 0);
-  const totalTokensProcessed = requestLogs.reduce((acc, l) => acc + (l.tokensProcessed || 0), 0);
+  const totalTokensProcessed = successfulLogs.reduce((acc, l) => acc + (l.tokensProcessed || 0), 0);
   const avgLatencyMs =
-    totalRequests > 0
+    successfulLogs.length > 0
+      ? Math.round(successfulLogs.reduce((acc, l) => acc + (l.latencyMs || 0), 0) / successfulLogs.length)
+      : totalRequests > 0
       ? Math.round(requestLogs.reduce((acc, l) => acc + (l.latencyMs || 0), 0) / totalRequests)
       : 0;
 
   const dollarSavings = ((totalTokensSaved + totalTokensProcessed) * 0.000003).toFixed(4);
-
   return {
     isLoaded,
     apiKeys,
@@ -235,6 +240,7 @@ export function useSZRouteStore() {
     importBackup,
     stats: {
       totalRequests,
+      successRate,
       totalTokensSaved,
       totalTokensProcessed,
       avgLatencyMs,

@@ -17,11 +17,12 @@ import {
 } from "lucide-react";
 import { DEFAULT_COMBOS, PROVIDER_CATALOG } from "@/lib/providers/catalog";
 import { NavTab } from "../layout/Sidebar";
-
 interface OverviewViewProps {
   onNavigate: (tab: NavTab) => void;
+  apiKeys?: Record<string, string>;
   stats: {
     totalRequests: number;
+    successRate: number;
     totalTokensSaved: number;
     totalTokensProcessed: number;
     avgLatencyMs: number;
@@ -29,7 +30,7 @@ interface OverviewViewProps {
   };
 }
 
-export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
+export function OverviewView({ onNavigate, apiKeys = {}, stats }: OverviewViewProps) {
   const [copiedEndpoint, setCopiedEndpoint] = useState(false);
   const [calcTokens, setCalcTokens] = useState<number>(100000);
   const [calcSelectedModel, setCalcSelectedModel] = useState<string>("free-auto");
@@ -49,7 +50,10 @@ export function OverviewView({ onNavigate, stats }: OverviewViewProps) {
       const res = await fetch("/v1/test-provider", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ providerId }),
+        body: JSON.stringify({
+          providerId,
+          apiKey: apiKeys[providerId] || undefined,
+        }),
       });
       const data = await res.json();
       setPingResults((prev) => ({

@@ -14,20 +14,43 @@ export async function POST(req: NextRequest) {
     }
 
     const testModel = provider.models[0]?.id || "default";
+    const effectiveApiKey =
+      apiKey ||
+      (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
+      "";
+
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(provider.customHeaders || {}),
     };
 
-    if (apiKey) {
+    if (effectiveApiKey) {
       if (provider.authHeader === "Authorization") {
-        headers["Authorization"] = provider.authPrefix ? `${provider.authPrefix} ${apiKey}` : apiKey;
+        headers["Authorization"] = provider.authPrefix ? `${provider.authPrefix} ${effectiveApiKey}` : effectiveApiKey;
       } else {
-        headers[provider.authHeader] = apiKey;
+        headers[provider.authHeader] = effectiveApiKey;
       }
     }
 
-    const upstreamUrl = `${provider.baseUrl}/chat/completions`;
+    let upstreamBaseUrl = provider.baseUrl;
+    if (upstreamBaseUrl.includes("{ACCOUNT_ID}")) {
+      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || "";
+      if (!accountId) {
+        return NextResponse.json({
+          success: false,
+          latencyMs: Date.now() - startTime,
+          error: "Cloudflare requires CLOUDFLARE_ACCOUNT_ID environment variable",
+        });
+      }
+      upstreamBaseUrl = upstreamBaseUrl.replace("{ACCOUNT_ID}", accountId);
+    }
+
+    const isAnthropic = provider.id === "anthropic";
+    const upstreamUrl = isAnthropic ? `${upstreamBaseUrl}/messages` : `${upstreamBaseUrl}/chat/completions`;
+    if (isAnthropic) {
+      headers["anthropic-version"] = "2023-06-01";
+    }
+
     const res = await fetch(upstreamUrl, {
       method: "POST",
       headers,

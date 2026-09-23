@@ -18,7 +18,14 @@ export interface GatewayChatRequest {
   tools?: unknown[];
   tool_choice?: unknown;
   response_format?: unknown;
+  stop?: string | string[];
+  seed?: number;
+  frequency_penalty?: number;
+  presence_penalty?: number;
+  n?: number;
+  user?: string;
   compress?: boolean;
+  [key: string]: unknown;
 }
 
 export interface RouteTarget {
@@ -55,6 +62,9 @@ export function detectProviderFromKey(key: string): string | null {
   if (k.startsWith("sk-ant-")) return "anthropic";
   if (k.startsWith("sk-or-v1-") || k.startsWith("sk-or-")) return "openrouter";
   if (k.startsWith("together_")) return "together";
+  if (k.startsWith("nvapi-")) return "nvidia";
+  if (k.startsWith("fw_")) return "fireworks";
+  if (k.startsWith("hf_")) return "huggingface";
 
   return null;
 }
@@ -95,11 +105,27 @@ export function resolveRouteTargets(
       };
     }
   }
+  // 2. Provider/Model format (e.g. "groq/llama-3.3-70b-versatile", "anthropic/claude-3-7-sonnet-20250219")
+  if (modelId && modelId.includes("/")) {
+    const slashIdx = modelId.indexOf("/");
+    const providerPrefix = modelId.slice(0, slashIdx).toLowerCase().trim();
+    const subModelId = modelId.slice(slashIdx + 1).trim();
+    const provider = PROVIDER_CATALOG.find((p) => p.id.toLowerCase() === providerPrefix);
+    if (provider && subModelId) {
+      return {
+        isCombo: false,
+        targets: [{ provider, upstreamModelId: subModelId, priority: 1 }],
+      };
+    }
+  }
 
-  // 2. Direct model lookup across Provider Catalog
+  // 3. Direct model lookup across Provider Catalog (including hyphen/underscore aliases)
   for (const provider of PROVIDER_CATALOG) {
     const matchedModel = provider.models.find(
-      (m) => m.id.toLowerCase() === normalizedModel || m.name.toLowerCase() === normalizedModel
+      (m) =>
+        m.id.toLowerCase() === normalizedModel ||
+        m.name.toLowerCase() === normalizedModel ||
+        m.id.toLowerCase().replace(/[-_]/g, "") === normalizedModel.replace(/[-_]/g, "")
     );
     if (matchedModel) {
       return {
@@ -134,6 +160,69 @@ export function resolveRouteTargets(
 /**
  * Executes chat completion with circuit-breaker cooldowns, multi-key pooling, & tool normalization
  */
+function createAnthropicToOpenAISSETransformStream(modelId: string): TransformStream<Uint8Array, Uint8Array> {
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  return new TransformStream({
+    transform(chunk, controller) {
+      buffer += decoder.decode(chunk, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("data: ")) {
+          const raw = trimmed.slice(6);
+          try {
+            const data = JSON.parse(raw) as Record<string, unknown>;
+            if (data.type === "content_block_delta" && typeof data.delta === "object" && data.delta !== null) {
+              const delta = data.delta as Record<string, unknown>;
+              if (delta.type === "text_delta" && typeof delta.text === "string") {
+                const sseChunk = {
+                  id: "chatcmpl-" + Math.random().toString(36).slice(2, 9),
+                  object: "chat.completion.chunk",
+                  created: Math.floor(Date.now() / 1000),
+                  model: modelId,
+                  choices: [
+                    {
+                      index: 0,
+                      delta: { content: delta.text },
+                      finish_reason: null,
+                    },
+                  ],
+                };
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify(sseChunk)}\n\n`));
+              }
+            } else if (data.type === "message_delta" || data.type === "message_stop") {
+              const delta = (data.delta as Record<string, unknown>) || {};
+              const finishReason = delta.stop_reason === "max_tokens" ? "length" : "stop";
+              const sseChunk = {
+                id: "chatcmpl-" + Math.random().toString(36).slice(2, 9),
+                object: "chat.completion.chunk",
+                created: Math.floor(Date.now() / 1000),
+                model: modelId,
+                choices: [
+                  {
+                    index: 0,
+                    delta: {},
+                    finish_reason: finishReason,
+                  },
+                ],
+              };
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify(sseChunk)}\n\n`));
+              controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+            }
+          } catch {
+            // Ignore non-json chunks
+          }
+        }
+      }
+    },
+  });
+}
+
 export async function executeGatewayChat(
   req: GatewayChatRequest,
   apiKeyMap: Record<string, string> = {},
@@ -174,12 +263,20 @@ export async function executeGatewayChat(
     attempts++;
 
     // Feature 2: Multi-Key pooling and auto-detection
-    const rawKeys =
-      apiKeyMap[provider.id] ||
-      (detectedProvider === provider.id ? defaultToken : "") ||
-      (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
-      defaultToken;
+    // If defaultToken was detected for a different provider, do NOT pass it to this provider
+    let tokenCandidate = apiKeyMap[provider.id];
+    if (!tokenCandidate) {
+      if (detectedProvider === provider.id) {
+        tokenCandidate = defaultToken;
+      } else if (!detectedProvider) {
+        tokenCandidate = defaultToken;
+      }
+    }
 
+    const rawKeys =
+      tokenCandidate ||
+      (provider.defaultKeyEnv ? process.env[provider.defaultKeyEnv] : "") ||
+      "";
     const apiKey = getNextPooledKey(provider.id, rawKeys);
 
     const headers: Record<string, string> = {
@@ -214,15 +311,65 @@ export async function executeGatewayChat(
     if (normalizedTools) payload.tools = normalizedTools;
     if (req.tool_choice) payload.tool_choice = req.tool_choice;
     if (req.response_format) payload.response_format = req.response_format;
+    if (req.stop !== undefined) payload.stop = req.stop;
+    if (req.seed !== undefined) payload.seed = req.seed;
+    if (req.frequency_penalty !== undefined) payload.frequency_penalty = req.frequency_penalty;
+    if (req.presence_penalty !== undefined) payload.presence_penalty = req.presence_penalty;
+    if (req.n !== undefined) payload.n = req.n;
+    if (req.user !== undefined) payload.user = req.user;
+
+    let upstreamBaseUrl = provider.baseUrl;
+    if (upstreamBaseUrl.includes("{ACCOUNT_ID}")) {
+      const accountId =
+        apiKeyMap["cloudflare_account_id"] ||
+        apiKeyMap["account_id"] ||
+        process.env.CLOUDFLARE_ACCOUNT_ID ||
+        "";
+      if (!accountId) {
+        lastError = new Error("Cloudflare AI requires CLOUDFLARE_ACCOUNT_ID environment variable or apiKeyMap entry");
+        continue;
+      }
+      upstreamBaseUrl = upstreamBaseUrl.replace("{ACCOUNT_ID}", accountId);
+    }
+
+    const isAnthropic = provider.id === "anthropic";
+    let upstreamUrl = `${upstreamBaseUrl}/chat/completions`;
+    let requestBody: Record<string, unknown> = payload;
+
+    if (isAnthropic) {
+      upstreamUrl = `${upstreamBaseUrl}/messages`;
+      headers["anthropic-version"] = "2023-06-01";
+      if (apiKey && apiKey !== "szroute-free") {
+        headers["x-api-key"] = apiKey;
+      }
+
+      let anthropicSystem: string | undefined = undefined;
+      const nonSystemMessages = finalMessages.filter((m) => {
+        if (m.role === "system") {
+          anthropicSystem = typeof m.content === "string" ? m.content : JSON.stringify(m.content);
+          return false;
+        }
+        return true;
+      });
+
+      requestBody = {
+        model: upstreamModelId,
+        messages: nonSystemMessages,
+        max_tokens: req.max_tokens ?? 4096,
+        stream: Boolean(req.stream),
+        ...(req.temperature !== undefined ? { temperature: req.temperature } : {}),
+        ...(req.top_p !== undefined ? { top_p: req.top_p } : {}),
+        ...(anthropicSystem ? { system: anthropicSystem } : {}),
+        ...(normalizedTools ? { tools: normalizedTools } : {}),
+      };
+    }
 
     try {
-      const upstreamUrl = `${provider.baseUrl}/chat/completions`;
       const response = await fetch(upstreamUrl, {
         method: "POST",
         headers,
-        body: JSON.stringify(payload),
+        body: JSON.stringify(requestBody),
       });
-
       if (response.ok) {
         const contentType = response.headers.get("content-type") || "";
 
@@ -241,6 +388,92 @@ export async function executeGatewayChat(
         // Record success and clear failure counter
         recordProviderSuccess(provider.id);
 
+        if (isAnthropic) {
+          if (req.stream) {
+            const transformedStream = response.body?.pipeThrough(
+              createAnthropicToOpenAISSETransformStream(upstreamModelId)
+            );
+            const streamHeaders = new Headers(response.headers);
+            streamHeaders.set("Content-Type", "text/event-stream; charset=utf-8");
+            return {
+              response: new Response(transformedStream, {
+                status: 200,
+                headers: streamHeaders,
+              }),
+              selectedProvider: provider.id,
+              selectedModel: upstreamModelId,
+              failoverAttempts: attempts - 1,
+              tokensSaved,
+              percentTokensSaved,
+            };
+          } else {
+            const anthropicJson = (await response.json()) as Record<string, unknown>;
+            const contentBlocks = Array.isArray(anthropicJson.content)
+              ? (anthropicJson.content as Array<Record<string, unknown>>)
+              : [];
+            const textContent = contentBlocks
+              .filter((c) => c && c.type === "text" && typeof c.text === "string")
+              .map((c) => String(c.text))
+              .join("");
+
+            const toolUseBlocks = contentBlocks.filter((c) => c && c.type === "tool_use");
+            const toolCalls = toolUseBlocks.map((tu) => ({
+              id: String(tu.id ?? ""),
+              type: "function",
+              function: {
+                name: String(tu.name ?? ""),
+                arguments: JSON.stringify(tu.input ?? {}),
+              },
+            }));
+            const usage = anthropicJson.usage as Record<string, number> | undefined;
+            const inputTokens = usage?.input_tokens ?? 0;
+            const outputTokens = usage?.output_tokens ?? 0;
+
+            const openaiFormat = {
+              id: "chatcmpl-" + (anthropicJson.id ?? Math.random().toString(36).slice(2, 9)),
+              object: "chat.completion",
+              created: Math.floor(Date.now() / 1000),
+              model: upstreamModelId,
+              choices: [
+                {
+                  index: 0,
+                  message: {
+                    role: "assistant",
+                    content: textContent,
+                    ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
+                  },
+                  finish_reason:
+                    anthropicJson.stop_reason === "tool_use"
+                      ? "tool_calls"
+                      : anthropicJson.stop_reason === "max_tokens"
+                      ? "length"
+                      : "stop",
+                },
+              ],
+              usage: {
+                prompt_tokens: inputTokens,
+                completion_tokens: outputTokens,
+                total_tokens: inputTokens + outputTokens,
+              },
+            };
+
+            const transformedHeaders = new Headers(response.headers);
+            transformedHeaders.set("Content-Type", "application/json");
+
+            return {
+              response: new Response(JSON.stringify(openaiFormat), {
+                status: 200,
+                headers: transformedHeaders,
+              }),
+              selectedProvider: provider.id,
+              selectedModel: upstreamModelId,
+              failoverAttempts: attempts - 1,
+              tokensSaved,
+              percentTokensSaved,
+            };
+          }
+        }
+
         return {
           response,
           selectedProvider: provider.id,
@@ -248,7 +481,7 @@ export async function executeGatewayChat(
           failoverAttempts: attempts - 1,
           tokensSaved,
           percentTokensSaved,
-        };
+        }
       }
 
       const errorText = await response.text();

@@ -49,16 +49,28 @@ export async function GET(req: NextRequest) {
 
     const tokenRes = await fetch(provider.tokenUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
       body: bodyParams.toString(),
     });
 
-    const tokenJson = await tokenRes.json().catch(() => ({}));
+    const tokenText = await tokenRes.text().catch(() => "");
+    let tokenJson: Record<string, unknown> = {};
+    try {
+      tokenJson = JSON.parse(tokenText);
+    } catch {
+      const parsedParams = new URLSearchParams(tokenText);
+      tokenJson = Object.fromEntries(parsedParams.entries());
+    }
 
-    const accessToken = tokenJson.access_token || tokenJson.key || code;
-    const refreshToken = tokenJson.refresh_token || "";
-    const expiresIn = typeof tokenJson.expires_in === "number" ? tokenJson.expires_in : 3600;
-
+    const accessToken = String(tokenJson.access_token || tokenJson.key || code || "");
+    const refreshToken = String(tokenJson.refresh_token || "");
+    const expiresIn =
+      typeof tokenJson.expires_in === "number"
+        ? tokenJson.expires_in
+        : Number(tokenJson.expires_in) || 3600;
     const tokenData: OAuthTokenData = {
       accessToken,
       refreshToken,

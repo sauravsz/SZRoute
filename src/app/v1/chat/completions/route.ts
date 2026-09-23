@@ -43,8 +43,10 @@ export async function POST(req: NextRequest) {
     }
 
     // If client supplied single bearer token, test if it maps directly or can be passed to the requested target
-    if (authHeader.startsWith("Bearer ")) {
-      const token = authHeader.slice(7).trim();
+    if (authHeader) {
+      const token = authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7).trim()
+        : authHeader.trim();
       if (token) {
         apiKeyMap["default"] = token;
       }

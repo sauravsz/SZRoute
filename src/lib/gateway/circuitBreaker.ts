@@ -19,7 +19,7 @@ export function isProviderCoolingDown(providerId: string): boolean {
   const entry = providerCooldowns.get(providerId);
   if (!entry) return false;
 
-  if (Date.now() > entry.cooldownUntil) {
+  if (Date.now() >= entry.cooldownUntil) {
     providerCooldowns.delete(providerId);
     return false;
   }
@@ -28,9 +28,21 @@ export function isProviderCoolingDown(providerId: string): boolean {
 }
 
 /**
+ * Determines if an HTTP status code represents a transient provider outage (429 or 5xx)
+ * Client errors (400, 401, 403, 404, 422) must not trip provider-wide circuits.
+ */
+export function shouldTripCircuit(status: number): boolean {
+  return status === 429 || (status >= 500 && status <= 599);
+}
+
+/**
  * Report a provider failure and trip the circuit breaker cooldown
  */
 export function tripProviderCircuit(providerId: string, status: number, reason: string): void {
+  if (!shouldTripCircuit(status)) {
+    return;
+  }
+
   const existing = providerCooldowns.get(providerId);
   const consecutive = (existing?.consecutiveFailures || 0) + 1;
   const cooldownDuration = Math.min(DEFAULT_COOLDOWN_MS * consecutive, MAX_COOLDOWN_MS);
@@ -71,7 +83,7 @@ export function getNextPooledKey(providerId: string, rawKeys: string | string[])
   if (!Array.isArray(rawKeys) || rawKeys.length === 0) return "";
   if (rawKeys.length === 1) return rawKeys[0];
 
-  const currentIndex = providerKeyIndices.get(providerId) || 0;
+  const currentIndex = (providerKeyIndices.get(providerId) || 0) % rawKeys.length;
   const nextIndex = (currentIndex + 1) % rawKeys.length;
   providerKeyIndices.set(providerId, nextIndex);
 

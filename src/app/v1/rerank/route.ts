@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     const cohereKey =
       process.env.COHERE_API_KEY ||
       req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ||
+      req.headers.get("x-api-key") ||
       "";
 
     // If Cohere key is present, route upstream; otherwise execute algorithmic TF-IDF BM25 fallback
@@ -42,20 +43,65 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Fast Edge BM25 heuristic reranking fallback (zero cost, zero latency)
-    const queryTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
-    const scored = documents.map((doc: string | { text: string }, index: number) => {
-      const text = typeof doc === "string" ? doc : doc.text || "";
-      const lower = text.toLowerCase();
-      let score = 0;
-      for (const term of queryTerms) {
-        if (lower.includes(term)) score += 1;
+    // Algorithmic Okapi BM25 Reranking Engine (Zero cost, Zero latency Edge Ranking)
+    // Formula: Score(D, Q) = sum( IDF(qi) * (f(qi, D) * (k1 + 1)) / (f(qi, D) + k1 * (1 - b + b * (|D| / avgdl))) )
+    const tokenize = (text: string): string[] => text.toLowerCase().match(/\b[\w'-]+\b/g) || [];
+
+    const queryTokens = tokenize(query);
+    const queryTerms = Array.from(new Set(queryTokens));
+
+    const N = documents.length;
+    const docItems = documents.map((doc: string | { text: string }, index: number) => {
+      const text = typeof doc === "string" ? doc : doc && typeof doc.text === "string" ? doc.text : "";
+      const tokens = tokenize(text);
+      const tfMap = new Map<string, number>();
+      for (const t of tokens) {
+        tfMap.set(t, (tfMap.get(t) || 0) + 1);
       }
-      const relevance_score = Math.min(0.99, score / Math.max(1, queryTerms.length));
-      return { index, relevance_score, document: { text } };
+      return { index, text, tokens, tfMap, length: tokens.length };
     });
 
-    scored.sort((a: any, b: any) => b.relevance_score - a.relevance_score);
+    const totalLength = docItems.reduce((acc, d) => acc + d.length, 0);
+    const avgdl = N > 0 ? Math.max(1, totalLength / N) : 1;
+
+    // Compute Document Frequencies for each unique query term
+    const dfMap = new Map<string, number>();
+    for (const term of queryTerms) {
+      let count = 0;
+      for (const d of docItems) {
+        if (d.tfMap.has(term)) count++;
+      }
+      dfMap.set(term, count);
+    }
+
+    // Standard Okapi BM25 parameters
+    const k1 = 1.2;
+    const b = 0.75;
+
+    const scored = docItems.map((doc) => {
+      let bm25Score = 0;
+      for (const term of queryTerms) {
+        const f = doc.tfMap.get(term) || 0;
+        if (f === 0) continue;
+
+        const n = dfMap.get(term) || 0;
+        // Robertson-Spärck Jones IDF with +1 smoothing to guarantee non-negative weight
+        const idf = Math.log(1 + (N - n + 0.5) / (n + 0.5));
+        const numerator = f * (k1 + 1);
+        const denominator = f + k1 * (1 - b + b * (doc.length / avgdl));
+        bm25Score += idf * (numerator / denominator);
+      }
+
+      // Normalize BM25 score smoothly into [0, 1) probability range
+      const relevance_score = bm25Score > 0 ? Number((bm25Score / (bm25Score + 1.0)).toFixed(6)) : 0;
+      return {
+        index: doc.index,
+        relevance_score,
+        document: { text: doc.text },
+      };
+    });
+
+    scored.sort((a, b) => b.relevance_score - a.relevance_score || a.index - b.index);
 
     return NextResponse.json({
       id: `rerank_${Date.now()}`,

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { PROVIDER_CATALOG, DEFAULT_COMBOS } from "../src/lib/providers/catalog";
 import { compressPrompt, compressMessages, estimateTokenCount, ContentBlock } from "../src/lib/compression/engine";
 import { resolveRouteTargets, detectProviderFromKey } from "../src/lib/gateway/router";
+import { shouldTripCircuit, isProviderCoolingDown, tripProviderCircuit, getNextPooledKey } from "../src/lib/gateway/circuitBreaker";
 import { OAUTH_PROVIDERS, generateCodeVerifier, generateCodeChallenge } from "../src/lib/oauth/providers";
 
 describe("SZRoute Provider Catalog & Virtual Combos", () => {
@@ -156,6 +157,49 @@ describe("RTK + Caveman Token Compression Engine (Optimized Single-Pass)", () =>
     assert.equal(result.messages.length, 4, "Duplicate system message should be deduplicated");
     assert.ok(result.rulesApplied.includes("rtk-system-prompt-deduplication"));
   });
+
+  test("compressPrompt preserves Python/code block indentation inside code fences", () => {
+    const pythonCode = "```python\ndef calculate_sum(numbers):\n    total = 0\n    for n in numbers:\n        total += n\n    return total\n```";
+    const prompt = `Review this code:\n\n\n\n${pythonCode}\n\nPlease check performance.`;
+    const result = compressPrompt(prompt);
+    assert.ok(result.compressedText.includes("    total = 0"), "4-space indentation must be preserved");
+    assert.ok(result.compressedText.includes("        total += n"), "8-space indentation must be preserved");
+  });
+
+  test("compressMessages preserves tool_calls, tool_call_id, and name attributes", () => {
+    const messages = [
+      {
+        role: "assistant" as const,
+        content: "Calling function now.",
+        tool_calls: [
+          {
+            id: "call_abc123",
+            type: "function",
+            function: { name: "get_weather", arguments: "{\"city\":\"Tokyo\"}" },
+          },
+        ],
+      },
+      {
+        role: "tool" as const,
+        name: "get_weather",
+        tool_call_id: "call_abc123",
+        content: "Sunny, 22C",
+      },
+    ];
+
+    const res = compressMessages(messages);
+    assert.equal(res.messages.length, 2);
+    assert.ok(Array.isArray((res.messages[0] as any).tool_calls), "tool_calls array must be preserved");
+    assert.equal((res.messages[1] as any).tool_call_id, "call_abc123", "tool_call_id must be preserved");
+    assert.equal((res.messages[1] as any).name, "get_weather", "tool name must be preserved");
+  });
+
+  test("estimateTokenCount handles boundary conditions safely", () => {
+    assert.equal(estimateTokenCount(""), 0);
+    assert.equal(estimateTokenCount(null as any), 0);
+    assert.equal(estimateTokenCount(undefined as any), 0);
+    assert.ok(estimateTokenCount("Hello world") >= 2);
+  });
 });
 
 describe("Gateway Route Resolution & Fallback Logic", () => {
@@ -178,5 +222,152 @@ describe("Gateway Route Resolution & Fallback Logic", () => {
     const route = resolveRouteTargets("unknown-custom-model-xyz");
     assert.equal(route.isCombo, true);
     assert.ok(route.targets.length > 0);
+  });
+});
+
+describe("Circuit Breaker & Key Pooling Engine", () => {
+  test("shouldTripCircuit correctly discriminates transient outages vs client errors", () => {
+    // Client errors MUST NOT trip the provider circuit
+    assert.equal(shouldTripCircuit(400), false, "400 Bad Request should not trip circuit");
+    assert.equal(shouldTripCircuit(401), false, "401 Unauthorized should not trip circuit");
+    assert.equal(shouldTripCircuit(403), false, "403 Forbidden should not trip circuit");
+    assert.equal(shouldTripCircuit(404), false, "404 Not Found should not trip circuit");
+    assert.equal(shouldTripCircuit(422), false, "422 Unprocessable Entity should not trip circuit");
+
+    // Rate limits and server outages MUST trip the circuit
+    assert.equal(shouldTripCircuit(429), true, "429 Too Many Requests must trip circuit");
+    assert.equal(shouldTripCircuit(500), true, "500 Internal Server Error must trip circuit");
+    assert.equal(shouldTripCircuit(502), true, "502 Bad Gateway must trip circuit");
+    assert.equal(shouldTripCircuit(503), true, "503 Service Unavailable must trip circuit");
+    assert.equal(shouldTripCircuit(504), true, "504 Gateway Timeout must trip circuit");
+  });
+
+  test("getNextPooledKey rotates keys safely using modulo", () => {
+    const keys = ["key-1", "key-2", "key-3"];
+    const first = getNextPooledKey("test-provider", keys);
+    const second = getNextPooledKey("test-provider", keys);
+    const third = getNextPooledKey("test-provider", keys);
+    const fourth = getNextPooledKey("test-provider", keys);
+
+    assert.equal(first, "key-1");
+    assert.equal(second, "key-2");
+    assert.equal(third, "key-3");
+    assert.equal(fourth, "key-1");
+  });
+});
+
+describe("Advanced Route Resolution & Provider Prefixing", () => {
+  test("resolves slash-separated provider prefix models directly", () => {
+    const groqRoute = resolveRouteTargets("groq/llama-3.3-70b-versatile");
+    assert.equal(groqRoute.isCombo, false);
+    assert.equal(groqRoute.targets[0].provider.id, "groq");
+    assert.equal(groqRoute.targets[0].upstreamModelId, "llama-3.3-70b-versatile");
+
+    const anthropicRoute = resolveRouteTargets("anthropic/claude-3-7-sonnet-20250219");
+    assert.equal(anthropicRoute.isCombo, false);
+    assert.equal(anthropicRoute.targets[0].provider.id, "anthropic");
+    assert.equal(anthropicRoute.targets[0].upstreamModelId, "claude-3-7-sonnet-20250219");
+  });
+
+  test("resolves hyphen/underscore normalized model aliases", () => {
+    // cerebras catalog model id is "llama3.3-70b" (no hyphen between llama and 3.3)
+    const route = resolveRouteTargets("llama-3.3-70b");
+    assert.equal(route.isCombo, false);
+    assert.equal(route.targets[0].provider.id, "cerebras");
+  });
+
+  test("detectProviderFromKey correctly identifies API key signatures", () => {
+    assert.equal(detectProviderFromKey("gsk_test123456"), "groq");
+    assert.equal(detectProviderFromKey("csk-test123456"), "cerebras");
+    assert.equal(detectProviderFromKey("sk-ant-api03-test"), "anthropic");
+    assert.equal(detectProviderFromKey("AIzaSyTest123"), "gemini");
+    assert.equal(detectProviderFromKey("together_test123"), "together");
+    assert.equal(detectProviderFromKey("sk-or-v1-test"), "openrouter");
+    assert.equal(detectProviderFromKey("random-bearer-token"), null);
+  });
+});
+
+describe("Algorithmic Okapi BM25 Reranking Engine", () => {
+  const tokenize = (text: string): string[] => text.toLowerCase().match(/\b[\w'-]+\b/g) || [];
+
+  function computeBM25(query: string, documents: string[]) {
+    const queryTokens = tokenize(query);
+    const queryTerms = Array.from(new Set(queryTokens));
+    const N = documents.length;
+    if (N === 0) return [];
+
+    const docItems = documents.map((text, index) => {
+      const tokens = tokenize(text);
+      const tfMap = new Map<string, number>();
+      for (const t of tokens) {
+        tfMap.set(t, (tfMap.get(t) || 0) + 1);
+      }
+      return { index, text, tokens, tfMap, length: tokens.length };
+    });
+
+    const totalLength = docItems.reduce((acc, d) => acc + d.length, 0);
+    const avgdl = Math.max(1, totalLength / N);
+
+    const dfMap = new Map<string, number>();
+    for (const term of queryTerms) {
+      let count = 0;
+      for (const d of docItems) {
+        if (d.tfMap.has(term)) count++;
+      }
+      dfMap.set(term, count);
+    }
+
+    const k1 = 1.2;
+    const b = 0.75;
+
+    return docItems.map((doc) => {
+      let bm25Score = 0;
+      for (const term of queryTerms) {
+        const f = doc.tfMap.get(term) || 0;
+        if (f === 0) continue;
+        const n = dfMap.get(term) || 0;
+        const idf = Math.log(1 + (N - n + 0.5) / (n + 0.5));
+        const numerator = f * (k1 + 1);
+        const denominator = f + k1 * (1 - b + b * (doc.length / avgdl));
+        bm25Score += idf * (numerator / denominator);
+      }
+      const relevance_score = bm25Score > 0 ? Number((bm25Score / (bm25Score + 1.0)).toFixed(6)) : 0;
+      return { index: doc.index, relevance_score, text: doc.text };
+    }).sort((a, b) => b.relevance_score - a.relevance_score || a.index - b.index);
+  }
+
+  test("ranks exact query matches higher than partial and irrelevant documents", () => {
+    const query = "quantum computing algorithms";
+    const docs = [
+      "Quantum computing utilizes quantum superposition and entanglement to run algorithms exponentially faster.",
+      "Classical algorithms for sorting include quicksort and mergesort.",
+      "The weather in Tokyo is sunny today with a gentle breeze."
+    ];
+
+    const results = computeBM25(query, docs);
+    assert.equal(results[0].index, 0, "Most relevant document must rank first");
+    assert.equal(results[1].index, 1, "Partially relevant document must rank second");
+    assert.equal(results[2].index, 2, "Irrelevant document must rank last");
+    assert.equal(results[2].relevance_score, 0, "Completely disjoint document must score 0");
+    assert.ok(results[0].relevance_score > results[1].relevance_score);
+  });
+
+  test("normalizes length so concise relevant docs score higher than bloated documents", () => {
+    const query = "deep reinforcement learning";
+    const conciseDoc = "A survey of deep reinforcement learning agents and value iteration.";
+    const bloatedDoc = "Today we discuss deep reinforcement learning agents. " + "Here are irrelevant filler sentences without meaning. ".repeat(40);
+
+    const results = computeBM25(query, [conciseDoc, bloatedDoc]);
+    assert.equal(results[0].text, conciseDoc, "Concise document must score higher due to length normalization");
+  });
+
+  test("scores are strictly bounded within [0, 1)", () => {
+    const query = "test query sample";
+    const docs = ["test query sample", "test test test query query query sample sample sample"];
+    const results = computeBM25(query, docs);
+    for (const r of results) {
+      assert.ok(r.relevance_score >= 0, "Relevance score cannot be negative");
+      assert.ok(r.relevance_score < 1.0, "Relevance score must be strictly less than 1.0");
+    }
   });
 });

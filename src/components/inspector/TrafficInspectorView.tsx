@@ -95,9 +95,15 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                 </tr>
               ) : (
                 filteredLogs.map((log) => {
-                  const isSuccess = log.status >= 200 && log.status < 300;
+                  const isSuccess =
+                    typeof log.status === "number"
+                      ? log.status >= 200 && log.status < 300
+                      : (log.status as unknown) === "success";
                   const isRateLimit = log.status === 429;
-
+                  const formattedTime =
+                    typeof log.timestamp === "number" || !isNaN(Number(log.timestamp))
+                      ? new Date(Number(log.timestamp)).toLocaleTimeString()
+                      : log.timestamp;
                   return (
                     <tr
                       key={log.id}
@@ -105,7 +111,7 @@ export function TrafficInspectorView({ requestLogs, onClearLogs }: TrafficInspec
                       className="hover:bg-[var(--glass-surface-subtle)]/70 cursor-pointer transition-colors"
                     >
                       <td className="py-3 px-4 font-mono text-[12px] text-[var(--text-secondary)]">
-                        {log.timestamp}
+                        {formattedTime}
                       </td>
                       <td className="py-3 px-4 font-semibold text-[var(--text-primary)]">
                         {log.model}
